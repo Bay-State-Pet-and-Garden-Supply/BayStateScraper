@@ -1,0 +1,28 @@
+from scraper_backend.scrapers.actions.base import BaseAction
+
+# Import handlers to ensure they are registered
+from scraper_backend.scrapers.actions.handlers import (
+    anti_detection,
+    browser,
+    click,
+    combine,
+    conditional,
+    extract,
+    image,
+    input,
+    json,
+    login,
+    navigate,
+    script,
+    sponsored,
+    table,
+    transform,
+    validation,
+    verify,
+    wait,
+    wait_for,
+    weight,
+)
+from scraper_backend.scrapers.actions.registry import ActionRegistry
+
+__all__ = ["ActionRegistry", "BaseAction"]

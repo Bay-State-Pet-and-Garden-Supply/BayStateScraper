@@ -1,0 +1,112 @@
+name: central_pet
+# Test SKUs: Central Pet item numbers (verified from trending items on homepage)
+test_skus: [
+  "38777520",  # KONG Air Dog Squeaker Tennis Ball
+  "43580233",  # IAMS Perfect Portions Kitten Wet Cat Food
+  "55599200",  # Kaytee Take-Home Box Medium
+  "32530920",  # Hikari USA Frozen Mysis Shrimp Fish Food
+  "74200017",  # Starmark Everlasting Treat Chicken Small
+  "32530120",  # Hikari USA Blood Worm Frozen Fish Food
+]
+fake_skus: ["xyzabc123notexist456", "00000000", "99999999"]
+edge_case_skus: ["1", "123456789012345"]  # Very short and very long
+base_url: https://www.centralpet.com
+timeout: 15
+retries: 2
+image_quality: 80
+
+selectors:
+  - attribute: text
+    name: Name
+    selector: "#tst_productDetail_erpDescription, h1"
+  - attribute: text
+    name: Brand
+    selector: a[ng-if='vm.product.brand.detailPagePath']
+  - attribute: innerHTML
+    name: Weight
+    selector: //div[@class='specification-container']//li[strong[contains(text(), 'Product Gross Weight')]]/span
+  - attribute: src
+    multiple: true
+    name: Image URLs
+    selector: a#tst_productDetail_imageZoom img
+
+workflows:
+  - action: navigate
+    params:
+      url: https://www.centralpet.com/Search?criteria={sku}
+  - action: conditional_click
+    params:
+      selector: //button[contains(text(), 'Accept')]
+  - action: wait_for
+    params:
+      selector: "#tst_productDetail_erpDescription, span.no-results-found, .no-results"
+      timeout: 5
+  - action: wait
+    params:
+      duration: 2
+  - action: check_no_results
+  - action: conditional_skip
+    params:
+      if_flag: no_results_found
+  - action: "extract"
+    params:
+      fields:
+        - Name
+        - Brand
+        - Weight
+        - Image URLs
+  - action: "transform_value"
+    params:
+      field: "Image URLs"
+      transformations:
+        - type: "replace"
+          pattern: "/w_900/"
+          replacement: "/w_1500/"
+
+http_status:
+  enabled: true
+  error_status_codes:
+    - 400
+    - 401
+    - 403
+    - 404
+    - 500
+    - 502
+    - 503
+    - 504
+  fail_on_error_status: true
+  warning_status_codes:
+    - 301
+    - 302
+    - 307
+    - 308
+
+anti_detection:
+  enable_blocking_handling: false
+  enable_captcha_detection: false
+  enable_human_simulation: false
+  enable_rate_limiting: false
+  enable_session_rotation: false
+  max_retries_on_detection: 3
+  rate_limit_max_delay: 3.0
+  rate_limit_min_delay: 1.0
+  session_rotation_interval: 100
+
+validation:
+  no_results_selectors:
+    - "//h2[contains(text(), 'No results found')]"
+    - span.no-results-found
+    - .no-results
+    - .empty-search
+    - "[data-testid*='no-results']"
+    - div.search-results-none
+    - p:contains('Sorry, no products were found')
+    - h2:contains('No Search Results')
+  no_results_text_patterns:
+    - no results found
+    - no products found
+    - your search returned no results
+    - we couldn't find any results
+    - no items match your search
+    - sorry, no products were found
+    - no search results

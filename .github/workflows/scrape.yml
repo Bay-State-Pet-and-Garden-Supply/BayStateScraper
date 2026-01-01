@@ -1,0 +1,123 @@
+name: Scrape Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: 'Supabase job ID for tracking'
+        required: true
+        type: string
+      skus:
+        description: 'Comma-separated list of SKUs to scrape'
+        required: false
+        type: string
+      scrapers:
+        description: 'Comma-separated list of scraper names to run'
+        required: false
+        type: string
+      test_mode:
+        description: 'Run in test mode'
+        required: false
+        type: boolean
+        default: false
+      max_workers:
+        description: 'Maximum number of concurrent workers'
+        required: false
+        type: number
+        default: 3
+
+# Only run on self-hosted runners with Docker
+jobs:
+  scrape:
+    runs-on: [self-hosted, docker]
+    timeout-minutes: 60
+    environment: production
+
+    env:
+      # Only the callback URL and webhook secret - NO database credentials!
+      CALLBACK_URL: ${{ secrets.SCRAPER_CALLBACK_URL }} # actionlint-disable-line
+      WEBHOOK_SECRET: ${{ secrets.SCRAPER_WEBHOOK_SECRET }} # actionlint-disable-line
+
+      JOB_ID: ${{ inputs.job_id }}
+
+    steps:
+      - name: Notify job started
+        env:
+          RUNNER_NAME: ${{ runner.name }}
+        run: |
+          # Generate HMAC signature for the payload
+          PAYLOAD='{"job_id":"'"${JOB_ID}"'","status":"running","runner_name":"'"${RUNNER_NAME}"'"}'
+          SIGNATURE=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | awk '{print $2}')
+          
+          curl -X POST "$CALLBACK_URL" \
+            -H "Content-Type: application/json" \
+            -H "X-Webhook-Signature: $SIGNATURE" \
+            -d "$PAYLOAD"
+
+      - name: Run scraping job in Docker
+        id: scrape
+        run: |
+          # Build Docker command args
+          DOCKER_ARGS=""
+          
+          if [ -n "${{ inputs.skus }}" ]; then
+            SKUS=$(echo "${{ inputs.skus }}" | tr ',' ' ')
+            DOCKER_ARGS="$DOCKER_ARGS --skus $SKUS"
+          fi
+          
+          if [ -n "${{ inputs.scrapers }}" ]; then
+            SCRAPERS=$(echo "${{ inputs.scrapers }}" | tr ',' ' ')
+            DOCKER_ARGS="$DOCKER_ARGS --scrapers $SCRAPERS"
+          fi
+          
+          if [ "${{ inputs.test_mode }}" = "true" ]; then
+            DOCKER_ARGS="$DOCKER_ARGS --test-mode"
+          fi
+          
+          DOCKER_ARGS="$DOCKER_ARGS --max-workers ${{ inputs.max_workers }}"
+          
+          echo "Running Docker: baystate-scraper:latest $DOCKER_ARGS"
+          
+          # Run Docker without any database credentials
+          # The container outputs results to stdout as JSON
+          docker run --rm baystate-scraper:latest $DOCKER_ARGS > /tmp/scrape_results.json
+
+      - name: Report success
+        if: success()
+        env:
+          RUNNER_NAME: ${{ runner.name }}
+        run: |
+          # Read results from the scraper output
+          RESULTS=$(cat /tmp/scrape_results.json 2>/dev/null || echo '{}')
+          
+          # Build payload
+          PAYLOAD=$(jq -n \
+            --arg job_id "$JOB_ID" \
+            --arg runner_name "$RUNNER_NAME" \
+            --argjson results "$RESULTS" \
+            '{job_id: $job_id, status: "completed", runner_name: $runner_name, results: $results}')
+          
+          # Generate signature
+          SIGNATURE=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | awk '{print $2}')
+          
+          curl -X POST "$CALLBACK_URL" \
+            -H "Content-Type: application/json" \
+            -H "X-Webhook-Signature: $SIGNATURE" \
+            -d "$PAYLOAD"
+
+      - name: Report failure
+        if: failure()
+        env:
+          RUNNER_NAME: ${{ runner.name }}
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg job_id "$JOB_ID" \
+            --arg runner_name "$RUNNER_NAME" \
+            '{job_id: $job_id, status: "failed", runner_name: $runner_name, error_message: "Workflow failed - check GitHub Actions logs"}')
+          
+          SIGNATURE=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | awk '{print $2}')
+          
+          curl -X POST "$CALLBACK_URL" \
+            -H "Content-Type: application/json" \
+            -H "X-Webhook-Signature: $SIGNATURE" \
+            -d "$PAYLOAD"

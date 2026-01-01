@@ -1,0 +1,84 @@
+name: "phillips"
+# Test SKUs: Phillips Pet UPCs
+test_skus: [
+  "072705115310",  # Phillips Pet product
+  "072705104321",  # Pet product
+  "072705201234",  # Pet product
+  "045663012106",  # Pet supplies
+  "073893191001",  # Pet food
+  "038100175489",  # Pet product
+]
+fake_skus: ["xyzabc123notexist456", "000000000000", "999999999999"]
+edge_case_skus: ["123", "1234567890123456789"]  # Very short and very long
+base_url: "https://shop.phillipspet.com"
+timeout: 15
+retries: 2
+image_quality: 20
+
+selectors:
+  - name: "Name"
+    selector: ".cc_product_item .cc_product_name"
+    attribute: "text"
+  - name: "Brand"
+    selector: ".cc_product_item .product-brand .branded"
+    attribute: "text"
+  - name: "UPC"
+    selector: ".cc_product_item .product-upc .cc_value"
+    attribute: "text"
+  - name: "ItemNumber"
+    selector: ".cc_product_item .product-item-number .cc_value"
+    attribute: "text"
+  - name: "Image URLs"
+    selector: ".cc_product_item .cc_product_image img"
+    attribute: "src"
+    multiple: true
+
+workflows:
+  - action: "login"
+  - action: "navigate"
+    params:
+      url: "https://shop.phillipspet.com/ccrz__ProductList?cartID=&operation=quickSearch&searchText={sku}&portalUser=&store=DefaultStore&cclcl=en_US"
+  - action: "wait_for"
+    params:
+      selector:
+        - ".cc_product_item .cc_product_name"
+        - ".plp-empty-state-message-container h3"
+      timeout: 5
+  - action: "check_no_results"
+  - action: "conditional_skip"
+    params:
+      if_flag: "no_results_found"
+  - action: "extract"
+    params:
+      fields: ["Name", "Brand", "UPC", "ItemNumber", "Image URLs"]
+  - action: "transform_value"
+    params:
+      field: "Image URLs"
+      transformations:
+        - type: "replace"
+          pattern: "/thumb/"
+          replacement: "/large/"
+
+login:
+  url: "https://shop.phillipspet.com/ccrz__CCSiteLogin"
+  username_field: "#emailField"
+  password_field: "#passwordField"
+  submit_button: "#send2Dsk"
+  success_indicator: "a.doLogout.cc_do_logout"
+  timeout: 60
+
+anti_detection:
+  enable_captcha_detection: false
+  enable_rate_limiting: false
+  enable_human_simulation: false
+  enable_session_rotation: false
+  enable_blocking_handling: false
+  rate_limit_min_delay: 1.0
+  rate_limit_max_delay: 3.0
+  session_rotation_interval: 100
+  max_retries_on_detection: 3
+
+validation:
+  no_results_selectors:
+    - ".plp-empty-state-message-container h3"
+  no_results_text_patterns: []

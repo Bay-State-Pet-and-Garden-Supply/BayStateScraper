@@ -1,0 +1,110 @@
+name: "walmart"
+display_name: "Walmart"
+# Test SKUs: Real pet product UPCs for validation
+test_skus: [
+  "035585499741",  # Pet toy/accessory
+  "079105116708",  # Nylabone DuraChew
+  "029695285400",  # Kaytee bird food
+  "038100174642",  # Purina ONE cat food
+  "017800149495",  # Purina Pro Plan dog food
+  "023100106434",  # Blue Buffalo dog food
+]
+fake_skus: ["xyzabc123notexist456", "000000000000", "999999999999"]
+edge_case_skus: ["123", "12345678901234567890"]  # Very short and very long
+base_url: "https://www.walmart.com"
+timeout: 15
+retries: 2
+image_quality: 100
+
+selectors:
+  - name: "Name"
+    selector: "[data-testid='product-title'], h1[itemprop='name'], h1.prod-ProductTitle"
+    attribute: "text"
+  - name: "Brand"
+    selector: "[data-testid='product-brand'], a[link-identifier='brand'], span.prod-brandName a"
+    attribute: "text"
+
+  - name: "Description"
+    selector: "[data-testid='product-description'], div.about-desc, div.AboutThisItem-description"
+    attribute: "text"
+  - name: "Images"
+    selector: "[data-testid='media-thumbnail'] img, .hover-zoom-hero-image img, img.prod-hero-image-image"
+    attribute: "src"
+    multiple: true
+  - name: "Weight"
+    selector: "//div[contains(text(), 'Weight')]/following-sibling::div | //tr[.//td[contains(., 'Weight')]]/td[2]"
+    attribute: "text"
+  - name: "UPC"
+    selector: "//div[contains(text(), 'UPC')]/following-sibling::div | //tr[.//td[contains(., 'UPC')]]/td[2]"
+    attribute: "text"
+
+workflows:
+  - action: "navigate"
+    params:
+      url: "https://www.walmart.com/search?q={sku}"
+  - action: "wait"
+    params:
+      seconds: 3
+  - action: "wait_for"
+    params:
+      selector: "[data-testid='list-view'], div.search-result-gridview-items, .search-result-listview-items, [data-testid='item-stack'], .no-results"
+      timeout: 5
+  - action: "wait"
+    params:
+      seconds: 2
+  - action: "check_no_results"
+  - action: "conditional_skip"
+    params:
+      if_flag: "no_results_found"
+  - action: "click"
+    params:
+      selector: "[data-testid='list-view'] a[link-identifier], div.search-result-gridview-item a, [data-item-id] a.product-title-link"
+      filter_text_exclude: "sponsored"
+      index: 0
+  - action: "wait_for"
+    params:
+      selector:
+        - "[data-testid='product-title']"
+        - "h1[itemprop='name']"
+        - "h1.prod-ProductTitle"
+      timeout: 5
+  - action: "wait"
+    params:
+      seconds: 2
+  - action: "extract"
+    params:
+      fields: ["Name", "Brand", "Description", "Images", "Weight", "UPC"]
+  - action: "transform_value"
+    params:
+      field: "Images"
+      transformations:
+        - type: "replace"
+          pattern: "odnHeight=\\d+"
+          replacement: "odnHeight=612"
+        - type: "replace"
+          pattern: "odnWidth=\\d+"
+          replacement: "odnWidth=612"
+
+anti_detection:
+  enable_captcha_detection: true
+  enable_rate_limiting: true
+  enable_human_simulation: true
+  enable_session_rotation: false
+  enable_blocking_handling: true
+  rate_limit_min_delay: 2.0
+  rate_limit_max_delay: 5.0
+  session_rotation_interval: 50
+  max_retries_on_detection: 3
+
+validation:
+  no_results_selectors:
+    - ".no-results"
+    - "[data-testid='no-results']"
+    - ".search-no-results"
+    - "//h2[contains(text(), 'No results')]"
+  no_results_text_patterns:
+    - "no results"
+    - "0 results"
+    - "We couldn't find"
+    - "Try checking your spelling"
+    - "Sorry, we didn't find"

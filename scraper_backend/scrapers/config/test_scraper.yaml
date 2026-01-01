@@ -1,0 +1,31 @@
+name: "Test Scraper"
+base_url: "https://httpbin.org"
+timeout: 30
+retries: 3
+
+selectors:
+  - name: "product_name"
+    selector: ".product-title"
+    attribute: "text"
+  - name: "price"
+    selector: ".price"
+    attribute: "text"
+
+workflows:
+  - action: "navigate"
+    params:
+      url: "https://httpbin.org/html"
+  - action: "wait_for"
+    params:
+      selector: "h1"
+      timeout: 10
+  - action: "extract"
+    params:
+      fields: ["product_name", "price"]
+
+login:
+  url: "https://httpbin.org/forms/post"
+  username_field: "#username"
+  password_field: "#password"
+  submit_button: "button[type='submit']"
+  success_indicator: "h1"
