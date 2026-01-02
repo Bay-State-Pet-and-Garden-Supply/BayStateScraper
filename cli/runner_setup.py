@@ -7,8 +7,8 @@ No git clone required - downloaded via curl.
 
 Usage:
     python runner_setup.py           # Interactive setup
-    python runner_setup.py login     # Re-authenticate
     python runner_setup.py status    # Check connection status
+    python runner_setup.py test      # Test API connection
 """
 
 from __future__ import annotations
@@ -17,9 +17,7 @@ import json
 import os
 import platform
 import sys
-import getpass
 from pathlib import Path
-from typing import Optional
 
 try:
     import httpx
@@ -36,7 +34,6 @@ console = Console()
 
 CONFIG_DIR = Path.home() / ".baystate-runner"
 CONFIG_FILE = CONFIG_DIR / "config.json"
-CREDENTIALS_FILE = CONFIG_DIR / ".credentials"
 
 DEFAULT_API_URL = "https://app.baystatepet.com"
 
@@ -52,21 +49,8 @@ def save_config(config: dict) -> None:
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     with open(CONFIG_FILE, "w") as f:
         json.dump(config, f, indent=2)
-
-
-def load_credentials() -> tuple[str, str]:
-    if CREDENTIALS_FILE.exists():
-        with open(CREDENTIALS_FILE) as f:
-            data = json.load(f)
-            return data.get("email", ""), data.get("password", "")
-    return "", ""
-
-
-def save_credentials(email: str, password: str) -> None:
-    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-    with open(CREDENTIALS_FILE, "w") as f:
-        json.dump({"email": email, "password": password}, f)
-    os.chmod(CREDENTIALS_FILE, 0o600)
+    # Secure the config file (contains API key)
+    os.chmod(CONFIG_FILE, 0o600)
 
 
 def clear_screen():
@@ -76,7 +60,7 @@ def clear_screen():
 def print_header():
     header = Panel(
         "[bold blue]Bay State Scraper[/bold blue] - Runner Setup",
-        subtitle="v1.0.0",
+        subtitle="v2.0.0 (API Key Auth)",
         border_style="blue",
     )
     console.print(header)
@@ -92,41 +76,27 @@ def prompt_api_url() -> str:
     return url.rstrip("/")
 
 
-def prompt_supabase_config() -> tuple[str, str]:
+def prompt_api_key() -> str:
     config = load_config()
+    existing = config.get("api_key", "")
 
-    console.print("\n[dim]Supabase configuration (from your BayStateApp admin).[/dim]")
-
-    supabase_url = Prompt.ask(
-        "Supabase URL", default=config.get("supabase_url", "https://xxx.supabase.co")
-    )
-
-    anon_key = Prompt.ask(
-        "Supabase Anon Key", default=config.get("supabase_anon_key", "")
-    )
-
-    return supabase_url.rstrip("/"), anon_key
-
-
-def prompt_credentials() -> tuple[str, str]:
-    console.print("\n[bold]Runner Credentials[/bold]")
+    console.print("\n[bold]API Key[/bold]")
     console.print(
-        "[dim]Get these from Admin Panel > Scraper Network > Runner Accounts[/dim]\n"
+        "[dim]Get this from Admin Panel > Scraper Network > Runner Accounts[/dim]\n"
     )
 
-    existing_email, existing_password = load_credentials()
+    if existing:
+        masked = existing[:12] + "..." + existing[-4:] if len(existing) > 16 else "***"
+        console.print(f"[dim]Current key: {masked}[/dim]")
+        if Confirm.ask("Keep existing API key?", default=True):
+            return existing
 
-    email = Prompt.ask("Email", default=existing_email or "")
+    api_key = Prompt.ask("API Key (starts with bsr_)")
 
-    if existing_password:
-        console.print(
-            "[dim]Password saved. Press Enter to keep it, or type a new one.[/dim]"
-        )
-        password = getpass.getpass("Password: ") or existing_password
-    else:
-        password = getpass.getpass("Password: ")
+    if not api_key.startswith("bsr_"):
+        console.print("[yellow]Warning: API key should start with 'bsr_'[/yellow]")
 
-    return email, password
+    return api_key
 
 
 def prompt_runner_name() -> str:
@@ -139,38 +109,22 @@ def prompt_runner_name() -> str:
     return Prompt.ask("Runner name", default=default_name)
 
 
-def authenticate(
-    supabase_url: str, anon_key: str, email: str, password: str
-) -> Optional[str]:
-    auth_url = f"{supabase_url}/auth/v1/token?grant_type=password"
-
+def test_api_connection(api_url: str, api_key: str) -> bool:
+    """Test the API connection with the provided credentials."""
     try:
-        response = httpx.post(
-            auth_url,
-            headers={
-                "Content-Type": "application/json",
-                "apikey": anon_key,
-            },
-            json={"email": email, "password": password},
-            timeout=15,
+        response = httpx.get(
+            f"{api_url}/api/admin/scraper-network/health",
+            headers={"X-API-Key": api_key},
+            timeout=10,
         )
-
-        if response.status_code == 200:
-            return response.json()["access_token"]
-        else:
-            error = response.json().get("error_description", "Authentication failed")
-            console.print(f"[red]Auth error: {error}[/red]")
-            return None
-
-    except httpx.ConnectError:
-        console.print("[red]Could not connect to Supabase[/red]")
-        return None
+        return response.status_code == 200
     except Exception as e:
-        console.print(f"[red]Auth error: {e}[/red]")
-        return None
+        console.print(f"[dim]Connection error: {e}[/dim]")
+        return False
 
 
-def register_runner(api_url: str, token: str, runner_name: str) -> bool:
+def register_runner(api_url: str, api_key: str, runner_name: str) -> bool:
+    """Register this runner with the coordinator."""
     register_url = f"{api_url}/api/admin/scraper-network/runners/register"
 
     try:
@@ -178,7 +132,7 @@ def register_runner(api_url: str, token: str, runner_name: str) -> bool:
             register_url,
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {token}",
+                "X-API-Key": api_key,
             },
             json={
                 "runner_name": runner_name,
@@ -210,51 +164,6 @@ def register_runner(api_url: str, token: str, runner_name: str) -> bool:
         return False
 
 
-def test_connection(api_url: str) -> bool:
-    try:
-        response = httpx.get(f"{api_url}/api/admin/scraper-network/health", timeout=10)
-        return response.status_code == 200
-    except Exception:
-        return False
-
-
-def command_login():
-    clear_screen()
-    print_header()
-
-    console.print("[bold]Login to Bay State Scraper Network[/bold]\n")
-
-    config = load_config()
-
-    supabase_url = config.get("supabase_url")
-    anon_key = config.get("supabase_anon_key")
-
-    if not supabase_url or not anon_key:
-        supabase_url, anon_key = prompt_supabase_config()
-        config["supabase_url"] = supabase_url
-        config["supabase_anon_key"] = anon_key
-        save_config(config)
-
-    email, password = prompt_credentials()
-
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        console=console,
-    ) as progress:
-        task = progress.add_task("Authenticating...", total=None)
-
-        token = authenticate(supabase_url, anon_key, email, password)
-
-        if token:
-            progress.update(task, description="[green]✓ Authentication successful")
-            save_credentials(email, password)
-            return token
-        else:
-            progress.update(task, description="[red]✗ Authentication failed")
-            return None
-
-
 def command_status():
     config = load_config()
 
@@ -268,18 +177,67 @@ def command_status():
     table.add_row("API URL", config.get("api_url", "[dim]Not set[/dim]"))
     table.add_row("Config Dir", str(CONFIG_DIR))
 
-    email, _ = load_credentials()
-    table.add_row("Logged in as", email or "[dim]Not logged in[/dim]")
+    api_key = config.get("api_key", "")
+    if api_key:
+        masked = api_key[:12] + "..." if len(api_key) > 12 else "***"
+        table.add_row("API Key", masked)
+    else:
+        table.add_row("API Key", "[dim]Not configured[/dim]")
 
     console.print(table)
 
     api_url = config.get("api_url")
-    if api_url:
+    if api_url and api_key:
         console.print("\n[dim]Testing connection...[/dim]")
-        if test_connection(api_url):
+        if test_api_connection(api_url, api_key):
             console.print("[green]✓ API connection OK[/green]")
         else:
-            console.print("[yellow]⚠ Could not reach API[/yellow]")
+            console.print("[yellow]⚠ Could not reach API or invalid key[/yellow]")
+
+    console.print()
+
+
+def command_test():
+    """Test the API connection and authentication."""
+    config = load_config()
+
+    api_url = config.get("api_url")
+    api_key = config.get("api_key")
+
+    if not api_url or not api_key:
+        console.print("[red]Not configured. Run setup first.[/red]")
+        return
+
+    console.print("\n[bold]Testing API Connection[/bold]\n")
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        console=console,
+    ) as progress:
+        task = progress.add_task("Connecting to API...", total=None)
+
+        try:
+            response = httpx.get(
+                f"{api_url}/api/admin/scraper-network/health",
+                headers={"X-API-Key": api_key},
+                timeout=10,
+            )
+
+            if response.status_code == 200:
+                progress.update(task, description="[green]✓ API connection successful")
+            elif response.status_code == 401:
+                progress.update(task, description="[red]✗ Invalid API key")
+            else:
+                progress.update(
+                    task,
+                    description=f"[yellow]⚠ Unexpected status: {response.status_code}",
+                )
+
+        except httpx.ConnectError:
+            progress.update(task, description="[red]✗ Could not connect to API")
+        except Exception as e:
+            progress.update(task, description=f"[red]✗ Error: {e}")
 
     console.print()
 
@@ -293,16 +251,13 @@ def command_setup():
     api_url = prompt_api_url()
     config["api_url"] = api_url
 
-    supabase_url, anon_key = prompt_supabase_config()
-    config["supabase_url"] = supabase_url
-    config["supabase_anon_key"] = anon_key
-
     runner_name = prompt_runner_name()
     config["runner_name"] = runner_name
 
-    save_config(config)
+    api_key = prompt_api_key()
+    config["api_key"] = api_key
 
-    email, password = prompt_credentials()
+    save_config(config)
 
     console.print()
 
@@ -313,32 +268,12 @@ def command_setup():
     ) as progress:
         task = progress.add_task("Testing API connection...", total=None)
 
-        if test_connection(api_url):
+        if test_api_connection(api_url, api_key):
             progress.update(task, description="[green]✓ API connection OK")
         else:
             progress.update(
-                task, description="[yellow]⚠ Could not reach API (is it running?)"
+                task, description="[yellow]⚠ Could not verify API connection"
             )
-
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        console=console,
-    ) as progress:
-        task = progress.add_task("Authenticating...", total=None)
-
-        token = authenticate(supabase_url, anon_key, email, password)
-
-        if token:
-            progress.update(task, description="[green]✓ Authentication successful")
-            save_credentials(email, password)
-        else:
-            progress.update(task, description="[red]✗ Authentication failed")
-            console.print(
-                "\n[yellow]Check your credentials and try again with:[/yellow]"
-            )
-            console.print("  python runner_setup.py login\n")
-            return
 
     with Progress(
         SpinnerColumn(),
@@ -347,7 +282,7 @@ def command_setup():
     ) as progress:
         task = progress.add_task("Registering runner...", total=None)
 
-        if register_runner(api_url, token, runner_name):
+        if register_runner(api_url, api_key, runner_name):
             progress.update(task, description=f"[green]✓ Registered as '{runner_name}'")
         else:
             progress.update(task, description="[yellow]⚠ Registration failed")
@@ -360,9 +295,14 @@ def command_setup():
     console.print("\n[bold]Next Steps:[/bold]\n")
     console.print(f"  1. View this runner in the admin panel:")
     console.print(f"     {api_url}/admin/scraper-network\n")
-    console.print("  2. To reconfigure or check status:")
+    console.print("  2. To check status or test connection:")
     console.print("     python runner_setup.py status")
-    console.print("     python runner_setup.py login\n")
+    console.print("     python runner_setup.py test\n")
+
+    console.print("[bold]Environment Variables for Docker:[/bold]\n")
+    console.print(f"  SCRAPER_API_URL={api_url}")
+    console.print(f"  SCRAPER_API_KEY={api_key[:20]}...")
+    console.print(f"  RUNNER_NAME={runner_name}\n")
 
 
 def main():
@@ -370,15 +310,15 @@ def main():
 
     if not args or args[0] == "setup":
         command_setup()
-    elif args[0] == "login":
-        command_login()
     elif args[0] == "status":
         command_status()
+    elif args[0] == "test":
+        command_test()
     elif args[0] in ["-h", "--help", "help"]:
         console.print(__doc__)
     else:
         console.print(f"[red]Unknown command: {args[0]}[/red]")
-        console.print("Usage: python runner_setup.py [setup|login|status]")
+        console.print("Usage: python runner_setup.py [setup|status|test]")
         sys.exit(1)
 
 

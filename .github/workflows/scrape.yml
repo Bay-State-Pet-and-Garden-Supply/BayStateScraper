@@ -34,11 +34,13 @@ jobs:
     environment: production
 
     env:
-      # API-driven configuration - NO database credentials!
-      SCRAPER_API_URL: ${{ secrets.SCRAPER_API_URL }} # actionlint-disable-line
-      SCRAPER_WEBHOOK_SECRET: ${{ secrets.SCRAPER_WEBHOOK_SECRET }} # actionlint-disable-line
-      # Legacy callback URL (now handled by runner.py internally)
-      CALLBACK_URL: ${{ secrets.SCRAPER_CALLBACK_URL }} # actionlint-disable-line
+      # API Key authentication (simple, no token refresh needed)
+      SCRAPER_API_URL: ${{ secrets.SCRAPER_API_URL }}
+      SCRAPER_API_KEY: ${{ secrets.SCRAPER_API_KEY }}
+      # Webhook secret for HMAC fallback (Docker crash reporting)
+      SCRAPER_WEBHOOK_SECRET: ${{ secrets.SCRAPER_WEBHOOK_SECRET }}
+      # Callback URL for HMAC fallback
+      CALLBACK_URL: ${{ secrets.SCRAPER_CALLBACK_URL }}
 
       JOB_ID: ${{ inputs.job_id }}
 
@@ -52,22 +54,22 @@ jobs:
           echo "Runner: $RUNNER_NAME"
           
           # Run the API-driven runner module
-          # The runner fetches config from API, executes scraping, and submits results
+          # The runner authenticates with API key, fetches config, executes scraping, and submits results
           docker run --rm \
             -e SCRAPER_API_URL="$SCRAPER_API_URL" \
-            -e SCRAPER_WEBHOOK_SECRET="$SCRAPER_WEBHOOK_SECRET" \
+            -e SCRAPER_API_KEY="$SCRAPER_API_KEY" \
             -e RUNNER_NAME="$RUNNER_NAME" \
             baystate-scraper:latest \
             python -m scraper_backend.runner --job-id "$JOB_ID" --runner-name "$RUNNER_NAME" \
             > /tmp/scrape_results.json
 
-      - name: Report failure
+      - name: Report failure via HMAC
         if: failure()
         env:
           RUNNER_NAME: ${{ runner.name }}
         run: |
-          # Runner.py handles normal result submission
           # This step only runs if Docker itself fails (out of memory, crash, etc.)
+          # Uses HMAC signature since we can't use the Python API client
           PAYLOAD=$(jq -n \
             --arg job_id "$JOB_ID" \
             --arg runner_name "$RUNNER_NAME" \

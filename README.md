@@ -1,43 +1,36 @@
-# BayState Scraper
+# BayStateScraper
 
-Self-hosted scraper for Bay State Pet & Garden Supply product data collection.
+Distributed scraper runners for Bay State Pet & Garden Supply product data collection.
 
-## Quick Start (One-Line Install)
+## Quick Start
+
+### One-Line Install
 
 Run this on any Mac or Linux machine:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/YOUR_ORG/BayStateScraper/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/main/install.py | python3
 ```
 
 The installer will:
-1. Install Python if needed
-2. Download the runner setup tool
-3. Walk you through configuration
-4. Register the runner with BayStateApp
+1. Install Python dependencies
+2. Prompt you to paste your **API Key** (from BayStateApp admin panel)
+3. Register the runner with BayStateApp
+4. Save configuration locally
 
-No git or manual cloning required.
+### Get Your API Key First
 
-### After Installation
-
-```bash
-# Check status
-~/.baystate-runner/baystate-runner status
-
-# Re-login
-~/.baystate-runner/baystate-runner login
-```
+1. Go to **BayStateApp Admin Panel** → **Scraper Network** → **Runner Accounts**
+2. Click **"Create Runner"** and enter a name for this machine
+3. **Copy the API key** (starts with `bsr_`) - it's only shown once!
+4. Run the installer above and paste the key when prompted
 
 ## Documentation
-- [Project Goals](docs/GOALS.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [API Proposal](docs/API_PROPOSAL.md)
 
-## Overview
+- [Architecture](docs/ARCHITECTURE.md) - System design and data flow
+- [API Reference](docs/API_PROPOSAL.md) - Runner ↔ Coordinator communication
 
-This repository contains the Python-based scraper that runs on self-hosted GitHub Actions runners. It collects product data from various supplier websites and reports results back to the main BayStateApp via secure webhooks.
-
-## Alternative: Manual Setup
+## Manual Setup
 
 If you prefer manual setup or already have the repo cloned:
 
@@ -46,9 +39,9 @@ python install.py
 ```
 
 ### Prerequisites
+
 - Python 3.9+
 - Docker (optional, for containerized deployment)
-- GitHub Actions self-hosted runner (for production)
 
 ### Install Dependencies
 
@@ -62,20 +55,15 @@ python -m playwright install chromium
 Create `scraper_backend/.env`:
 
 ```env
+# Runner Identity
 RUNNER_NAME=my-runner
-SCRAPER_API_URL=http://localhost:3000
-SUPABASE_URL=https://xxx.supabase.co
-SUPABASE_ANON_KEY=your-anon-key
-RUNNER_EMAIL=runner@scraper.local
-RUNNER_PASSWORD=from-admin-panel
+
+# API Configuration
+SCRAPER_API_URL=https://app.baystatepet.com
+
+# API Key Authentication (get from Admin Panel)
+SCRAPER_API_KEY=bsr_your_api_key_here
 ```
-
-### Get Runner Credentials
-
-1. Go to BayStateApp admin panel -> Scraper Network -> Runner Accounts
-2. Click "Create Account" and enter a runner name
-3. Copy the generated email and password
-4. Update your `.env` file
 
 ## Docker Deployment
 
@@ -88,15 +76,14 @@ docker build -t baystate-scraper:latest .
 
 ### GitHub Actions Secrets
 
-Configure these in repository settings:
+Configure these in your repository settings:
 
 | Secret | Description |
 |--------|-------------|
-| `SCRAPER_API_URL` | Base URL to BayStateApp |
-| `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_ANON_KEY` | Supabase anon key |
-| `RUNNER_EMAIL` | Runner account email |
-| `RUNNER_PASSWORD` | Runner account password |
+| `SCRAPER_API_URL` | Base URL to BayStateApp (e.g., `https://app.baystatepet.com`) |
+| `SCRAPER_API_KEY` | API key from admin panel (starts with `bsr_`) |
+| `SCRAPER_WEBHOOK_SECRET` | Shared secret for HMAC fallback (Docker crash reporting) |
+| `SCRAPER_CALLBACK_URL` | Callback URL for HMAC fallback |
 
 ## Usage
 
@@ -107,14 +94,14 @@ The scraper is triggered via `workflow_dispatch` from the BayStateApp admin pane
 ```bash
 gh workflow run scrape.yml \
   -f job_id=test-123 \
-  -f scrapers=supplier1,supplier2 \
+  -f scrapers=amazon,chewy \
   -f test_mode=true
 ```
 
 ### Local testing
 
 ```bash
-./run_local_job.sh --job-id test-123
+python -m scraper_backend.runner --job-id test-123
 ```
 
 ## Architecture
@@ -135,11 +122,35 @@ gh workflow run scrape.yml \
                     ┌─────────────────┐
                     │  Docker Runner  │
                     │ baystate-scraper│
+                    │                 │
+                    │ Auth: X-API-Key │
                     └────────┬────────┘
-                             │ webhook callback
+                             │ POST /api/admin/scraping/callback
                              ▼
                     ┌─────────────────┐
                     │   BayStateApp   │
                     │  (API Callback) │
                     └─────────────────┘
 ```
+
+## Authentication
+
+Runners authenticate using **API Keys** (not passwords):
+
+1. **Admin creates runner** in BayStateApp → generates API key
+2. **Runner stores key** in environment variable `SCRAPER_API_KEY`
+3. **All requests include** `X-API-Key: bsr_xxxxx` header
+4. **BayStateApp validates** key against database, processes request
+
+Benefits over password-based auth:
+- No token refresh needed
+- Easy key rotation via admin panel
+- Instant revocation
+- Simpler runner configuration
+
+## Security
+
+- **No database credentials** on runners - all communication via API
+- **API keys are hashed** in database (SHA256)
+- **HMAC fallback** for Docker crash reporting
+- **RLS policies** ensure runners can only update their own status
