@@ -70,6 +70,7 @@ class ScraperAPIClient:
         """
         self.api_url = api_url or os.environ.get("SCRAPER_API_URL", "")
         self.webhook_secret = webhook_secret or os.environ.get("SCRAPER_WEBHOOK_SECRET", "")
+        self.runner_name = os.environ.get("RUNNER_NAME", "unknown-runner")
         self.timeout = timeout
 
         if not self.api_url:
@@ -210,6 +211,8 @@ class ScraperAPIClient:
 
         if runner_name:
             payload_dict["runner_name"] = runner_name
+        else:
+            payload_dict["runner_name"] = self.runner_name
         if results:
             payload_dict["results"] = results
         if error_message:

@@ -2,6 +2,11 @@
 
 Self-hosted scraper for Bay State Pet & Garden Supply product data collection.
 
+## Documentation
+- [Project Goals](docs/GOALS.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [API Proposal](docs/API_PROPOSAL.md)
+
 ## Overview
 
 This repository contains the Python-based scraper that runs on self-hosted GitHub Actions runners. It collects product data from various supplier websites and reports results back to the main BayStateApp via secure webhooks.
