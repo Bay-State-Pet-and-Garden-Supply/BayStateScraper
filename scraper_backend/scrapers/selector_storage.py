@@ -5,6 +5,8 @@ This module provides a JSON-based storage system for learned CSS selectors
 used in web scraping. It includes confidence scoring, fallback chains, and
 automatic learning capabilities.
 """
+from __future__ import annotations
+
 
 import json
 import logging

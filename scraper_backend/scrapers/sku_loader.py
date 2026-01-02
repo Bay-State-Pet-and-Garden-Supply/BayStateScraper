@@ -3,6 +3,8 @@ SKU Loader Module
 
 Loads SKUs from Excel files for scraping operations.
 """
+from __future__ import annotations
+
 
 from pathlib import Path
 

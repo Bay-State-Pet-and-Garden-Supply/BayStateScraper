@@ -4,6 +4,8 @@ Concurrent scraping manager for parallel execution of scrapers.
 Provides browser pooling, task distribution, and resource throttling
 to achieve 3+ simultaneous scraper operations.
 """
+from __future__ import annotations
+
 
 import logging
 import queue

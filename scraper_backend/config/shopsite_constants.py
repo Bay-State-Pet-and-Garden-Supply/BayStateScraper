@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # ShopSite constants and configuration
 SHOPSITE_PAGES = [
     "Home",

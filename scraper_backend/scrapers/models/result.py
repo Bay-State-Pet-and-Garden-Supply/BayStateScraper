@@ -4,6 +4,8 @@ SKU Result Model and Pass/Fail Logic
 This module provides the central source of truth for SKU status determination.
 Both backend processing and health calculation should use these helpers.
 """
+from __future__ import annotations
+
 
 from dataclasses import dataclass, field
 from typing import Literal

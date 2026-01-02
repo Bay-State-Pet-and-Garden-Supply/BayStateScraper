@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from scraper_backend.scrapers.actions.base import BaseAction
 
 
@@ -39,7 +41,7 @@ class ActionRegistry:
         # Import all modules in the handlers directory
         for _, module_name, _ in pkgutil.iter_modules([str(handlers_path)]):
             try:
-                importlib.import_module(f"backend.scrapers.actions.handlers.{module_name}")
+                importlib.import_module(f"scraper_backend.scrapers.actions.handlers.{module_name}")
                 # The decorators will register the actions automatically
             except ImportError as e:
                 # Log but don't fail - some handlers might have dependencies

@@ -1,6 +1,8 @@
 """
 This module provides the core functionality for running scraper tests.
 """
+from __future__ import annotations
+
 
 import asyncio
 from pathlib import Path

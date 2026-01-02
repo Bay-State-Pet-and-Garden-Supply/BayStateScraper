@@ -3,6 +3,8 @@ Playwright browser utility for scrapers.
 Parallel to ScraperBrowser but using Playwright's async API.
 Includes both Async and Sync implementations to support migration.
 """
+from __future__ import annotations
+
 
 import asyncio
 import os

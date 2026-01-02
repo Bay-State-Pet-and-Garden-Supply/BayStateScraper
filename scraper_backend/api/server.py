@@ -8,6 +8,8 @@ Event System Integration:
     This server now uses the structured event system for observability.
     Events are exposed via the /events endpoint for the frontend to consume.
 """
+from __future__ import annotations
+
 
 import logging
 import os

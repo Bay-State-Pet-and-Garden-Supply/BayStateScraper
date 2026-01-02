@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .config import LoginConfig, ScraperConfig, SelectorConfig, WorkflowStep
 from .result import (
     SkuResult,

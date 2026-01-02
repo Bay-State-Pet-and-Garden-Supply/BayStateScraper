@@ -2,6 +2,8 @@
 Testing utilities package.
 Provides testing helpers that can be used by both production code and tests.
 """
+from __future__ import annotations
+
 
 from .scraper_validator import ScraperValidator
 

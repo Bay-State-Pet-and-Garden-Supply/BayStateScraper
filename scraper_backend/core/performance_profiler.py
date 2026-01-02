@@ -4,6 +4,8 @@ Performance profiling and optimization utilities for scraper execution.
 Provides timing analysis, bottleneck identification, and optimization recommendations
 to achieve the target of <2min average execution time.
 """
+from __future__ import annotations
+
 
 import functools
 import logging

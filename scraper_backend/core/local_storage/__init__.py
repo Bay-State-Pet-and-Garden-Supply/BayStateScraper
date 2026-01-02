@@ -4,6 +4,8 @@ Local storage implementations for testing purposes.
 This module provides local file-based implementations of storage services
 that mimic cloud storage APIs for testing.
 """
+from __future__ import annotations
+
 
 from scraper_backend.core.settings_manager import PROJECT_ROOT, settings
 

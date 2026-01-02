@@ -2,6 +2,8 @@
 Settings Manager for ProductScraper
 Handles application configuration using JSON file-based storage and secure database storage.
 """
+from __future__ import annotations
+
 
 import json
 import logging

@@ -6,6 +6,8 @@ Classifies exceptions and page content into specific failure types with confiden
 and recovery strategies.
 """
 
+from __future__ import annotations
+
 import logging
 import re
 from dataclasses import dataclass

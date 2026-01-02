@@ -5,6 +5,8 @@ This replaces direct Supabase access, ensuring runners have NO database credenti
 All communication is done via authenticated HTTP endpoints.
 """
 
+from __future__ import annotations
+
 import hashlib
 import hmac
 import json

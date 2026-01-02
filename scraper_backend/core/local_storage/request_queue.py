@@ -1,6 +1,8 @@
 """
 Local request queue implementation using JSON file storage.
 """
+from __future__ import annotations
+
 
 import json
 import uuid

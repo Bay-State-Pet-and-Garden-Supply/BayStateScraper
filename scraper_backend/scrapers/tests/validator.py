@@ -1,6 +1,8 @@
 """
 Scraper output validation utilities for testing and debugging.
 """
+from __future__ import annotations
+
 
 import re
 from typing import Any, TypedDict

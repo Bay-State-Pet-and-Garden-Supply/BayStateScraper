@@ -4,6 +4,8 @@ Scraper caching and incremental update system.
 Provides intelligent caching for scraper results with TTL-based invalidation,
 incremental scraping support, and cache statistics.
 """
+from __future__ import annotations
+
 
 import hashlib
 import json

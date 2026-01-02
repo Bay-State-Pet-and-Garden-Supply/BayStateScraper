@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # Lazy imports to avoid circular import issues
 # (retry_executor imports exceptions, which would trigger this __init__)
 

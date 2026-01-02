@@ -2,6 +2,8 @@
 CAPTCHA solving service integration for anti-detection manager.
 Supports multiple CAPTCHA solving services including 2Captcha, Anti-Captcha, etc.
 """
+from __future__ import annotations
+
 
 import logging
 import time

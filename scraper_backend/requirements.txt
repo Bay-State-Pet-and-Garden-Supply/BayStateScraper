@@ -24,3 +24,9 @@ structlog>=23.0.0
 
 # Supabase client for result storage
 supabase>=2.0.0
+
+# Stealth
+playwright-stealth>=1.0.4
+
+# Compatibility
+eval-type-backport>=0.1.3

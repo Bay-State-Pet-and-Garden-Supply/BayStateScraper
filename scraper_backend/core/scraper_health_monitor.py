@@ -8,6 +8,8 @@ Provides comprehensive health monitoring for all scrapers including:
 - Alerts and notifications for degraded scrapers
 - Integration with FailureAnalytics for historical data
 """
+from __future__ import annotations
+
 
 import logging
 import threading

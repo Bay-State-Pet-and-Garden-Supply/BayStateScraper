@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # Field mapping configuration for ShopSite XML import
 # Maps ShopSite XML fields to the specific fields needed by the product editor
 

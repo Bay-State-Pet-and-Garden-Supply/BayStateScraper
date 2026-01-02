@@ -4,6 +4,8 @@ Scraper Exception Hierarchy
 Provides structured exceptions for different failure scenarios with context
 for debugging and automatic recovery decisions.
 """
+from __future__ import annotations
+
 
 from dataclasses import dataclass, field
 from enum import Enum

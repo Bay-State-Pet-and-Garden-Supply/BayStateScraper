@@ -7,6 +7,8 @@ Provides intelligent retry logic for scraper actions with:
 - Integration with failure analytics for learning
 - Configurable backoff strategies
 """
+from __future__ import annotations
+
 
 import logging
 import threading

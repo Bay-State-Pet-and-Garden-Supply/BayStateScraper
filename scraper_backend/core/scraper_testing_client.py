@@ -2,6 +2,8 @@
 Scraper Testing Client
 Provides interface for local scraper testing only.
 """
+from __future__ import annotations
+
 
 import logging
 from enum import Enum

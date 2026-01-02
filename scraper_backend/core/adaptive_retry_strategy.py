@@ -4,6 +4,8 @@ Adaptive Retry Strategy for Intelligent Scraping Operations
 Provides dynamic retry configuration based on failure history and patterns.
 Learns from past failures to optimize scraping efficiency and success rates.
 """
+from __future__ import annotations
+
 
 import json
 import logging

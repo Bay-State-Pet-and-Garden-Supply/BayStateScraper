@@ -4,6 +4,8 @@ Memory management and optimization utilities for scraper execution.
 Provides memory tracking, leak detection, and optimization strategies
 to achieve the target of <200MB peak memory usage.
 """
+from __future__ import annotations
+
 
 import gc
 import logging

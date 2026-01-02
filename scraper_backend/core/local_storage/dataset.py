@@ -1,6 +1,8 @@
 """
 Local dataset implementation for storing data items as JSON files.
 """
+from __future__ import annotations
+
 
 import json
 from pathlib import Path

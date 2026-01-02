@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from scraper_backend.scrapers.actions.base import BaseAction
 
 # Import handlers to ensure they are registered

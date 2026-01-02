@@ -4,6 +4,8 @@ Failure Analytics and Reporting System
 Provides comprehensive failure tracking, analysis, and insights for scraper optimization.
 Collects failure data across all scrapers and generates actionable reports.
 """
+from __future__ import annotations
+
 
 import json
 import logging

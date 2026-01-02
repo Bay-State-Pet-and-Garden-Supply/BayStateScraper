@@ -1,6 +1,8 @@
 """
 Workflow executor for scraper automation using Selenium WebDriver.
 """
+from __future__ import annotations
+
 
 import logging
 import os

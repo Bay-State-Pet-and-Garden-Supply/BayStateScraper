@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 
 from scraper_backend.scrapers.models import ScraperConfig

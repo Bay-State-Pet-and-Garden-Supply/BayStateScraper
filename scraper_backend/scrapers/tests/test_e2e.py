@@ -1,6 +1,8 @@
 """
 Integration tests for running scrapers locally and validating output.
 """
+from __future__ import annotations
+
 
 import copy
 import os

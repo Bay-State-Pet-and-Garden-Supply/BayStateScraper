@@ -6,6 +6,8 @@ Usage:
     python -m src.scrapers --test                        # Test mode using YAML test_skus
     python -m src.scrapers --test --scrapers amazon      # Test specific scraper(s)
 """
+from __future__ import annotations
+
 
 import argparse
 import os
