@@ -30,8 +30,18 @@ Configure these in GitHub repository settings:
 
 | Secret | Description |
 |--------|-------------|
-| `SCRAPER_CALLBACK_URL` | URL to the BayStateApp callback endpoint |
-| `SCRAPER_WEBHOOK_SECRET` | Shared secret for HMAC signature verification |
+| `SCRAPER_API_URL` | Base URL to the BayStateApp (e.g., https://app.example.com) |
+| `SUPABASE_URL` | Supabase project URL for authentication |
+| `SUPABASE_ANON_KEY` | Supabase anon key for authentication |
+| `RUNNER_EMAIL` | Runner account email (from admin panel) |
+| `RUNNER_PASSWORD` | Runner account password (from admin panel) |
+
+### Creating Runner Credentials
+
+1. Go to the BayStateApp admin panel → Scraper Network → Runner Accounts
+2. Click "Create Account" and enter a runner name
+3. Copy the generated email and password
+4. Configure these as `RUNNER_EMAIL` and `RUNNER_PASSWORD` secrets
 
 ## Usage
 
