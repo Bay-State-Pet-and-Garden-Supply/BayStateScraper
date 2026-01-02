@@ -64,20 +64,32 @@ workflows:
         - "#title"
         - "h1"
       timeout: 5
-  - action: "extract"
+  # Using extract_and_transform for cleaner single-pass extraction with inline transforms
+  - action: "extract_and_transform"
     params:
-      fields: ["Name", "Brand", "Images", "Weight"]
-  - action: "transform_value"
-    params:
-      field: "Brand"
-      regex: "Visit the (.+) Store"
-  - action: "transform_value"
-    params:
-      field: "Images"
-      transformations:
-        - type: "replace"
-          pattern: "_AC_US40_"
-          replacement: "_AC_SL1500_"
+      fields:
+        - name: "Name"
+          selector: "#productTitle"
+          attribute: "text"
+        - name: "Brand"
+          selector: "#bylineInfo"
+          attribute: "text"
+          transform:
+            - type: "regex_extract"
+              pattern: "Visit the (.+) Store"
+              group: 1
+        - name: "Images"
+          selector: "#altImages li.imageThumbnail img"
+          attribute: "src"
+          multiple: true
+          transform:
+            - type: "replace"
+              pattern: "_AC_US40_"
+              replacement: "_AC_SL1500_"
+        - name: "Weight"
+          selector: "//tr[.//th[contains(., 'Weight')]] | //li[contains(., 'ounces')] | //li[contains(., 'pounds')]"
+          attribute: "text"
+          required: false
 
 anti_detection:
   enable_captcha_detection: false

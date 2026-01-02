@@ -10,6 +10,7 @@ from scraper_backend.scrapers.actions.handlers import (
     combine,
     conditional,
     extract,
+    extract_transform,
     image,
     input,
     json,
