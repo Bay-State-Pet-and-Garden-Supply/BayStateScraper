@@ -43,3 +43,6 @@ htmlcov/
 
 # Logs
 *.log
+
+# Local/Secrets
+scraper_backend/.env
