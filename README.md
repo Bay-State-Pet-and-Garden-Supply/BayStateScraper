@@ -2,6 +2,32 @@
 
 Self-hosted scraper for Bay State Pet & Garden Supply product data collection.
 
+## Quick Start (One-Line Install)
+
+Run this on any Mac or Linux machine:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/YOUR_ORG/BayStateScraper/main/install.sh | bash
+```
+
+The installer will:
+1. Install Python if needed
+2. Download the runner setup tool
+3. Walk you through configuration
+4. Register the runner with BayStateApp
+
+No git or manual cloning required.
+
+### After Installation
+
+```bash
+# Check status
+~/.baystate-runner/baystate-runner status
+
+# Re-login
+~/.baystate-runner/baystate-runner login
+```
+
 ## Documentation
 - [Project Goals](docs/GOALS.md)
 - [Architecture](docs/ARCHITECTURE.md)
@@ -11,11 +37,47 @@ Self-hosted scraper for Bay State Pet & Garden Supply product data collection.
 
 This repository contains the Python-based scraper that runs on self-hosted GitHub Actions runners. It collects product data from various supplier websites and reports results back to the main BayStateApp via secure webhooks.
 
-## Setup
+## Alternative: Manual Setup
+
+If you prefer manual setup or already have the repo cloned:
+
+```bash
+python install.py
+```
 
 ### Prerequisites
-- Docker installed on the runner machine
-- GitHub Actions self-hosted runner configured with labels: `self-hosted`, `docker`
+- Python 3.9+
+- Docker (optional, for containerized deployment)
+- GitHub Actions self-hosted runner (for production)
+
+### Install Dependencies
+
+```bash
+pip install -r scraper_backend/requirements.txt
+python -m playwright install chromium
+```
+
+### Configure Environment
+
+Create `scraper_backend/.env`:
+
+```env
+RUNNER_NAME=my-runner
+SCRAPER_API_URL=http://localhost:3000
+SUPABASE_URL=https://xxx.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+RUNNER_EMAIL=runner@scraper.local
+RUNNER_PASSWORD=from-admin-panel
+```
+
+### Get Runner Credentials
+
+1. Go to BayStateApp admin panel -> Scraper Network -> Runner Accounts
+2. Click "Create Account" and enter a runner name
+3. Copy the generated email and password
+4. Update your `.env` file
+
+## Docker Deployment
 
 ### Build the Docker image
 
@@ -24,28 +86,21 @@ cd scraper_backend
 docker build -t baystate-scraper:latest .
 ```
 
-### Required Secrets
+### GitHub Actions Secrets
 
-Configure these in GitHub repository settings:
+Configure these in repository settings:
 
 | Secret | Description |
 |--------|-------------|
-| `SCRAPER_API_URL` | Base URL to the BayStateApp (e.g., https://app.example.com) |
-| `SUPABASE_URL` | Supabase project URL for authentication |
-| `SUPABASE_ANON_KEY` | Supabase anon key for authentication |
-| `RUNNER_EMAIL` | Runner account email (from admin panel) |
-| `RUNNER_PASSWORD` | Runner account password (from admin panel) |
-
-### Creating Runner Credentials
-
-1. Go to the BayStateApp admin panel → Scraper Network → Runner Accounts
-2. Click "Create Account" and enter a runner name
-3. Copy the generated email and password
-4. Configure these as `RUNNER_EMAIL` and `RUNNER_PASSWORD` secrets
+| `SCRAPER_API_URL` | Base URL to BayStateApp |
+| `SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_ANON_KEY` | Supabase anon key |
+| `RUNNER_EMAIL` | Runner account email |
+| `RUNNER_PASSWORD` | Runner account password |
 
 ## Usage
 
-The scraper is triggered via `workflow_dispatch` from the main BayStateApp admin panel.
+The scraper is triggered via `workflow_dispatch` from the BayStateApp admin panel.
 
 ### Manual trigger (for testing)
 
@@ -54,6 +109,12 @@ gh workflow run scrape.yml \
   -f job_id=test-123 \
   -f scrapers=supplier1,supplier2 \
   -f test_mode=true
+```
+
+### Local testing
+
+```bash
+./run_local_job.sh --job-id test-123
 ```
 
 ## Architecture
