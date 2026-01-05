@@ -1,108 +1,44 @@
-# BayStateScraper - Agent Development Guidelines
+# BayStateScraper Agent Guide
 
-## Overview
+## OVERVIEW
+- Python 3.10 based distributed scraping engine.
+- Docker-first deployment on self-hosted runners.
+- Orchestrated by BayStateApp via workflow dispatch.
+- YAML DSL for defining scraper logic without code changes.
 
-Distributed scraper runners for Bay State Pet & Garden Supply. Deployed to Docker containers on self-hosted GitHub Actions runners. Communicates with BayStateApp via **API Key authentication**.
-
-## Commands
-
-```bash
-# Build Docker image
-docker build -t baystate-scraper:latest scraper_backend/
-
-# Run locally
-python -m scraper_backend.runner --job-id <JOB_ID>
-
-# Manual workflow trigger
-gh workflow run scrape.yml \
-  -f job_id=test-123 \
-  -f scrapers=amazon,chewy \
-  -f test_mode=true
-
-# Setup a new runner
-python install.py
+## STRUCTURE
+```
+.
+├── BayStateScraper/
+│   ├── scraper_backend/    # Main package
+│   │   ├── runner.py       # Entry point for job execution
+│   │   ├── scrapers/
+│   │   │   ├── configs/    # YAML scraper definitions (DSL)
+│   │   │   ├── actions/    # Reusable action handlers & registry
+│   │   │   └── executor/   # DSL interpretation & flow control
+│   │   └── core/           # API client, retries, and health monitors
+│   └── install.py          # Runner provisioning script
 ```
 
-## Code Style
+## WHERE TO LOOK
+| Component | Path | Purpose |
+|-----------|------|---------|
+| Entry Point | `scraper_backend/runner.py` | CLI for starting jobs |
+| DSL Configs | `scrapers/configs/*.yaml` | Scraper logic definitions |
+| Action Logic | `scrapers/actions/handlers/` | Python implementation of YAML actions |
+| Action Map | `scrapers/actions/registry.py` | Mapping YAML keys to Python classes |
+| API Client | `core/api_client.py` | Auth and callback logic |
 
-- **Python:** 3.10+, 100 char line length
-- **Linting:** ruff (E, F, B, I, N, UP, PL, RUF)
-- **Typing:** Type hints required
-- **Naming:** snake_case (functions/vars), PascalCase (classes)
-- **Async:** async/await for I/O operations
+## CONVENTIONS
+- **Auth**: Use `X-API-Key` (starts with `bsr_`). No direct DB access.
+- **Scraper Dev**: Add/edit YAML in `configs/`. Avoid Python code for site logic.
+- **Actions**: Register new action types in `registry.py`.
+- **Async**: Use Playwright async API for browser interactions.
+- **Data**: Scrapers emit raw/mapped data via API callbacks.
 
-## Architecture
-
-```
-BayStateApp (Admin)
-    │
-    │ Creates scrape_job, triggers workflow_dispatch
-    ▼
-GitHub Actions (self-hosted runner)
-    │
-    │ Runs Docker container
-    ▼
-Runner (this project)
-    │
-    │ Auth: X-API-Key header
-    │ GET /api/scraper/v1/job → fetch config
-    │ Executes scraping
-    │ POST /api/admin/scraping/callback → submit results
-    ▼
-BayStateApp (API)
-    │
-    │ Validates key, updates database
-    ▼
-Supabase (products_ingestion table)
-```
-
-## Key Directories
-
-```
-scraper_backend/
-├── core/
-│   ├── api_client.py    # HTTP client with API key auth
-│   └── database/        # Legacy Supabase sync (deprecated)
-├── scrapers/
-│   ├── configs/         # YAML scraper definitions
-│   ├── actions/         # Scraper action handlers
-│   └── executor/        # Workflow execution engine
-├── runner.py            # Job runner entry point
-└── run_job.py           # Alternative entry point
-cli/
-└── runner_setup.py      # Standalone setup CLI
-docs/
-├── ARCHITECTURE.md      # System design
-└── API_PROPOSAL.md      # API reference
-```
-
-## Authentication
-
-Runners use **API Keys** (not passwords):
-
-```python
-# Environment variable
-SCRAPER_API_KEY=bsr_xxxxx
-
-# Sent as header on all requests
-X-API-Key: bsr_xxxxx
-```
-
-Get keys from: Admin Panel → Scraper Network → Runner Accounts
-
-## Required GitHub Secrets
-
-| Secret | Description |
-|--------|-------------|
-| `SCRAPER_API_URL` | BayStateApp base URL |
-| `SCRAPER_API_KEY` | API key (starts with `bsr_`) |
-| `SCRAPER_WEBHOOK_SECRET` | HMAC secret for crash fallback |
-| `SCRAPER_CALLBACK_URL` | Callback URL for HMAC fallback |
-
-## Rules
-
-- Scrapers defined in YAML, not hardcoded
-- **No database credentials** on runners
-- All auth via API key header
-- Respect robots.txt, use proper user-agents
-- Data processing happens in BayStateApp after callback
+## ANTI-PATTERNS
+- **NO** database credentials in runner environment or code.
+- **NO** hardcoded site-specific logic in Python files (use YAML DSL).
+- **NO** direct Supabase/PostgreSQL connections (use `api_client`).
+- **NO** synchronous I/O in scraper loop (use `asyncio`).
+- **NO** manual result handling (use `result_collector`).
