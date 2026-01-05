@@ -7,7 +7,7 @@ module fetches configuration from the API and submits results back via HTTP.
 
 Usage:
     python -m scraper_backend.runner --job-id <uuid>
-    
+
 Environment Variables:
     SCRAPER_API_URL: Base URL for BayStateApp API
     SCRAPER_WEBHOOK_SECRET: Shared secret for HMAC authentication
@@ -58,8 +58,12 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
     }
 
     logger.info(f"[Runner] Starting job {job_id}")
-    logger.info(f"[Runner] SKUs: {len(job_config.skus)}, Scrapers: {len(job_config.scrapers)}")
-    logger.info(f"[Runner] Test mode: {job_config.test_mode}, Max workers: {job_config.max_workers}")
+    logger.info(
+        f"[Runner] SKUs: {len(job_config.skus)}, Scrapers: {len(job_config.scrapers)}"
+    )
+    logger.info(
+        f"[Runner] Test mode: {job_config.test_mode}, Max workers: {job_config.max_workers}"
+    )
 
     # Parse scraper configs into internal format
     configs = []
@@ -127,7 +131,8 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
                     if result.get("success"):
                         extracted_data = result.get("results", {})
                         has_data = any(
-                            extracted_data.get(field) for field in ["Name", "Brand", "Weight"]
+                            extracted_data.get(field)
+                            for field in ["Name", "Brand", "Weight"]
                         )
 
                         if has_data:
@@ -174,7 +179,15 @@ def main():
     parser = argparse.ArgumentParser(description="Run a scrape job from the API")
     parser.add_argument("--job-id", required=True, help="Job ID to execute")
     parser.add_argument("--api-url", help="API base URL (or set SCRAPER_API_URL)")
-    parser.add_argument("--runner-name", default=os.environ.get("RUNNER_NAME", "unknown"))
+    parser.add_argument(
+        "--runner-name", default=os.environ.get("RUNNER_NAME", "unknown")
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["full", "chunk_worker"],
+        default="full",
+        help="Execution mode: 'full' (legacy) or 'chunk_worker' (claim chunks)",
+    )
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
 
@@ -191,49 +204,123 @@ def main():
         logger.error("No API URL provided. Set --api-url or SCRAPER_API_URL")
         sys.exit(1)
 
-    client = ScraperAPIClient(api_url=api_url)
+    client = ScraperAPIClient(api_url=api_url, runner_name=args.runner_name)
 
-    # Notify job started
-    logger.info(f"Fetching job config for {args.job_id}...")
-    client.update_status(args.job_id, "running", runner_name=args.runner_name)
+    if args.mode == "chunk_worker":
+        run_chunk_worker_mode(client, args.job_id, args.runner_name)
+    else:
+        run_full_mode(client, args.job_id, args.runner_name)
 
-    # Fetch job config
-    job_config = client.get_job_config(args.job_id)
+
+def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> None:
+    """Legacy mode: process all SKUs in a single job."""
+    logger.info(f"[Full Mode] Fetching job config for {job_id}...")
+    client.update_status(job_id, "running", runner_name=runner_name)
+
+    job_config = client.get_job_config(job_id)
     if not job_config:
         logger.error("Failed to fetch job config")
         client.submit_results(
-            args.job_id,
+            job_id,
             "failed",
-            runner_name=args.runner_name,
+            runner_name=runner_name,
             error_message="Failed to fetch job configuration",
         )
         sys.exit(1)
 
-    # Run the job
     try:
-        results = run_job(job_config, runner_name=args.runner_name)
-
-        # Submit results
+        results = run_job(job_config, runner_name=runner_name)
         client.submit_results(
-            args.job_id,
+            job_id,
             "completed",
-            runner_name=args.runner_name,
+            runner_name=runner_name,
             results=results,
         )
 
-        # Also output results as JSON for workflow capture
         import json
+
         print(json.dumps(results, indent=2))
 
     except Exception as e:
         logger.exception("Job failed with error")
         client.submit_results(
-            args.job_id,
+            job_id,
             "failed",
-            runner_name=args.runner_name,
+            runner_name=runner_name,
             error_message=str(e),
         )
         sys.exit(1)
+
+
+def run_chunk_worker_mode(
+    client: ScraperAPIClient, job_id: str, runner_name: str
+) -> None:
+    """Chunk worker mode: claim and process chunks until none remain."""
+    logger.info(f"[Chunk Worker] Starting for job {job_id}")
+
+    chunks_processed = 0
+    total_skus_processed = 0
+    total_successful = 0
+    total_failed = 0
+
+    while True:
+        chunk = client.claim_chunk(job_id, runner_name)
+
+        if not chunk:
+            logger.info(
+                f"[Chunk Worker] No more chunks. Processed {chunks_processed} chunks, {total_skus_processed} SKUs"
+            )
+            break
+
+        chunk_id = chunk["chunk_id"]
+        chunk_index = chunk["chunk_index"]
+        skus = chunk.get("skus", [])
+        scrapers_filter = chunk.get("scrapers", [])
+
+        logger.info(
+            f"[Chunk Worker] Processing chunk {chunk_index} with {len(skus)} SKUs"
+        )
+
+        try:
+            job_config = client.get_job_config(job_id)
+            if not job_config:
+                raise RuntimeError("Failed to fetch job config for chunk")
+
+            job_config.skus = skus
+            if scrapers_filter:
+                job_config.scrapers = [
+                    s for s in job_config.scrapers if s.name in scrapers_filter
+                ]
+
+            results = run_job(job_config, runner_name=runner_name)
+
+            chunk_results = {
+                "skus_processed": results.get("skus_processed", 0),
+                "skus_successful": len(results.get("data", {})),
+                "skus_failed": results.get("skus_processed", 0)
+                - len(results.get("data", {})),
+                "data": results.get("data", {}),
+            }
+
+            client.submit_chunk_results(chunk_id, "completed", results=chunk_results)
+
+            chunks_processed += 1
+            total_skus_processed += chunk_results["skus_processed"]
+            total_successful += chunk_results["skus_successful"]
+            total_failed += chunk_results["skus_failed"]
+
+            logger.info(
+                f"[Chunk Worker] Completed chunk {chunk_index}: {chunk_results['skus_successful']}/{chunk_results['skus_processed']} successful"
+            )
+
+        except Exception as e:
+            logger.exception(f"[Chunk Worker] Chunk {chunk_index} failed")
+            client.submit_chunk_results(chunk_id, "failed", error_message=str(e))
+            chunks_processed += 1
+
+    logger.info(
+        f"[Chunk Worker] Finished. Total: {chunks_processed} chunks, {total_successful}/{total_skus_processed} successful"
+    )
 
 
 if __name__ == "__main__":

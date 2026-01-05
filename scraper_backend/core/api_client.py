@@ -201,6 +201,97 @@ class ScraperAPIClient:
         """Send a status update (e.g., 'running') without results."""
         return self.submit_results(job_id, status, runner_name=runner_name)
 
+    def claim_chunk(
+        self, job_id: str, runner_name: str | None = None
+    ) -> dict[str, Any] | None:
+        """
+        Claim the next available chunk for processing.
+
+        Returns chunk data with keys: chunk_id, chunk_index, skus, scrapers
+        Returns None if no chunks are available.
+        """
+        if not self.api_url:
+            logger.error("API client not configured - missing URL")
+            return None
+
+        payload = json.dumps(
+            {
+                "job_id": job_id,
+                "runner_name": runner_name or self.runner_name,
+            }
+        )
+
+        try:
+            data = self._make_request(
+                "POST", "/api/scraper/v1/claim-chunk", payload=payload
+            )
+
+            chunk = data.get("chunk")
+            if not chunk:
+                logger.info(f"No pending chunks for job {job_id}")
+                return None
+
+            logger.info(
+                f"Claimed chunk {chunk.get('chunk_index')} with {len(chunk.get('skus', []))} SKUs"
+            )
+            return chunk
+
+        except AuthenticationError as e:
+            logger.error(f"Authentication failed: {e}")
+            return None
+        except httpx.HTTPStatusError as e:
+            logger.error(
+                f"Failed to claim chunk: {e.response.status_code} - {e.response.text}"
+            )
+            return None
+        except Exception as e:
+            logger.error(f"Error claiming chunk: {e}")
+            return None
+
+    def submit_chunk_results(
+        self,
+        chunk_id: str,
+        status: str,
+        results: dict[str, Any] | None = None,
+        error_message: str | None = None,
+    ) -> bool:
+        """Submit results for a completed chunk."""
+        if not self.api_url:
+            logger.error("API client not configured - missing URL")
+            return False
+
+        payload_dict: dict[str, Any] = {
+            "chunk_id": chunk_id,
+            "status": status,
+            "runner_name": self.runner_name,
+        }
+
+        if results:
+            payload_dict["results"] = results
+        if error_message:
+            payload_dict["error_message"] = error_message
+
+        payload = json.dumps(payload_dict)
+
+        try:
+            self._make_request(
+                "POST", "/api/scraper/v1/chunk-callback", payload=payload
+            )
+            logger.info(f"Submitted results for chunk {chunk_id}: status={status}")
+            return True
+
+        except AuthenticationError as e:
+            logger.error(f"Authentication failed: {e}")
+            return False
+        except httpx.HTTPStatusError as e:
+            logger.error(
+                f"Failed to submit chunk results: {e.response.status_code} - {e.response.text}"
+            )
+            return False
+        except Exception as e:
+            logger.error(f"Error submitting chunk results: {e}")
+            return False
+
 
 # Global instance for convenience
 api_client = ScraperAPIClient()

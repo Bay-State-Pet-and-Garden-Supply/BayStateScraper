@@ -25,6 +25,11 @@ on:
         required: false
         type: number
         default: 3
+      mode:
+        description: 'Runner mode: full (process all SKUs) or chunk_worker (claim chunks from queue)'
+        required: false
+        type: string
+        default: 'full'
 
 # Only run on self-hosted runners with Docker
 jobs:
@@ -43,6 +48,7 @@ jobs:
       CALLBACK_URL: ${{ secrets.SCRAPER_CALLBACK_URL }}
 
       JOB_ID: ${{ inputs.job_id }}
+      MODE: ${{ inputs.mode }}
 
     steps:
       - name: Run scraping job in Docker
@@ -52,6 +58,7 @@ jobs:
         run: |
           echo "Starting job: $JOB_ID"
           echo "Runner: $RUNNER_NAME"
+          echo "Mode: $MODE"
           
           # Run the API-driven runner module
           # The runner authenticates with API key, fetches config, executes scraping, and submits results
@@ -60,7 +67,7 @@ jobs:
             -e SCRAPER_API_KEY="$SCRAPER_API_KEY" \
             -e RUNNER_NAME="$RUNNER_NAME" \
             baystate-scraper:latest \
-            python -m scraper_backend.runner --job-id "$JOB_ID" --runner-name "$RUNNER_NAME" \
+            python -m scraper_backend.runner --job-id "$JOB_ID" --runner-name "$RUNNER_NAME" --mode "$MODE" \
             > /tmp/scrape_results.json
 
       - name: Report failure via HMAC
