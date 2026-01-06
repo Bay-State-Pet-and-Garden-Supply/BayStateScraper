@@ -21,7 +21,6 @@ export default function Scrapers() {
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState<string | null>(null);
   const [testSkus, setTestSkus] = useState("");
-  const [selectedScraper, setSelectedScraper] = useState<string | null>(null);
   const [result, setResult] = useState<ScrapeResult | null>(null);
 
   useEffect(() => {

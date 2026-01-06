@@ -1,4 +1,4 @@
-import { Home, Settings, Spider } from "lucide-react";
+import { Home, Settings, Bug } from "lucide-react";
 
 type View = "dashboard" | "scrapers" | "settings";
 
@@ -10,7 +10,7 @@ interface SidebarProps {
 export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
   const navItems = [
     { id: "dashboard" as View, label: "Dashboard", icon: Home },
-    { id: "scrapers" as View, label: "Scrapers", icon: Spider },
+    { id: "scrapers" as View, label: "Scrapers", icon: Bug },
     { id: "settings" as View, label: "Settings", icon: Settings },
   ];
 

@@ -1,0 +1,71 @@
+#
+# Scraper Config for Bay State Pet & Garden Supply (Migration)
+#
+name: "Bay State Pet Live Site"
+base_url: "https://www.baystatepet.com"
+timeout: 30
+retries: 3
+
+selectors:
+  - name: "product_name"
+    selector: "h1"
+    attribute: "text"
+
+  - name: "price"
+    selector: ".price"
+    attribute: "text"
+
+  - name: "sku"
+    selector: ".product-sku"
+    attribute: "text"
+
+  - name: "description"
+    selector: "#product-description"
+    attribute: "text"
+
+  - name: "image_urls"
+    selector: ".product-image img"
+    attribute: "src"
+    multiple: true
+
+  - name: "breadcrumbs"
+    selector: ".breadcrumb a"
+    attribute: "text"
+    multiple: true
+
+workflows:
+  # Navigate to a product page directly (assuming we feed it URLs or iterate categories)
+  # But typically we start with search or category navigation.
+  # For migration, we might want to crawl categories.
+  
+  # Step 1: Handle age gate or popups if any (none seen on home page)
+  
+  # Step 2: Navigate to category pages (example)
+  - action: "navigate"
+    params:
+      url: "https://www.baystatepet.com/shop-all-dog-food.html"
+  
+  # Step 3: Wait for product list
+  - action: "wait_for"
+    params:
+      selector: ".product-list"
+      timeout: 10
+
+  # Step 4: Extract product links (this would be a separate crawler workflow ideally, 
+  # but here we can define how to extract data from a product page if we assume we are ON one)
+  
+  # REALISTIC WORKFLOW FOR A PRODUCT PAGE (once navigated there):
+  - action: "wait_for"
+    params:
+      selector: "h1"
+      timeout: 10
+
+  - action: "extract"
+    params:
+      fields: ["product_name", "price", "sku", "description", "image_urls", "breadcrumbs"]
+
+validation:
+  no_results_selectors:
+    - ".no-products"
+  no_results_text_patterns:
+    - "No products found"

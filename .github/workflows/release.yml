@@ -5,32 +5,65 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v1.0.0)'
+        required: false
+
+env:
+  TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+  TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
 jobs:
   create-release:
     runs-on: ubuntu-latest
     outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+      release_body: ${{ steps.changelog.outputs.changelog }}
     steps:
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - uses: actions/checkout@v4
+      
+      - name: Build Changelog
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          configurationJson: |
+            {
+              "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>",
+              "categories": [
+                {
+                    "title": "## 🚀 Features",
+                    "labels": ["feat", "feature"]
+                },
+                {
+                    "title": "## 🐛 Fixes",
+                    "labels": ["fix", "bug"]
+                },
+                {
+                    "title": "## 📦 Dependencies",
+                    "labels": ["dependencies"]
+                }
+              ]
+            }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: true
-          prerelease: false
 
-  build-tauri:
+  build-desktop:
     needs: create-release
     strategy:
+
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-22.04, windows-latest]
+        include:
+          - platform: macos-latest
+            target: universal-apple-darwin
+            sidecar_suffix: aarch64-apple-darwin
+          - platform: windows-latest
+            target: x86_64-pc-windows-msvc
+            sidecar_suffix: x86_64-pc-windows-msvc
     
     runs-on: ${{ matrix.platform }}
+    
     steps:
       - uses: actions/checkout@v4
 
@@ -38,25 +71,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+          cache-dependency-path: ui/package-lock.json
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Add Rust targets (macOS)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-
-      - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+          python-version: '3.11'
+          cache: 'pip'
 
       - name: Install Frontend Dependencies
-        run: |
-          cd ui
-          npm install
+        working-directory: ui
+        run: npm ci
 
       - name: Install Python Dependencies
         run: |
@@ -69,22 +104,34 @@ jobs:
           pyinstaller scraper_sidecar.spec
           mkdir -p src-tauri/binaries
           
-          # Move binary to correct location with target triple
           if [ "${{ runner.os }}" == "Windows" ]; then
-            mv dist/scraper-sidecar-*.exe src-tauri/binaries/scraper-sidecar-x86_64-pc-windows-msvc.exe
-          elif [ "${{ runner.os }}" == "macOS" ]; then
-            mv dist/scraper-sidecar-* src-tauri/binaries/scraper-sidecar-x86_64-apple-darwin
+            cp dist/scraper-sidecar-*.exe "src-tauri/binaries/scraper-sidecar-${{ matrix.sidecar_suffix }}.exe"
           else
-            mv dist/scraper-sidecar-* src-tauri/binaries/scraper-sidecar-x86_64-unknown-linux-gnu
+            cp dist/scraper-sidecar-* "src-tauri/binaries/scraper-sidecar-x86_64-apple-darwin"
+            cp dist/scraper-sidecar-* "src-tauri/binaries/scraper-sidecar-aarch64-apple-darwin"
           fi
+          
+          ls -la src-tauri/binaries/
 
       - name: Build Tauri App
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          releaseId: ${{ needs.create-release.outputs.id }}
-          tagName: ${{ github.ref_name }}
-          projectPath: ./src-tauri
-          args: --target-triple ${{ matrix.platform == 'macos-latest' && 'x86_64-apple-darwin' || (matrix.platform == 'windows-latest' && 'x86_64-pc-windows-msvc' || 'x86_64-unknown-linux-gnu') }}
+          tagName: ${{ github.ref_name || inputs.version || 'v0.0.0' }}
+          releaseName: "Bay State Scraper ${{ github.ref_name || inputs.version }}"
+          releaseBody: ${{ needs.create-release.outputs.release_body }}
+          releaseDraft: true
+          prerelease: false
 
+  generate-update-manifest:
+    needs: build-desktop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Generate update manifest
+        run: |
+          echo "Update manifest will be generated by tauri-action"
+          echo "Make sure to publish the release to trigger update checks"

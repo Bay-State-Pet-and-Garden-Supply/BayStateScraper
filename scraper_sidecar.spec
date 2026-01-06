@@ -18,17 +18,17 @@ else:
     target_triple = "unknown"
 
 a = Analysis(
-    ["runner.py"],
+    ["sidecar_bridge.py"],
     pathex=["."],
     binaries=[],
     datas=[
         ("scrapers/configs/*.yaml", "scrapers/configs"),
-        (".env", "."),
     ],
     hiddenimports=[
         "playwright",
         "playwright.sync_api",
         "playwright.async_api",
+        "playwright_stealth",
         "httpx",
         "pyyaml",
         "yaml",
@@ -36,6 +36,8 @@ a = Analysis(
         "pydantic_settings",
         "rich",
         "structlog",
+        "pandas",
+        "openpyxl",
     ],
     hookspath=[],
     hooksconfig={},

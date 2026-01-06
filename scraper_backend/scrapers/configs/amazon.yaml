@@ -1,0 +1,116 @@
+name: "amazon"
+# Test SKUs: Real pet product UPCs for validation
+test_skus: [
+  "035585499741",  # Pet toy/accessory
+  "079105116708",  # Nylabone DuraChew
+  "029695285400",  # Kaytee bird food
+  "038100174642",  # Purina ONE cat food
+  "017800149495",  # Purina Pro Plan dog food
+  "852Icons4",     # Amazon ASIN format example
+]
+fake_skus: ["xyzabc123notexist456", "B00ZZZZZZZ", "NOTAPRODUCT"]
+edge_case_skus: ["A1", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]  # Very short and very long
+base_url: "https://www.amazon.com"
+timeout: 15
+retries: 2
+image_quality: 100
+
+selectors:
+  - name: "Name"
+    selector: "#productTitle"
+    attribute: "text"
+  - name: "Brand"
+    selector: "#bylineInfo"
+    attribute: "text"
+  - name: "Images"
+    selector: "#altImages li.imageThumbnail img"
+    attribute: "src"
+    multiple: true
+  - name: "Weight"
+    selector: "//tr[.//th[contains(., 'Weight')]] | //li[contains(., 'ounces')] | //li[contains(., 'pounds')]"
+    attribute: "text"
+    required: false
+
+workflows:
+  - action: "conditional_click"
+    params:
+      selector: "#sp-cc-accept"
+  - action: "navigate"
+    params:
+      url: "https://www.amazon.com/s?k={sku}"
+  - action: "wait"
+    params:
+      seconds: 5
+  - action: "wait_for"
+    params:
+      selector: ".s-result-item, .s-main-slot, .s-no-results-filler, #noResultsTitle, h2, #search, body"
+      timeout: 5
+  - action: "wait"
+    params:
+      seconds: 2
+  - action: "check_no_results"
+  - action: "conditional_skip"
+    params:
+      if_flag: "no_results_found"
+  - action: "click"
+    params:
+      selector: "div.s-result-item[data-asin] h2 a.a-link-normal, div.s-result-item[data-asin] a.a-link-normal[href*='/dp/'], .s-result-item a[href*='/dp/']"
+      filter_text_exclude: "sponsored"
+      index: 0
+  - action: "wait_for"
+    params:
+      selector:
+        - "#productTitle"
+        - "#title"
+        - "h1"
+      timeout: 5
+  # Using extract_and_transform for cleaner single-pass extraction with inline transforms
+  - action: "extract_and_transform"
+    params:
+      fields:
+        - name: "Name"
+          selector: "#productTitle"
+          attribute: "text"
+        - name: "Brand"
+          selector: "#bylineInfo"
+          attribute: "text"
+          transform:
+            - type: "regex_extract"
+              pattern: "Visit the (.+) Store"
+              group: 1
+        - name: "Images"
+          selector: "#altImages li.imageThumbnail img"
+          attribute: "src"
+          multiple: true
+          transform:
+            - type: "replace"
+              pattern: "_AC_US40_"
+              replacement: "_AC_SL1500_"
+        - name: "Weight"
+          selector: "//tr[.//th[contains(., 'Weight')]] | //li[contains(., 'ounces')] | //li[contains(., 'pounds')]"
+          attribute: "text"
+          required: false
+
+anti_detection:
+  enable_captcha_detection: false
+  enable_rate_limiting: false
+  enable_human_simulation: false
+  enable_session_rotation: false
+  enable_blocking_handling: false
+  rate_limit_min_delay: 1.0
+  rate_limit_max_delay: 3.0
+  session_rotation_interval: 100
+  max_retries_on_detection: 3
+
+validation:
+  no_results_selectors:
+    - "[widgetId='messaging-messages-no-results']"
+    - ".s-no-results-filler"
+    - "#noResultsTitle"
+    - ".s-desktop-no-results"
+    - "//h2[contains(text(), 'No results for your search query')]"
+  no_results_text_patterns:
+    - "no results for"
+    - "0 results for"
+    - "No results for your search query"
+    - "Try checking your spelling"

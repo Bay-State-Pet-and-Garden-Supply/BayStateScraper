@@ -1,44 +1,90 @@
-# BayStateScraper Agent Guide
+# BAYSTATE SCRAPER
+
+**Context:** Distributed Python scraping engine. Muscle of the operation.
 
 ## OVERVIEW
-- Python 3.10 based distributed scraping engine.
-- Docker-first deployment on self-hosted runners.
-- Orchestrated by BayStateApp via workflow dispatch.
-- YAML DSL for defining scraper logic without code changes.
+Docker-first distributed scraper network. Executes YAML-defined workflows via Playwright. Stateless runners communicate with BayStateApp coordinator via API.
+
+**Stack:** Python 3.10+, Playwright, Docker, GitHub Actions (self-hosted), Tauri (desktop).
 
 ## STRUCTURE
 ```
 .
-├── BayStateScraper/
-│   ├── scraper_backend/    # Main package
-│   │   ├── runner.py       # Entry point for job execution
-│   │   ├── scrapers/
-│   │   │   ├── configs/    # YAML scraper definitions (DSL)
-│   │   │   ├── actions/    # Reusable action handlers & registry
-│   │   │   └── executor/   # DSL interpretation & flow control
-│   │   └── core/           # API client, retries, and health monitors
-│   └── install.py          # Runner provisioning script
+├── runner.py              # CLI entry for orchestrated jobs
+├── main.py                # CLI entry for local/manual runs
+├── scraper_backend/       # Core engine package
+│   ├── runner.py          # Job lifecycle management
+│   ├── core/              # API client, health, retry, memory
+│   ├── scrapers/          # Configs, actions, executor
+│   └── utils/             # Logging, encryption, testing
+├── core/                   # Shared utilities (mirrors scraper_backend/core)
+├── scrapers/               # Additional configs (mirrors scraper_backend/scrapers)
+├── src-tauri/              # Desktop app (Rust)
+├── ui/                     # Desktop frontend (Vite + Tailwind v3)
+└── install.py              # Runner provisioning wizard
 ```
 
 ## WHERE TO LOOK
-| Component | Path | Purpose |
-|-----------|------|---------|
-| Entry Point | `scraper_backend/runner.py` | CLI for starting jobs |
-| DSL Configs | `scrapers/configs/*.yaml` | Scraper logic definitions |
-| Action Logic | `scrapers/actions/handlers/` | Python implementation of YAML actions |
-| Action Map | `scrapers/actions/registry.py` | Mapping YAML keys to Python classes |
-| API Client | `core/api_client.py` | Auth and callback logic |
+| Task | Location | Notes |
+|------|----------|-------|
+| **New Scraper** | `scrapers/configs/*.yaml` | YAML DSL, not Python |
+| **New Action** | `scraper_backend/scrapers/actions/handlers/` | Inherit `BaseAction`, use decorator |
+| **API Client** | `scraper_backend/core/api_client.py` | Auth & callbacks |
+| **Workflow Engine** | `scraper_backend/scrapers/executor/` | YAML interpretation |
+| **Desktop App** | `src-tauri/` | Rust + Python sidecar |
+
+## YAML DSL STRUCTURE
+```yaml
+name: "Scraper Name"
+base_url: "https://..."
+timeout: 30
+retries: 3
+
+selectors:
+  - name: "product_name"
+    selector: "h1.title"
+    attribute: "text"
+    required: true
+
+workflows:
+  - action: "navigate"
+    params: { url: "{base_url}/p/{sku}" }
+  - action: "wait_for"
+    params: { selector: "h1.title" }
+  - action: "extract"
+    params: { fields: ["product_name", "price"] }
+```
+
+## ADDING NEW ACTIONS
+1. Create `new_action.py` in `scrapers/actions/handlers/`
+2. Inherit from `BaseAction`
+3. Decorate: `@ActionRegistry.register("action_name")`
+4. Implement `execute(self, params: dict)`
+5. Auto-discovered via `auto_discover_actions()`
 
 ## CONVENTIONS
-- **Auth**: Use `X-API-Key` (starts with `bsr_`). No direct DB access.
-- **Scraper Dev**: Add/edit YAML in `configs/`. Avoid Python code for site logic.
-- **Actions**: Register new action types in `registry.py`.
-- **Async**: Use Playwright async API for browser interactions.
-- **Data**: Scrapers emit raw/mapped data via API callbacks.
+- **Auth**: `X-API-Key` header (bsr_* prefix). No direct DB access.
+- **Async**: Playwright async API for all browser ops
+- **Data**: Emit via API callbacks, never write to DB directly
+- **Logging**: Use `utils/logger.py` structured logging
+- **Secrets**: Environment variables only, never in YAML
 
 ## ANTI-PATTERNS
-- **NO** database credentials in runner environment or code.
-- **NO** hardcoded site-specific logic in Python files (use YAML DSL).
-- **NO** direct Supabase/PostgreSQL connections (use `api_client`).
-- **NO** synchronous I/O in scraper loop (use `asyncio`).
-- **NO** manual result handling (use `result_collector`).
+- **NO** database credentials in runners
+- **NO** hardcoded site logic in Python (use YAML DSL)
+- **NO** direct Supabase/PostgreSQL connections
+- **NO** synchronous I/O in scraper loop
+- **NO** bypassing `ActionRegistry` for custom steps
+- **NO** credentials in YAML configs
+
+## COMMANDS
+```bash
+# Local execution
+python -m scraper_backend.runner --job-id test --scraper amazon
+
+# Docker build
+docker build -t baystate-scraper .
+
+# Desktop app
+cd ui && npm run tauri dev
+```

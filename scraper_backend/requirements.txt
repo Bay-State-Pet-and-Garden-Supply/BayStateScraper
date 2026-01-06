@@ -1,0 +1,32 @@
+# Bay State Scraper Backend Requirements
+# Core dependencies for web scraping
+
+# Web scraping
+playwright>=1.40.0
+pyyaml>=6.0
+
+# HTTP requests
+requests>=2.31.0
+httpx>=0.25.0
+
+# Data processing
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# Environment and config
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Logging and utilities
+rich>=13.0.0
+structlog>=23.0.0
+
+# Supabase client for result storage
+supabase>=2.0.0
+
+# Stealth
+playwright-stealth>=1.0.4
+
+# Compatibility
+eval-type-backport>=0.1.3
