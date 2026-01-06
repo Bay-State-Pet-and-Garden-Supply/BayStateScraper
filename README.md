@@ -35,6 +35,17 @@ BayStateScraper/
 
 ## Quick Start
 
+### Desktop App (Download)
+
+Download the latest release for your platform:
+
+| Platform | Download |
+|----------|----------|
+| **macOS** (Intel/Apple Silicon) | [Bay.State.Scraper.dmg](https://github.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/releases/latest) |
+| **Windows** | [Bay.State.Scraper.msi](https://github.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/releases/latest) |
+
+**First Run (macOS):** Right-click → Open → Confirm (required until app is notarized)
+
 ### Desktop App (Development)
 
 ```bash
