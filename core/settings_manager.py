@@ -2,6 +2,7 @@
 Settings Manager for ProductScraper
 Handles application configuration using JSON file-based storage and secure database storage.
 """
+
 from __future__ import annotations
 
 
@@ -53,10 +54,6 @@ class SettingsManager:
         "max_workers": 2,  # Number of concurrent scrapers
         # Additional settings
         "selenium_timeout": 30,
-        "openai_api_key": "",  # For OpenAI Batch API consolidation
-        "classification_method": "llm",
-        "auto_consolidate": False,
-        # Supabase Settings
         "supabase_enabled": False,
         "supabase_url": "",
         "supabase_key": "",
@@ -81,25 +78,31 @@ class SettingsManager:
         """Load encrypted settings from Supabase/PostgreSQL."""
         # Avoid circular import
         try:
-             # Basic check to see if we can even try connecting
-            if not self.get("supabase_enabled") or not self.get("supabase_url") or not self.get("supabase_key"):
+            # Basic check to see if we can even try connecting
+            if (
+                not self.get("supabase_enabled")
+                or not self.get("supabase_url")
+                or not self.get("supabase_key")
+            ):
                 return
 
             from core.database.supabase_sync import supabase_sync
-            
+
             # Ensure client is initialized
             if not supabase_sync.initialize(self):
-                logger.warning("Supabase not initialized, skipping remote settings load.")
+                logger.warning(
+                    "Supabase not initialized, skipping remote settings load."
+                )
                 return
 
             logger.info("Loading remote settings from database...")
             remote_settings = supabase_sync.get_all_settings()
-            
+
             count = 0
             for key, data in remote_settings.items():
                 value = data["value"]
                 is_encrypted = data["encrypted"]
-                
+
                 if is_encrypted:
                     try:
                         decrypted = encryption_manager.decrypt(value)
@@ -107,18 +110,18 @@ class SettingsManager:
                             value = decrypted
                         else:
                             logger.error(f"Failed to decrypt setting: {key}")
-                            continue 
+                            continue
                     except Exception as e:
                         logger.error(f"Error decrypting {key}: {e}")
                         continue
-                
+
                 # Set the value in cache (overriding local)
                 self.set(key, value)
                 count += 1
-            
+
             if count > 0:
                 logger.info(f"Loaded {count} settings from database.")
-                
+
         except ImportError as e:
             logger.warning(f"SupabaseSync not available (ImportError): {e}")
         except Exception as e:
@@ -142,7 +145,9 @@ class SettingsManager:
                 # Log Supabase settings status
                 has_supabase = bool(json_settings.get("supabase_enabled"))
                 has_key = bool(json_settings.get("supabase_key"))
-                logger.info(f"Settings loaded: supabase_enabled={has_supabase}, has_key={has_key}")
+                logger.info(
+                    f"Settings loaded: supabase_enabled={has_supabase}, has_key={has_key}"
+                )
             else:
                 logger.warning(f"Settings file not found at: {settings_file}")
         except Exception as e:
@@ -171,7 +176,6 @@ class SettingsManager:
             "supabase_enabled": "SUPABASE_ENABLED",
             "supabase_url": "SUPABASE_URL",
             "supabase_key": "SUPABASE_SERVICE_KEY",
-            "openai_api_key": "OPENAI_API_KEY",
         }
 
         for setting_key, env_key in env_mappings.items():
@@ -287,11 +291,6 @@ class SettingsManager:
             "headless": True,
             "timeout": self.get("selenium_timeout"),
         }
-
-    @property
-    def auto_consolidate(self) -> bool:
-        """Get auto-consolidate setting."""
-        return bool(self.get("auto_consolidate"))
 
 
 # Global settings instance
