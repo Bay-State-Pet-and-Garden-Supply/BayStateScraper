@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "identifier": "com.baystate.scraper",
   "build": {
-    "beforeBuildCommand": "cd ui && npm run build",
+    "beforeBuildCommand": "cd ../ui && npm run build",
     "beforeDevCommand": "",
     "devUrl": "http://localhost:5173",
     "frontendDist": "../ui/dist"
