@@ -45,4 +45,17 @@ htmlcov/
 *.log
 
 # Local/Secrets
+.env
+.env.*
+*.env
 scraper_backend/.env
+settings.json
+credentials.json
+
+# Tauri build artifacts
+src-tauri/target/
+ui/node_modules/
+ui/dist/
+
+# PyInstaller
+*.spec.bak
