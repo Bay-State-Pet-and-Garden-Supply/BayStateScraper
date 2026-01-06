@@ -11,7 +11,7 @@ jobs:
     name: Python Quality & Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install ruff mypy pytest pytest-cov types-requests types-PyYAML
+          pip install ruff==0.1.9 mypy pytest pytest-cov types-requests types-PyYAML
 
       - name: Lint with Ruff
         # Initial check - strictly fail on syntax errors, warn on style
@@ -45,7 +45,7 @@ jobs:
       run:
         working-directory: ui
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
