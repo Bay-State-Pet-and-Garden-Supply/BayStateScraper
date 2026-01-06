@@ -35,7 +35,28 @@ BayStateScraper/
 
 ## Quick Start
 
-### Desktop App (Download)
+### Option 1: Production Runner (Recommended)
+
+Set up a new laptop as a scraping runner in **under 5 minutes**:
+
+```bash
+# 1. Get your runner token from:
+#    https://github.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/settings/actions/runners/new
+
+# 2. Run the bootstrap script:
+curl -fsSL https://raw.githubusercontent.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/main/scripts/bootstrap-runner.sh | bash
+```
+
+The script will:
+- Install Docker (if needed)
+- Download and configure GitHub Actions runner
+- Register with correct labels (`self-hosted,docker`)
+- Pull the scraper Docker image
+- Install as a system service (auto-starts on boot)
+
+**That's it!** Your runner will appear in [GitHub Settings](https://github.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/settings/actions/runners) and start accepting jobs.
+
+### Option 2: Desktop App (Testing/Debugging)
 
 Download the latest release for your platform:
 
@@ -46,40 +67,30 @@ Download the latest release for your platform:
 
 **First Run (macOS):** Right-click → Open → Confirm (required until app is notarized)
 
-### Desktop App (Development)
+### Option 3: Docker (Manual)
+
+For manual Docker deployments:
 
 ```bash
-# Install UI dependencies
-cd ui && npm install
-
-# Install Rust dependencies and run
-cd ../src-tauri && cargo tauri dev
+docker pull ghcr.io/bay-state-pet-and-garden-supply/baystate-scraper:latest
+docker run --rm \
+  -e SCRAPER_API_URL="https://app.baystatepet.com" \
+  -e SCRAPER_API_KEY="bsr_your_key_here" \
+  ghcr.io/bay-state-pet-and-garden-supply/baystate-scraper:latest \
+  python -m runner --job-id YOUR_JOB_ID
 ```
 
-### CLI Mode (Existing)
+### Development Setup
 
 ```bash
-# Install Python dependencies
+# Python backend
 pip install -r requirements.txt
 python -m playwright install chromium
-
-# Run a job
 python -m runner --job-id <JOB_ID>
-```
 
-### One-Line Install (Production)
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/main/install.sh | bash
-```
-
-### Docker (Headless)
-
-For production environments using Docker or GitHub Actions, use the official image:
-
-```bash
-docker pull ghcr.io/bay-state-pet-and-garden-supply/baystatescraper:latest
-docker run -e SCRAPER_API_URL=... -e SCRAPER_API_KEY=... baystatescraper
+# Desktop app (Tauri)
+cd ui && npm install
+cd ../src-tauri && cargo tauri dev
 ```
 
 ## Execution Modes
