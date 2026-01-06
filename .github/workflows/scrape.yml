@@ -46,6 +46,11 @@ jobs:
       SCRAPER_WEBHOOK_SECRET: ${{ secrets.SCRAPER_WEBHOOK_SECRET }}
       # Callback URL for HMAC fallback
       CALLBACK_URL: ${{ secrets.SCRAPER_CALLBACK_URL }}
+      
+      # Vault Keys - Access to encrypted settings in Supabase
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      SETTINGS_ENCRYPTION_KEY: ${{ secrets.SETTINGS_ENCRYPTION_KEY }}
 
       JOB_ID: ${{ inputs.job_id }}
       MODE: ${{ inputs.mode }}
@@ -66,6 +71,10 @@ jobs:
             -e SCRAPER_API_URL="$SCRAPER_API_URL" \
             -e SCRAPER_API_KEY="$SCRAPER_API_KEY" \
             -e RUNNER_NAME="$RUNNER_NAME" \
+            -e SUPABASE_URL="$SUPABASE_URL" \
+            -e SUPABASE_SERVICE_KEY="$SUPABASE_SERVICE_KEY" \
+            -e SETTINGS_ENCRYPTION_KEY="$SETTINGS_ENCRYPTION_KEY" \
+            -e SUPABASE_ENABLED="true" \
             baystate-scraper:latest \
             python -m runner --job-id "$JOB_ID" --runner-name "$RUNNER_NAME" --mode "$MODE" \
             > /tmp/scrape_results.json
