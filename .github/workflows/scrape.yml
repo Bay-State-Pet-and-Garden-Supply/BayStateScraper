@@ -67,7 +67,7 @@ jobs:
             -e SCRAPER_API_KEY="$SCRAPER_API_KEY" \
             -e RUNNER_NAME="$RUNNER_NAME" \
             baystate-scraper:latest \
-            python -m scraper_backend.runner --job-id "$JOB_ID" --runner-name "$RUNNER_NAME" --mode "$MODE" \
+            python -m runner --job-id "$JOB_ID" --runner-name "$RUNNER_NAME" --mode "$MODE" \
             > /tmp/scrape_results.json
 
       - name: Report failure via HMAC

@@ -2,10 +2,10 @@
 set -e
 
 # Bay State Scraper - Runner Installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/OWNER/BayStateScraper/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/main/install.sh | bash
 
 INSTALL_DIR="${BAYSTATE_INSTALL_DIR:-$HOME/.baystate-runner}"
-REPO_URL="https://raw.githubusercontent.com/OWNER/BayStateScraper/main"
+REPO_URL="https://raw.githubusercontent.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/main"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'

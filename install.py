@@ -49,8 +49,8 @@ except ImportError:
 
 console = Console()
 
-ENV_FILE = Path(__file__).parent / "scraper_backend" / ".env"
-REQUIREMENTS_FILE = Path(__file__).parent / "scraper_backend" / "requirements.txt"
+ENV_FILE = Path(__file__).parent / ".env"
+REQUIREMENTS_FILE = Path(__file__).parent / "requirements.txt"
 
 
 def clear_screen():
@@ -386,7 +386,7 @@ def print_next_steps(config: dict[str, str], registered: bool = False):
             (
                 "2",
                 "Run a test job",
-                "python -m scraper_backend.runner --job-id <JOB_ID>",
+                "python -m runner --job-id <JOB_ID>",
             ),
             (
                 "3",
