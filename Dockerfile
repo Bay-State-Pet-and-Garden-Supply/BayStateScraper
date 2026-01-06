@@ -1,7 +1,7 @@
 # Bay State Scraper - Docker Image for Self-Hosted Runners
 # Provides consistent Python + Playwright environment for web scraping
 
-FROM mcr.microsoft.com/playwright/python:v1.40.0-jammy
+FROM mcr.microsoft.com/playwright/python:v1.57.0-jammy
 
 WORKDIR /app
 
