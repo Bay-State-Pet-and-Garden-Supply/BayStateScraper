@@ -36,7 +36,8 @@ jobs:
   scrape:
     runs-on: [self-hosted, docker]
     timeout-minutes: 60
-    environment: production
+    environment:
+      name: production
 
     env:
       # API Key authentication (simple, no token refresh needed)
