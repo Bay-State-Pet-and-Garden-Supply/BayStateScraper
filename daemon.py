@@ -107,12 +107,18 @@ def main():
     # Initialize API client
     client = ScraperAPIClient()
 
+    # Read version
+    version = "unknown"
+    version_file = PROJECT_ROOT / "VERSION"
+    if version_file.exists():
+        version = version_file.read_text().strip()
+
     if not client.api_url or not client.api_key:
         logger.error("Missing SCRAPER_API_URL or SCRAPER_API_KEY. Cannot start daemon.")
         sys.exit(1)
 
     logger.info("=" * 60)
-    logger.info("Bay State Scraper Daemon Starting")
+    logger.info(f"Bay State Scraper Daemon Starting (v{version})")
     logger.info("=" * 60)
     logger.info(f"Runner Name: {client.runner_name}")
     logger.info(f"API URL: {client.api_url}")

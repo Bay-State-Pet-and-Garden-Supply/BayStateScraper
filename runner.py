@@ -168,11 +168,24 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
 def main():
     """CLI entry point for running a single job via the API."""
     parser = argparse.ArgumentParser(description="Run a scrape job from the API")
-    parser.add_argument("--job-id", required=True, help="Job ID to execute")
+    parser.add_argument("--job-id", help="Job ID to execute")
     parser.add_argument("--api-url", help="API base URL (or set SCRAPER_API_URL)")
     parser.add_argument("--runner-name", default=os.environ.get("RUNNER_NAME", "unknown"))
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument("--version", action="store_true", help="Print version and exit")
     args = parser.parse_args()
+
+    # Handle version check
+    if args.version:
+        version_file = PROJECT_ROOT / "VERSION"
+        if version_file.exists():
+            print(f"BayStateScraper v{version_file.read_text().strip()}")
+        else:
+            print("BayStateScraper v(unknown)")
+        sys.exit(0)
+
+    if not args.job_id:
+        parser.error("--job-id is required unless --version is specified")
 
     log_level = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(
