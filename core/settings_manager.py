@@ -13,6 +13,9 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+# Project root directory - used by various modules for file paths
+PROJECT_ROOT = Path(__file__).parent.parent.resolve()
+
 
 class SettingsManager:
     """Manages runner configuration via environment variables."""

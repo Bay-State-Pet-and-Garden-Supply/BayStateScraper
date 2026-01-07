@@ -7,6 +7,7 @@ Provides intelligent retry logic for scraper actions with:
 - Integration with failure analytics for learning
 - Configurable backoff strategies
 """
+
 from __future__ import annotations
 
 
@@ -130,9 +131,7 @@ class RetryExecutor:
         # Recovery action callbacks
         self._recovery_handlers: dict[FailureType, Callable[..., bool]] = {}
 
-    def register_recovery_handler(
-        self, failure_type: FailureType, handler: Callable[..., bool]
-    ) -> None:
+    def register_recovery_handler(self, failure_type: FailureType, handler: Callable[..., bool]) -> None:
         """
         Register a recovery handler for a specific failure type.
 
@@ -228,10 +227,7 @@ class RetryExecutor:
                 last_error = scraper_error
                 last_failure_type = self._map_to_failure_type(scraper_error)
 
-                logger.warning(
-                    f"Attempt {attempt + 1}/{effective_max_retries + 1} failed for "
-                    f"{site_name}/{action_name}: {scraper_error.message}"
-                )
+                logger.warning(f"Attempt {attempt + 1}/{effective_max_retries + 1} failed for {site_name}/{action_name}: {scraper_error.message}")
 
                 # Record failure
                 self._record_failure(
@@ -257,9 +253,7 @@ class RetryExecutor:
 
                 # Check if we've exhausted retries
                 if attempt >= effective_max_retries:
-                    logger.error(
-                        f"Max retries ({effective_max_retries}) exceeded for {action_name}"
-                    )
+                    logger.error(f"Max retries ({effective_max_retries}) exceeded for {action_name}")
                     self._update_circuit_breaker_failure(site_name)
                     return RetryResult(
                         success=False,
@@ -285,12 +279,8 @@ class RetryExecutor:
                         logger.warning(f"Recovery failed: {recovery_exc}")
 
                 # Calculate delay with adaptive config
-                config = self.adaptive_strategy.get_adaptive_config(
-                    last_failure_type, site_name, attempt
-                )
-                delay = self._calculate_delay(
-                    config, attempt, effective_base_delay, last_failure_type
-                )
+                config = self.adaptive_strategy.get_adaptive_config(last_failure_type, site_name, attempt)
+                delay = self._calculate_delay(config, attempt, effective_base_delay, last_failure_type)
 
                 # Add jitter to prevent thundering herd
                 import random
@@ -304,14 +294,12 @@ class RetryExecutor:
                 if on_retry:
                     try:
                         on_retry(attempt, scraper_error, delay)
-                    except Exception:
-                        pass  # Don't let callback errors affect retry
+                    except Exception as cb_err:
+                        logger.debug(f"Retry callback error (ignored): {cb_err}")
 
                 # Check for cancellation before retry delay
                 if stop_event and stop_event.is_set():
-                    logger.warning(
-                        f"Retry cancelled for {site_name}/{action_name} after {attempt + 1} attempts"
-                    )
+                    logger.warning(f"Retry cancelled for {site_name}/{action_name} after {attempt + 1} attempts")
                     return RetryResult(
                         success=False,
                         error=last_error,
@@ -489,9 +477,7 @@ class RetryExecutor:
 
             elif state.state == CircuitState.CLOSED:
                 if state.failure_count >= self.circuit_config.failure_threshold:
-                    logger.warning(
-                        f"Circuit breaker OPEN for {site_name} after {state.failure_count} failures"
-                    )
+                    logger.warning(f"Circuit breaker OPEN for {site_name} after {state.failure_count} failures")
                     state.state = CircuitState.OPEN
 
     def get_circuit_breaker_status(self, site_name: str) -> dict[str, Any]:

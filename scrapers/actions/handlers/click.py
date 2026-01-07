@@ -29,18 +29,7 @@ class ClickAction(BaseAction):
 
         logger.debug(f"Attempting to click element: {selector} (max_retries: {max_retries})")
 
-        # 1. Wait for presence using the shared wait action logic
-        # We manually invoke the WaitForAction logic or rely on find_elements_safe implicitly if we want
-        # But to match previous behavior, we should wait.
-        try:
-            # Re-use WaitForAction logic by instantiating it? Or just call wait_for_selector directly?
-            # Easiest is to check if elements exist with a small loop/retry or just trust find_elements_safe with implicit wait
-            # Since we abstracted, we rely on the backend.
-            pass
-        except Exception:
-            pass
-
-        # Now find elements and perform filtering and click
+        # Find elements and perform filtering and click
         try:
             elements = self.executor.find_elements_safe(selector)
 
@@ -79,40 +68,24 @@ class ClickAction(BaseAction):
                 filtered_elements = new_filtered
 
             if not filtered_elements:
-                raise WorkflowExecutionError(
-                    f"No elements remaining after filtering for selector: {selector}"
-                )
+                raise WorkflowExecutionError(f"No elements remaining after filtering for selector: {selector}")
 
             if index >= len(filtered_elements):
-                raise WorkflowExecutionError(
-                    f"Index {index} out of bounds for filtered elements (count: {len(filtered_elements)}) for selector: {selector}"
-                )
+                raise WorkflowExecutionError(f"Index {index} out of bounds for filtered elements (count: {len(filtered_elements)}) for selector: {selector}")
 
             element_to_click = filtered_elements[index]
 
-            # Click Logic (Backend Specific)
-            is_playwright = hasattr(self.executor.browser, "page")
-
-            if is_playwright:
+            try:
+                element_to_click.scroll_into_view_if_needed()
+                element_to_click.click()
+                logger.info(f"Clicked element: {selector} (index {index})")
+            except Exception as click_err:
+                logger.warning(f"Click failed: {click_err}. Attempting force click.")
                 try:
-                    element_to_click.scroll_into_view_if_needed()
-                    element_to_click.click()
-                    logger.info(f"Successfully clicked element (Playwright): {selector}")
-                except Exception as pw_e:
-                    logger.warning(f"Playwright click failed: {pw_e}. Attempting force click.")
-                    try:
-                        element_to_click.click(force=True)
-                    except Exception as force_e:
-                        raise WorkflowExecutionError(
-                            f"Failed to click element (Playwright force): {force_e}"
-                        )
-            else:
-                # Selenium Logic
-                try:
-                    self.executor.browser.driver.execute_script(
-                        "arguments[0].scrollIntoView({block: 'center', inline: 'center'});",
-                        element_to_click,
-                    )
+                    element_to_click.click(force=True)
+                    logger.info(f"Force clicked element: {selector}")
+                except Exception as force_err:
+                    raise WorkflowExecutionError(f"Failed to click element '{selector}': {force_err}") from force_err
                     time.sleep(0.5)  # Brief pause after scrolling
                 except Exception as scroll_e:
                     logger.debug(f"Could not scroll element into view: {scroll_e}")
@@ -122,20 +95,12 @@ class ClickAction(BaseAction):
                     element_to_click.click()
                     logger.info(f"Successfully clicked element: {selector} at index {index}")
                 except Exception as click_error:
-                    logger.warning(
-                        f"Standard click failed for {selector}: {click_error}. Attempting JS click."
-                    )
+                    logger.warning(f"Standard click failed for {selector}: {click_error}. Attempting JS click.")
                     try:
-                        self.executor.browser.driver.execute_script(
-                            "arguments[0].click();", element_to_click
-                        )
-                        logger.info(
-                            f"Successfully clicked element via JS: {selector} at index {index}"
-                        )
+                        self.executor.browser.driver.execute_script("arguments[0].click();", element_to_click)
+                        logger.info(f"Successfully clicked element via JS: {selector} at index {index}")
                     except Exception as js_error:
-                        raise WorkflowExecutionError(
-                            f"Failed to click element (standard and JS): {js_error}"
-                        )
+                        raise WorkflowExecutionError(f"Failed to click element (standard and JS): {js_error}")
 
             # Optional wait after click
             wait_time = params.get("wait_after", 0)
