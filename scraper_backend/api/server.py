@@ -343,7 +343,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Docker Scraper API",
     description="API for controlling Docker-based scrapers",
-    version="1.0.0",
+    version="1.0.1",
     lifespan=lifespan,
 )
 
@@ -364,7 +364,7 @@ app.add_middleware(
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
-    return {"status": "healthy", "version": "1.0.0"}
+    return {"status": "healthy", "version": "1.0.1"}
 
 
 @app.post("/scrape", response_model=ScrapeResponse)
