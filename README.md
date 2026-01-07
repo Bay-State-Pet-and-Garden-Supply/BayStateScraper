@@ -1,43 +1,27 @@
 # BayStateScraper
 
-Distributed scraper runners for Bay State Pet & Garden Supply product data collection.
+Distributed headless scraper runners for Bay State Pet & Garden Supply product data collection.
 
-## NEW: Desktop Application (v1.0)
-
-Bay State Scraper is now a **self-contained desktop application** with:
-- Full local UI for debugging and manual scrapes
-- Headless mode for GitHub Actions integration
-- Self-update capability
-- Cross-platform support (Mac, Linux, Windows)
+This project contains the **headless runner** component of the Bay State scraping system. It is designed to run in Docker containers (GitHub Actions or self-hosted) and communicate with the BayStateApp coordinator via API.
 
 ## Project Structure
 
 ```
 BayStateScraper/
-├── src-tauri/          # Tauri Rust backend
-│   ├── src/
-│   │   ├── main.rs     # Tauri entry point
-│   │   └── commands.rs # IPC commands
-│   └── tauri.conf.json # Tauri configuration
-├── ui/                 # React frontend (Vite + Tailwind)
-│   ├── src/
-│   │   ├── components/ # Dashboard, Settings, Scrapers
-│   │   └── App.tsx
-│   └── package.json
-├── core/               # Python core engine
-├── scrapers/           # Scraper configs and executor
-├── api/                # FastAPI debug server
+├── core/               # Python core engine (API client, events)
+├── scrapers/           # Scraper configs and executor logic
+├── api/                # FastAPI debug server (optional)
 ├── utils/              # Debugging and utility tools
-├── runner.py           # CLI runner entry point
-├── sidecar_bridge.py   # Tauri-Python IPC bridge
-└── scraper_sidecar.spec # PyInstaller bundling spec
+├── runner.py           # Main CLI entry point
+├── Dockerfile          # Production Docker image
+└── requirements.txt    # Python dependencies
 ```
 
 ## Quick Start
 
-### Option 1: Production Runner (Recommended)
+### 1. Production Runner (Self-Hosted)
 
-Set up a new laptop as a scraping runner in **under 5 minutes**:
+Set up a new machine as a scraping runner in **under 5 minutes**:
 
 ```bash
 # 1. Get your runner token from:
@@ -54,22 +38,9 @@ The script will:
 - Pull the scraper Docker image
 - Install as a system service (auto-starts on boot)
 
-**That's it!** Your runner will appear in [GitHub Settings](https://github.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/settings/actions/runners) and start accepting jobs.
+### 2. Manual Docker Run
 
-### Option 2: Desktop App (Testing/Debugging)
-
-Download the latest release for your platform:
-
-| Platform | Download |
-|----------|----------|
-| **macOS** (Intel/Apple Silicon) | [Bay.State.Scraper.dmg](https://github.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/releases/latest) |
-| **Windows** | [Bay.State.Scraper.msi](https://github.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/releases/latest) |
-
-**First Run (macOS):** Right-click → Open → Confirm (required until app is notarized)
-
-### Option 3: Docker (Manual)
-
-For manual Docker deployments:
+To run a specific job manually using the Docker image:
 
 ```bash
 docker pull ghcr.io/bay-state-pet-and-garden-supply/baystate-scraper:latest
@@ -80,61 +51,28 @@ docker run --rm \
   python -m runner --job-id YOUR_JOB_ID
 ```
 
-### Development Setup
+### 3. Local Development
+
+Prerequisites: Python 3.10+
 
 ```bash
-# Python backend
+# Install dependencies
 pip install -r requirements.txt
 python -m playwright install chromium
+
+# Create .env file
+cp .env.example .env  # (create one with API_URL and API_KEY)
+
+# Run a job manually
 python -m runner --job-id <JOB_ID>
-
-# Desktop app (Tauri)
-cd ui && npm install
-cd ../src-tauri && cargo tauri dev
-```
-
-## Execution Modes
-
-| Mode | Trigger | UI | Use Case |
-|------|---------|-----|----------|
-| **Desktop** | Launch app | Full UI | Local debugging, manual scrapes |
-| **CLI** | `python -m runner --job-id X` | Terminal output | Scripting, cron jobs |
-| **Headless** | GitHub Actions / Docker | None (logs only) | Production scrapes |
-| **Daemon** | System service | Tray icon (optional) | Always-on self-hosted runner |
-
-## Building the Desktop App
-
-### macOS / Linux
-
-```bash
-# Build the Python sidecar
-pip install pyinstaller
-pyinstaller scraper_sidecar.spec
-
-# Copy to Tauri binaries directory
-cp dist/scraper-sidecar-* src-tauri/binaries/
-
-# Build the app
-cd ui && npm run build
-cd ../src-tauri && cargo tauri build
-```
-
-### Development
-
-```bash
-# Start frontend dev server
-cd ui && npm run dev
-
-# In another terminal, start Tauri
-cd src-tauri && cargo tauri dev
 ```
 
 ## Configuration
 
-Create `.env` in the project root:
+Runners are configured via environment variables. Create a `.env` file for local development:
 
 ```env
-RUNNER_NAME=my-runner
+RUNNER_NAME=my-local-runner
 SCRAPER_API_URL=https://app.baystatepet.com
 SCRAPER_API_KEY=bsr_your_api_key_here
 ```
