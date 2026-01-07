@@ -55,7 +55,7 @@ get_config() {
     else
         echo -e "${YELLOW}Enter your BayStateApp API URL${NC}"
         echo -e "(e.g., https://app.baystatepet.com)"
-        read -p "> " SCRAPER_API_URL
+        read -p "> " SCRAPER_API_URL < /dev/tty
         
         if [ -z "$SCRAPER_API_URL" ]; then
             SCRAPER_API_URL="https://app.baystatepet.com"
@@ -69,7 +69,7 @@ get_config() {
         echo ""
         echo -e "${YELLOW}Enter your API Key${NC}"
         echo -e "(Get this from Admin Panel > Scraper Network > Runner Accounts)"
-        read -p "> " SCRAPER_API_KEY
+        read -p "> " SCRAPER_API_KEY < /dev/tty
         
         if [ -z "$SCRAPER_API_KEY" ]; then
             echo -e "${RED}Error: API Key is required${NC}"
