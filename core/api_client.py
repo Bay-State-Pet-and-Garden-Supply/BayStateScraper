@@ -68,9 +68,7 @@ class ScraperAPIClient:
     ):
         self.api_url = api_url or os.environ.get("SCRAPER_API_URL", "")
         self.api_key = api_key or os.environ.get("SCRAPER_API_KEY", "")
-        self.runner_name = runner_name or os.environ.get(
-            "RUNNER_NAME", "unknown-runner"
-        )
+        self.runner_name = runner_name or os.environ.get("RUNNER_NAME", "unknown-runner")
         self.timeout = timeout
 
         if not self.api_url:
@@ -144,9 +142,7 @@ class ScraperAPIClient:
             logger.error(f"Authentication failed: {e}")
             return None
         except httpx.HTTPStatusError as e:
-            logger.error(
-                f"Failed to fetch job config: {e.response.status_code} - {e.response.text}"
-            )
+            logger.error(f"Failed to fetch job config: {e.response.status_code} - {e.response.text}")
             return None
         except Exception as e:
             logger.error(f"Error fetching job config: {e}")
@@ -187,23 +183,17 @@ class ScraperAPIClient:
             logger.error(f"Authentication failed: {e}")
             return False
         except httpx.HTTPStatusError as e:
-            logger.error(
-                f"Failed to submit results: {e.response.status_code} - {e.response.text}"
-            )
+            logger.error(f"Failed to submit results: {e.response.status_code} - {e.response.text}")
             return False
         except Exception as e:
             logger.error(f"Error submitting results: {e}")
             return False
 
-    def update_status(
-        self, job_id: str, status: str, runner_name: str | None = None
-    ) -> bool:
+    def update_status(self, job_id: str, status: str, runner_name: str | None = None) -> bool:
         """Send a status update (e.g., 'running') without results."""
         return self.submit_results(job_id, status, runner_name=runner_name)
 
-    def claim_chunk(
-        self, job_id: str, runner_name: str | None = None
-    ) -> dict[str, Any] | None:
+    def claim_chunk(self, job_id: str, runner_name: str | None = None) -> dict[str, Any] | None:
         """
         Claim the next available chunk for processing.
 
@@ -222,27 +212,21 @@ class ScraperAPIClient:
         )
 
         try:
-            data = self._make_request(
-                "POST", "/api/scraper/v1/claim-chunk", payload=payload
-            )
+            data = self._make_request("POST", "/api/scraper/v1/claim-chunk", payload=payload)
 
             chunk = data.get("chunk")
             if not chunk:
                 logger.info(f"No pending chunks for job {job_id}")
                 return None
 
-            logger.info(
-                f"Claimed chunk {chunk.get('chunk_index')} with {len(chunk.get('skus', []))} SKUs"
-            )
+            logger.info(f"Claimed chunk {chunk.get('chunk_index')} with {len(chunk.get('skus', []))} SKUs")
             return chunk
 
         except AuthenticationError as e:
             logger.error(f"Authentication failed: {e}")
             return None
         except httpx.HTTPStatusError as e:
-            logger.error(
-                f"Failed to claim chunk: {e.response.status_code} - {e.response.text}"
-            )
+            logger.error(f"Failed to claim chunk: {e.response.status_code} - {e.response.text}")
             return None
         except Exception as e:
             logger.error(f"Error claiming chunk: {e}")
@@ -274,9 +258,7 @@ class ScraperAPIClient:
         payload = json.dumps(payload_dict)
 
         try:
-            self._make_request(
-                "POST", "/api/scraper/v1/chunk-callback", payload=payload
-            )
+            self._make_request("POST", "/api/scraper/v1/chunk-callback", payload=payload)
             logger.info(f"Submitted results for chunk {chunk_id}: status={status}")
             return True
 
@@ -284,13 +266,158 @@ class ScraperAPIClient:
             logger.error(f"Authentication failed: {e}")
             return False
         except httpx.HTTPStatusError as e:
-            logger.error(
-                f"Failed to submit chunk results: {e.response.status_code} - {e.response.text}"
-            )
+            logger.error(f"Failed to submit chunk results: {e.response.status_code} - {e.response.text}")
             return False
         except Exception as e:
             logger.error(f"Error submitting chunk results: {e}")
             return False
+
+    def poll_for_work(self) -> JobConfig | None:
+        """
+        Poll the coordinator for the next available job.
+
+        This is the primary method for daemon mode - the runner continuously
+        polls this endpoint to claim work. The coordinator uses FOR UPDATE
+        SKIP LOCKED to ensure atomic job claiming across multiple runners.
+
+        Returns:
+            JobConfig if a job was claimed, None if no work available.
+        """
+        if not self.api_url:
+            logger.error("API client not configured - missing URL")
+            return None
+
+        payload = json.dumps(
+            {
+                "runner_name": self.runner_name,
+            }
+        )
+
+        try:
+            data = self._make_request("POST", "/api/scraper/v1/poll", payload=payload)
+
+            job_data = data.get("job")
+            if not job_data:
+                logger.debug("No pending jobs available")
+                return None
+
+            # Parse scrapers from response
+            scrapers = [
+                ScraperConfig(
+                    name=s.get("name", ""),
+                    disabled=s.get("disabled", False),
+                    base_url=s.get("base_url"),
+                    search_url_template=s.get("search_url_template"),
+                    selectors=s.get("selectors"),
+                    options=s.get("options"),
+                    test_skus=s.get("test_skus"),
+                )
+                for s in job_data.get("scrapers", [])
+            ]
+
+            job = JobConfig(
+                job_id=job_data["job_id"],
+                skus=job_data.get("skus", []),
+                scrapers=scrapers,
+                test_mode=job_data.get("test_mode", False),
+                max_workers=job_data.get("max_workers", 3),
+            )
+
+            logger.info(f"Claimed job {job.job_id} with {len(job.skus)} SKUs")
+            return job
+
+        except AuthenticationError as e:
+            logger.error(f"Authentication failed: {e}")
+            return None
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                # 404 means no jobs available - not an error
+                logger.debug("No pending jobs (404)")
+                return None
+            logger.error(f"Failed to poll for work: {e.response.status_code} - {e.response.text}")
+            return None
+        except Exception as e:
+            logger.error(f"Error polling for work: {e}")
+            return None
+
+    def heartbeat(self) -> bool:
+        """
+        Send a heartbeat to the coordinator to indicate the runner is alive.
+
+        The coordinator uses heartbeats to track runner health. If a runner
+        misses too many heartbeats (e.g., 5 minutes), it's marked as lost
+        and any in-progress jobs may be re-queued.
+
+        Returns:
+            True if heartbeat was acknowledged, False on error.
+        """
+        if not self.api_url:
+            logger.error("API client not configured - missing URL")
+            return False
+
+        payload = json.dumps(
+            {
+                "runner_name": self.runner_name,
+            }
+        )
+
+        try:
+            self._make_request("POST", "/api/scraper/v1/heartbeat", payload=payload)
+            logger.debug(f"Heartbeat sent for {self.runner_name}")
+            return True
+
+        except AuthenticationError as e:
+            logger.error(f"Heartbeat auth failed: {e}")
+            return False
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Heartbeat failed: {e.response.status_code} - {e.response.text}")
+            return False
+        except Exception as e:
+            logger.error(f"Heartbeat error: {e}")
+            return False
+
+    def get_credentials(self, scraper_name: str) -> dict[str, str] | None:
+        """
+        Fetch credentials for a specific scraper from the coordinator.
+
+        Credentials are fetched on-demand and should NOT be stored locally.
+        The coordinator returns credentials over HTTPS to authenticated runners.
+
+        Args:
+            scraper_name: Name of the scraper (e.g., "petfoodex", "phillips")
+
+        Returns:
+            Dict with 'username' and 'password' keys, or None if not available.
+        """
+        if not self.api_url:
+            logger.error("API client not configured - missing URL")
+            return None
+
+        try:
+            data = self._make_request("GET", f"/api/scraper/v1/credentials?scraper={scraper_name}")
+
+            if data.get("username") and data.get("password"):
+                logger.debug(f"Retrieved credentials for {scraper_name}")
+                return {
+                    "username": data["username"],
+                    "password": data["password"],
+                }
+
+            logger.warning(f"No credentials available for {scraper_name}")
+            return None
+
+        except AuthenticationError as e:
+            logger.error(f"Credentials auth failed: {e}")
+            return None
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                logger.warning(f"No credentials configured for {scraper_name}")
+                return None
+            logger.error(f"Failed to fetch credentials: {e.response.status_code} - {e.response.text}")
+            return None
+        except Exception as e:
+            logger.error(f"Error fetching credentials: {e}")
+            return None
 
 
 # Global instance for convenience

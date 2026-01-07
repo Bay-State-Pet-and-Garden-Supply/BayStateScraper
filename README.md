@@ -1,117 +1,116 @@
 # BayStateScraper
 
-Distributed headless scraper runners for Bay State Pet & Garden Supply product data collection.
+Distributed headless scraper runners for Bay State Pet & Garden Supply.
 
-This project contains the **headless runner** component of the Bay State scraping system. It is designed to run in Docker containers (GitHub Actions or self-hosted) and communicate with the BayStateApp coordinator via API.
+## Quick Install
 
-## Project Structure
-
-```
-BayStateScraper/
-├── core/               # Python core engine (API client, events)
-├── scrapers/           # Scraper configs and executor logic
-├── api/                # FastAPI debug server (optional)
-├── utils/              # Debugging and utility tools
-├── runner.py           # Main CLI entry point
-├── Dockerfile          # Production Docker image
-└── requirements.txt    # Python dependencies
-```
-
-## Quick Start
-
-### 1. Production Runner (Self-Hosted)
-
-Set up a new machine as a scraping runner in **under 5 minutes**:
+**One-liner** - paste this into your terminal:
 
 ```bash
-# 1. Get your runner token from:
-#    https://github.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/settings/actions/runners/new
-
-# 2. Run the bootstrap script:
-curl -fsSL https://raw.githubusercontent.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/main/scripts/bootstrap-runner.sh | bash
+curl -sSL https://raw.githubusercontent.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/main/get.sh | bash
 ```
 
-The script will:
-- Install Docker (if needed)
-- Download and configure GitHub Actions runner
-- Register with correct labels (`self-hosted,docker`)
-- Pull the scraper Docker image
-- Install as a system service (auto-starts on boot)
+You'll be prompted for:
+1. **API URL** - Your BayStateApp URL (default: `https://app.baystatepet.com`)
+2. **API Key** - Get from Admin Panel → Scraper Network → Runner Accounts
 
-### 2. Manual Docker Run
+That's it! The runner starts automatically and runs in the background.
 
-To run a specific job manually using the Docker image:
+## Commands
 
 ```bash
-docker pull ghcr.io/bay-state-pet-and-garden-supply/baystate-scraper:latest
-docker run --rm \
-  -e SCRAPER_API_URL="https://app.baystatepet.com" \
-  -e SCRAPER_API_KEY="bsr_your_key_here" \
-  ghcr.io/bay-state-pet-and-garden-supply/baystate-scraper:latest \
-  python -m runner --job-id YOUR_JOB_ID
+# View logs
+docker logs -f baystate-scraper
+
+# Stop runner
+docker stop baystate-scraper
+
+# Start runner
+docker start baystate-scraper
+
+# Update to latest version
+curl -sSL https://raw.githubusercontent.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper/main/get.sh | bash
 ```
 
-### 3. Local Development
+## How It Works
 
-Prerequisites: Python 3.10+
+The runner:
+1. **Polls** the coordinator every 30 seconds for new jobs
+2. **Fetches credentials** on-demand (never stored locally)
+3. **Executes** scraping jobs using Playwright
+4. **Reports** results back via API callback
+5. **Restarts automatically** if it crashes
+
+## Manual Installation
+
+If you prefer docker-compose:
+
+```bash
+# Clone the repo
+git clone https://github.com/Bay-State-Pet-and-Garden-Supply/BayStateScraper.git
+cd BayStateScraper
+
+# Create .env file
+cat > .env << EOF
+SCRAPER_API_URL=https://app.baystatepet.com
+SCRAPER_API_KEY=bsr_your_key_here
+RUNNER_NAME=$(hostname)
+EOF
+
+# Start
+docker-compose up -d
+```
+
+## Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `SCRAPER_API_URL` | Yes | - | BayStateApp base URL |
+| `SCRAPER_API_KEY` | Yes | - | Runner API key (starts with `bsr_`) |
+| `RUNNER_NAME` | No | hostname | Identifier for this runner |
+| `POLL_INTERVAL` | No | 30 | Seconds between job polls |
+| `MAX_JOBS_BEFORE_RESTART` | No | 100 | Restart for memory hygiene |
+
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                       BayStateApp                            │
+│  POST /api/scraper/v1/poll      → Returns job or null       │
+│  POST /api/scraper/v1/heartbeat → Updates runner status     │
+│  GET  /api/scraper/v1/credentials → On-demand credentials   │
+│  POST /api/admin/scraping/callback → Receives results       │
+└──────────────────────────────────────────────────────────────┘
+                              ▲
+                              │ HTTPS (X-API-Key: bsr_...)
+                              │
+┌─────────────────────────────┴─────────────────────────────────┐
+│  Docker Container (always running)                            │
+│  daemon.py polls → executes → reports → repeats              │
+└───────────────────────────────────────────────────────────────┘
+```
+
+## Security
+
+- **Credentials on-demand**: Site passwords are fetched from coordinator when needed, never stored
+- **API Key auth**: All requests include `X-API-Key` header
+- **HTTPS only**: All communication encrypted in transit
+- **No database access**: Runners communicate via API only
+
+## Development
 
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 python -m playwright install chromium
 
-# Create .env file
-cp .env.example .env  # (create one with API_URL and API_KEY)
+# Run daemon locally
+python daemon.py
 
-# Run a job manually
-python -m runner --job-id <JOB_ID>
+# Run single job
+python runner.py --job-id <uuid>
 ```
 
-## Configuration
+## License
 
-Runners are configured via environment variables. Create a `.env` file for local development:
-
-```env
-RUNNER_NAME=my-local-runner
-SCRAPER_API_URL=https://app.baystatepet.com
-SCRAPER_API_KEY=bsr_your_api_key_here
-```
-
-## GitHub Secrets
-
-When running in GitHub Actions, the following secrets must be configured in your repository settings:
-
-| Secret | Required | Description | Where to Get |
-|--------|----------|-------------|--------------|
-| `SCRAPER_API_URL` | Yes | BayStateApp base URL | Your deployment URL |
-| `SCRAPER_API_KEY` | Yes | Runner authentication | Admin Panel → Runners → Create |
-| `SCRAPER_WEBHOOK_SECRET` | Yes | HMAC fallback signing | Generate with `openssl rand -hex 32` |
-| `SCRAPER_CALLBACK_URL` | Yes | Callback endpoint | `{SCRAPER_API_URL}/api/admin/scraping/callback` |
-| `SUPABASE_URL` | Yes | Supabase project URL | Supabase Dashboard → Settings → API |
-| `SUPABASE_SERVICE_KEY` | Yes | Service role key | Supabase Dashboard → Settings → API → service_role |
-| `SETTINGS_ENCRYPTION_KEY` | Yes | Decrypt stored credentials | Same key used when encrypting settings |
-
-## Documentation
-
-- [Architecture](docs/ARCHITECTURE.md) - System design and data flow
-- [API Reference](docs/API_PROPOSAL.md) - Runner ↔ Coordinator communication
-
-## Authentication
-
-Runners authenticate using **API Keys**:
-
-1. **Admin creates runner** in BayStateApp → generates API key
-2. **Runner stores key** in environment variable `SCRAPER_API_KEY`
-3. **All requests include** `X-API-Key: bsr_xxxxx` header
-4. **BayStateApp validates** key against database
-
-## Security
-
-- **Vault Pattern**: The runner does not store site passwords. Instead, it uses "vault keys" to fetch and decrypt credentials at runtime:
-    1. GitHub Actions passes vault keys (Supabase URL/Key, Encryption Key) to the Docker container.
-    2. Runner connects to Supabase and downloads encrypted settings.
-    3. Runner decrypts the data using `SETTINGS_ENCRYPTION_KEY`.
-    4. Site credentials (e.g., Phillips, Orgill) are only available in memory during execution.
-- **No direct database access**: Runners communicate strictly through the API and restricted Supabase service calls.
-- **API keys are hashed** in database (SHA256)
-- **RLS policies** ensure runners can only update their own status
+Proprietary - Bay State Pet & Garden Supply
