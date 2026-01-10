@@ -200,6 +200,23 @@ def main():
 
     client = ScraperAPIClient(api_url=api_url, runner_name=args.runner_name)
 
+    # Configure API logging
+    try:
+        from utils.api_handler import ScraperAPIHandler
+
+        api_handler = ScraperAPIHandler(client, args.job_id)
+
+        # Prevent infinite loops from http client logging
+        class NoHttpFilter(logging.Filter):
+            def filter(self, record):
+                return not (record.name.startswith("httpx") or record.name.startswith("httpcore"))
+
+        api_handler.addFilter(NoHttpFilter())
+        logging.getLogger().addHandler(api_handler)
+        logger.debug("API logging enabled")
+    except Exception as e:
+        logger.warning(f"Failed to enable API logging: {e}")
+
     logger.info(f"Fetching job config for {args.job_id}...")
     client.update_status(args.job_id, "running", runner_name=args.runner_name)
 

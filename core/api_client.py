@@ -376,6 +376,26 @@ class ScraperAPIClient:
             logger.error(f"Heartbeat error: {e}")
             return False
 
+    def post_logs(self, job_id: str, logs: list[dict[str, Any]]) -> bool:
+        """
+        Send a batch of logs to the API.
+
+        Note: This method intentionally avoids using self.logger to prevent
+        infinite recursion loops since this client is used by the logging handler.
+        """
+        if not self.api_url:
+            return False
+
+        payload = json.dumps({"job_id": job_id, "logs": logs})
+
+        try:
+            self._make_request("POST", "/api/scraper/v1/logs", payload=payload)
+            return True
+
+        except Exception:
+            # Allow exception to bubble up to the handler
+            raise
+
     def get_credentials(self, scraper_name: str) -> dict[str, str] | None:
         """
         Fetch credentials for a specific scraper from the coordinator.
