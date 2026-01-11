@@ -41,6 +41,12 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from core.api_client import ScraperAPIClient, JobConfig
 
+
+class NoHttpFilter(logging.Filter):
+    def filter(self, record):
+        return not (record.name.startswith("httpx") or record.name.startswith("httpcore"))
+
+
 # Configuration
 POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "30"))
 MAX_JOBS_BEFORE_RESTART = int(os.environ.get("MAX_JOBS_BEFORE_RESTART", "100"))
@@ -126,6 +132,16 @@ def main():
     logger.info(f"Poll Interval: {POLL_INTERVAL}s")
     logger.info(f"Max Jobs Before Restart: {MAX_JOBS_BEFORE_RESTART}")
     logger.info("=" * 60)
+
+    try:
+        from utils.api_handler import ScraperAPIHandler
+
+        api_handler = ScraperAPIHandler(client, job_id="daemon")
+        api_handler.addFilter(NoHttpFilter())
+        logging.getLogger().addHandler(api_handler)
+        logger.debug("API logging enabled")
+    except Exception as e:
+        logger.warning(f"Failed to enable API logging: {e}")
 
     jobs_completed = 0
     last_heartbeat = 0
