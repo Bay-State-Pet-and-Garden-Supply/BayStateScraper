@@ -23,7 +23,9 @@ if sys.platform == "win32":
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 # Setup logging to stream to stdout so parent process can capture it
-logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stdout)
+from utils.logger import setup_logging
+
+setup_logging(debug_mode=False, json_output=True)
 logger = logging.getLogger(__name__)
 
 from scrapers.main import run_scraping
@@ -38,9 +40,7 @@ def main():
 
     args = parser.parse_args()
 
-    logger.info(
-        f"Starting job with SKUs: {args.skus}, Scrapers: {args.scrapers}, Test Mode: {args.test_mode}"
-    )
+    logger.info(f"Starting job with SKUs: {args.skus}, Scrapers: {args.scrapers}, Test Mode: {args.test_mode}")
 
     try:
         run_scraping(

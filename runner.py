@@ -31,6 +31,7 @@ from core.events import create_emitter
 from scrapers.parser import ScraperConfigParser
 from scrapers.executor.workflow_executor import WorkflowExecutor
 from scrapers.result_collector import ResultCollector
+from utils.logger import NoHttpFilter, setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -193,10 +194,9 @@ def main():
 
     # Configure logging
     log_level = logging.DEBUG if args.debug else logging.INFO
-    logging.basicConfig(
-        level=log_level,
-        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    )
+    if args.debug:
+        os.environ["LOG_LEVEL"] = "DEBUG"
+    setup_logging(debug_mode=args.debug)
 
     # Initialize API client
     api_url = args.api_url or os.environ.get("SCRAPER_API_URL")
@@ -218,7 +218,6 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
     client.update_status(job_id, "running", runner_name=runner_name)
 
     job_config = client.get_job_config(job_id)
-    if not job_config:
         logger.error("Failed to fetch job config")
         client.submit_results(
             job_id,
