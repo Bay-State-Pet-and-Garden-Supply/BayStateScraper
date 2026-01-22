@@ -19,8 +19,12 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class ScraperConfig:
-    """Configuration for a single scraper."""
+class JobScraperConfig:
+    """DTO for scraper configuration in job responses.
+
+    This is a minimal representation used for API communication.
+    For full validation, use ScraperConfig from scraper_backend.scrapers.models.config.
+    """
 
     name: str
     disabled: bool = False
@@ -37,7 +41,7 @@ class JobConfig:
 
     job_id: str
     skus: list[str]
-    scrapers: list[ScraperConfig]
+    scrapers: list[JobScraperConfig]
     test_mode: bool = False
     max_workers: int = 3
 
@@ -46,6 +50,20 @@ class AuthenticationError(Exception):
     """Raised when authentication fails."""
 
     pass
+
+
+class ConfigFetchError(Exception):
+    """Raised when config fetch fails."""
+
+    def __init__(
+        self,
+        message: str,
+        config_slug: str | None = None,
+        schema_version: str | None = None,
+    ):
+        self.config_slug = config_slug
+        self.schema_version = schema_version
+        super().__init__(message)
 
 
 class ScraperAPIClient:
@@ -120,7 +138,7 @@ class ScraperAPIClient:
             data = self._make_request("GET", f"/api/scraper/v1/job?job_id={job_id}")
 
             scrapers = [
-                ScraperConfig(
+                JobScraperConfig(
                     name=s.get("name", ""),
                     disabled=s.get("disabled", False),
                     base_url=s.get("base_url"),
@@ -151,6 +169,30 @@ class ScraperAPIClient:
         except Exception as e:
             logger.error(f"Error fetching job config: {e}")
             return None
+
+    def get_published_config(self, slug: str) -> dict[str, Any]:
+        """Fetch the latest published config for a scraper from the runner-facing endpoint.
+
+        Args:
+            slug: The scraper slug (e.g., 'hobby-lobby', 'amazon')
+
+        Returns:
+            dict with keys: schema_version, slug, version_number, status, config,
+            published_at, published_by
+
+        Raises:
+            ConfigFetchError: If the config cannot be fetched
+            AuthenticationError: If API key is invalid/missing
+            httpx.HTTPStatusError: On HTTP errors (404, 500, etc.)
+        """
+        if not self.api_url:
+            raise ConfigFetchError(
+                "API client not configured - missing URL",
+                config_slug=slug,
+            )
+
+        response = self._make_request("GET", f"/api/internal/scraper-configs/{slug}")
+        return response
 
     def submit_results(
         self,

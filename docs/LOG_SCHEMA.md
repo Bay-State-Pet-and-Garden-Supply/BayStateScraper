@@ -1,167 +1,115 @@
-# BayStateScraper JSON Log Schema
+# JSON Log Schema
 
-This document defines the canonical JSON log schema for BayStateScraper. All logs should conform to this schema for consistent parsing and ingestion by BayStateApp.
+All logs in BayStateScraper are emitted as single-line JSON objects to stdout. This schema ensures compatibility with downstream observability tools (DataDog, CloudWatch, etc.) and the centralized logging system.
 
-## Overview
+## Schema Version
+`1.0.0`
 
-All log entries must be valid JSON objects emitted as a single line (no pretty-printing) to stdout. This format is designed for:
-- Docker log collection (stdout → container logs)
-- Log aggregation pipelines
-- Machine parsing and search
-- Correlation across job/scraper/sku/step
+## Required Fields
 
-## Field Definitions
-
-### Required Fields
+Every log entry MUST contain these fields:
 
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
-| `timestamp` | string | ISO 8601 timestamp with timezone | `"2026-01-22T00:48:56.703Z"` |
-| `level` | string | Log severity level (uppercase) | `"INFO"`, `"WARNING"`, `"ERROR"`, `"DEBUG"` |
-| `logger` | string | Module name that emitted the log | `"daemon"`, `"runner"`, `"workflow_executor"` |
-| `message` | string | Human-readable log message | `"Starting job 12345"` |
-| `job_id` | string | Unique identifier for the scraping job | `"550e8400-e29b-41d4-a716-446655440000"` |
-| `runner_name` | string | Identifier for this runner instance | `"baystate-runner-01"` |
+| `timestamp` | string | ISO 8601 timestamp (UTC) | `"2025-01-21T10:30:00.123Z"` |
+| `level` | string | Log level (UPPERCASE) | `"INFO"`, `"ERROR"`, `"DEBUG"` |
+| `logger` | string | Python logger name | `"scraper_backend.scrapers.executor"` |
+| `message` | string | Human-readable message | `"Starting workflow execution"` |
+| `job_id` | string \| null | Current scrape job ID | `"job_12345"` |
+| `runner_name` | string | Configured runner identity | `"runner-prod-01"` |
 
-### Optional Fields
+## Optional Fields
 
-| Field | Type | Description | Example |
-|-------|------|-------------|---------|
-| `scraper_name` | string | Name of the scraper being executed | `"amazon"`, `"walmart"` |
-| `sku` | string | SKU being processed | `"ABC123"` |
-| `step` | string | Current workflow step/action name | `"extract"`, `"navigate"` |
-| `worker_id` | string | Worker identifier for parallel execution | `"worker-1"` |
-| `error_type` | string | Exception class name (ERROR/EXCEPTION logs) | `"ScraperError"`, `"TimeoutError"` |
-| `error_message` | string | Exception message (ERROR/EXCEPTION logs) | `"Selector not found: .product-title"` |
-| `stack_trace` | string | Full stack trace (ERROR/EXCEPTION logs) | *(multi-line string, should be single line or escaped)* |
-| `duration_ms` | number | Duration in milliseconds (performance logs) | `1250.5` |
+Include these fields when relevant context exists:
 
-### Reserved Fields (Do Not Use)
-
-The following field names are reserved for future use:
-- `correlation_id` (use `job_id`)
-- `trace_id`, `span_id` (future distributed tracing)
-- `version` (schema version)
-
-## Example Log Lines
-
-### INFO - Job Start
-
-```json
-{"timestamp":"2026-01-22T00:48:56.703Z","level":"INFO","logger":"runner","message":"Starting job 550e8400-e29b-41d4-a716-446655440000","job_id":"550e8400-e29b-41d4-a716-446655440000","runner_name":"baystate-runner-01","scraper_name":"amazon","skus":5}
-```
-
-### INFO - SKU Processing
-
-```json
-{"timestamp":"2026-01-22T00:48:57.891Z","level":"INFO","logger":"workflow_executor","message":"Processing SKU ABC123","job_id":"550e8400-e29b-41d4-a716-446655440000","runner_name":"baystate-runner-01","scraper_name":"amazon","sku":"ABC123","step":"extract"}
-```
-
-### DEBUG - Workflow Step
-
-```json
-{"timestamp":"2026-01-22T00:49:01.234Z","level":"DEBUG","logger":"workflow_executor","message":"Step navigate completed","job_id":"550e8400-e29b-41d4-a716-446655440000","runner_name":"baystate-runner-01","scraper_name":"amazon","sku":"ABC123","step":"navigate","duration_ms":450.2}
-```
-
-### WARNING - Extraction Issue
-
-```json
-{"timestamp":"2026-01-22T00:49:02.567Z","level":"WARNING","logger":"extract_handler","message":"Field 'price' not found, using default","job_id":"550e8400-e29b-41d4-a716-446655440000","runner_name":"baystate-runner-01","scraper_name":"amazon","sku":"ABC123","step":"extract"}
-```
-
-### ERROR - Critical Failure
-
-```json
-{"timestamp":"2026-01-22T00:49:05.891Z","level":"ERROR","logger":"workflow_executor","message":"Workflow failed for SKU ABC123","job_id":"550e8400-e29b-41d4-a716-446655440000","runner_name":"baystate-runner-01","scraper_name":"amazon","sku":"ABC123","error_type":"ScraperError","error_message":"CAPTCHA detected: please solve manually","stack_trace":"Traceback (most recent call last):\n  File \"workflow_executor.py\", line 156, in execute_workflow\n    ...\nScraperError: CAPTCHA detected: please solve manually"}
-```
-
-### ERROR - Exception with Duration
-
-```json
-{"timestamp":"2026-01-22T00:49:10.123Z","level":"ERROR","logger":"api_client","message":"Failed to submit results","job_id":"550e8400-e29b-41d4-a716-446655440000","runner_name":"baystate-runner-01","error_type":"httpx.ConnectError","error_message":"Connection refused","duration_ms":30000.0}
-```
+| Field | Type | Description |
+|-------|------|-------------|
+| `scraper_name` | string | Name of scraper config being used |
+| `sku` | string | Product SKU currently being processed |
+| `step` | string | Current workflow step name |
+| `action` | string | Action type (e.g., `navigate`, `extract`) |
+| `duration_ms` | integer | Execution time in milliseconds |
+| `error_type` | string | Exception class name |
+| `error_message` | string | Detailed error description |
+| `stack_trace` | string | Full stack trace (for errors only) |
+| `context` | object | Additional structured data |
 
 ## Redaction Rules
 
-### Never Log
+**CRITICAL:** The logging system automatically redacts sensitive information before emission.
 
-The following must **never** be logged:
-- API keys, tokens, passwords
-- Cookie values
-- Authorization headers
-- Credit card numbers or payment info
-- Full HTML page content
-- Session identifiers
-- User email addresses or PII
+1. **Credentials**: Any value for keys matching `*password*`, `*secret*`, `*key*`, `*token*`
+2. **API Keys**: Patterns matching `bsr_[a-zA-Z0-9]+`
+3. **Cookies**: Contents of `Cookie` or `Set-Cookie` headers
+4. **PII**: Email addresses, phone numbers (best effort)
 
-### Sanitize
+Redacted values are replaced with `[REDACTED]`.
 
-If the following data must be logged, sanitize it first:
-- URLs (remove query parameters that may contain tokens)
-- Form inputs (mask password fields)
-- Response bodies (truncate large responses)
+## Examples
 
-### Example: Sanitized URL
-
-**Bad:**
+### Info Log
 ```json
-{"message":"Requesting URL","url":"https://api.example.com/users?api_key=secret123"}
+{
+  "timestamp": "2025-01-21T10:30:05.123Z",
+  "level": "INFO",
+  "logger": "scraper_backend.scrapers.executor",
+  "message": "Successfully navigated to product page",
+  "job_id": "job_123",
+  "runner_name": "worker-01",
+  "scraper_name": "amazon_products",
+  "sku": "B08X5H",
+  "action": "navigate",
+  "duration_ms": 1250
+}
 ```
 
-**Good:**
+### Error Log
 ```json
-{"message":"Requesting URL","url":"https://api.example.com/users?api_key=[REDACTED]"}
+{
+  "timestamp": "2025-01-21T10:30:10.555Z",
+  "level": "ERROR",
+  "logger": "scraper_backend.core.retry",
+  "message": "Element not found after retries",
+  "job_id": "job_123",
+  "runner_name": "worker-01",
+  "scraper_name": "amazon_products",
+  "sku": "B08X5H",
+  "error_type": "TimeoutError",
+  "error_message": "Timeout 30000ms exceeded while waiting for selector '.price'",
+  "stack_trace": "Traceback (most recent call last)...\n..."
+}
 ```
 
-## Implementation Notes
-
-### Using Python Standard Library
-
-The schema can be implemented using Python's `logging` module with a custom JSON formatter:
-
-```python
-import json
-import logging
-from datetime import datetime, timezone
-
-class JSONFormatter(logging.Formatter):
-    def format(self, record):
-        log_data = {
-            "timestamp": datetime.fromtimestamp(record.created, tz=timezone.utc).isoformat(),
-            "level": record.levelname,
-            "logger": record.name,
-            "message": record.getMessage(),
-            "job_id": getattr(record, "job_id", ""),
-            "runner_name": getattr(record, "runner_name", ""),
-        }
-        # Add optional fields if present
-        if hasattr(record, "scraper_name") and record.scraper_name:
-            log_data["scraper_name"] = record.scraper_name
-        # ... more optional fields
-        
-        return json.dumps(log_data)
+### Warning Log
+```json
+{
+  "timestamp": "2025-01-21T10:30:08.777Z",
+  "level": "WARNING",
+  "logger": "scraper_backend.scrapers.extract",
+  "message": "Optional field 'rating' not found",
+  "job_id": "job_123",
+  "runner_name": "worker-01",
+  "scraper_name": "amazon_products",
+  "sku": "B08X5H",
+  "context": {
+    "selector": ".star-rating"
+  }
+}
 ```
 
-### Context Injection
-
-For injecting job/scraper/sku context, prefer:
-1. `contextvars` module with a custom formatter
-2. `logging.LoggerAdapter` for per-call context
-3. `logging.setLogRecordFactory()` for per-record attributes
-
-### Log Levels
-
-| Level | Use Case |
-|-------|----------|
-| DEBUG | Detailed debug info (step execution, selectors, timing) |
-| INFO | Normal operation (job start/stop, SKU processing, workflow progress) |
-| WARNING | Unexpected but recoverable (missing optional data, retries) |
-| ERROR | Failures that need attention (extraction errors, API failures) |
-| CRITICAL | System-level failures (database connection, memory exhaustion) |
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-22 | Initial schema definition |
-
+### Debug Log
+```json
+{
+  "timestamp": "2025-01-21T10:30:01.000Z",
+  "level": "DEBUG",
+  "logger": "scraper_backend.utils.debugging",
+  "message": "Selector validation result",
+  "job_id": null,
+  "runner_name": "local-dev",
+  "context": {
+    "selector": "div.price",
+    "matches": 1,
+    "first_match_text": "$19.99"
+  }
+}
+```

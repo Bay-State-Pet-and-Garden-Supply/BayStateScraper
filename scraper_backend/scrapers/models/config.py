@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from scraper_backend.core.anti_detection_manager import AntiDetectionConfig
+
+# Known schema versions - must be kept in sync with TypeScript Zod schema
+KNOWN_SCHEMA_VERSIONS = {"1.0"}
 
 
 class SelectorConfig(BaseModel):
@@ -19,7 +22,9 @@ class SelectorConfig(BaseModel):
         None, description="Attribute to extract (e.g., 'text', 'href', 'src')"
     )
     multiple: bool = Field(False, description="Whether to extract multiple elements")
-    required: bool = Field(True, description="Whether this field is required for a successful scrape")
+    required: bool = Field(
+        True, description="Whether this field is required for a successful scrape"
+    )
 
 
 class WorkflowStep(BaseModel):
@@ -28,7 +33,10 @@ class WorkflowStep(BaseModel):
     action: str = Field(
         ..., description="Action type (e.g., 'navigate', 'click', 'wait', 'extract')"
     )
-    params: dict[str, Any] = Field(default_factory=dict, description="Parameters for the action")
+    name: str | None = Field(None, description="Optional name for the step")
+    params: dict[str, Any] = Field(
+        default_factory=dict, description="Parameters for the action"
+    )
 
 
 class LoginConfig(BaseModel):
@@ -82,7 +90,9 @@ class NormalizationRule(BaseModel):
         ...,
         description="Normalization action (e.g., 'title_case', 'remove_prefix', 'trim')",
     )
-    params: dict[str, Any] = Field(default_factory=dict, description="Parameters for the action")
+    params: dict[str, Any] = Field(
+        default_factory=dict, description="Parameters for the action"
+    )
 
 
 class ScraperConfig(BaseModel):
@@ -90,8 +100,26 @@ class ScraperConfig(BaseModel):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
+    schema_version: Literal["1.0"] = Field(
+        ...,
+        description="Schema version for this config. Must match known version for compatibility.",
+    )
+
+    @field_validator("schema_version")
+    @classmethod
+    def validate_schema_version(cls, v: str) -> str:
+        """Reject unknown schema versions to ensure compatibility."""
+        if v not in KNOWN_SCHEMA_VERSIONS:
+            known = ", ".join(sorted(KNOWN_SCHEMA_VERSIONS))
+            raise ValueError(
+                f"Unknown schema_version '{v}'. Known versions: {known}. "
+                "Config may be from a newer version or corrupted."
+            )
+        return v
+
     name: str = Field(..., description="Name of the scraper")
     base_url: str = Field(..., description="Base URL for the scraper")
+    display_name: str | None = Field(None, description="Display name for UI")
     selectors: list[SelectorConfig] = Field(
         default_factory=list, description="List of selectors for data extraction"
     )
@@ -101,9 +129,11 @@ class ScraperConfig(BaseModel):
     normalization: list[NormalizationRule] | None = Field(
         None, description="List of normalization rules"
     )
-    login: LoginConfig | None = Field(None, description="Login configuration if required")
-    timeout: int = Field(30, description="Default timeout in seconds")
-    retries: int = Field(3, description="Number of retries on failure")
+    login: LoginConfig | None = Field(
+        None, description="Login configuration if required"
+    )
+    timeout: int = Field(30, description="Default timeout in seconds", ge=1, le=300)
+    retries: int = Field(3, description="Number of retries on failure", ge=0, le=10)
     anti_detection: AntiDetectionConfig | None = Field(
         None, description="Anti-detection configuration"
     )
@@ -113,9 +143,18 @@ class ScraperConfig(BaseModel):
     validation: ValidationConfig | None = Field(
         None, description="Data validation and no-results configuration"
     )
-    test_skus: list[str] | None = Field(None, description="List of SKUs to use for testing")
-    fake_skus: list[str] | None = Field(None, description="List of fake SKUs for no-results validation")
-    image_quality: int = Field(50, description="Quality score for images (0-100)")
+    test_skus: list[str] | None = Field(
+        None, description="List of SKUs to use for testing"
+    )
+    fake_skus: list[str] | None = Field(
+        None, description="List of fake SKUs for no-results validation"
+    )
+    edge_case_skus: list[str] | None = Field(
+        None, description="List of edge case SKUs for boundary testing"
+    )
+    image_quality: int = Field(
+        50, description="Quality score for images (0-100)", ge=0, le=100
+    )
 
     def requires_login(self) -> bool:
         """Check if this scraper requires authentication/login.
@@ -128,7 +167,14 @@ class ScraperConfig(BaseModel):
             return True
 
         # Check workflow steps for login-related actions
-        login_keywords = {"login", "authenticate", "sign_in", "signin", "password", "username"}
+        login_keywords = {
+            "login",
+            "authenticate",
+            "sign_in",
+            "signin",
+            "password",
+            "username",
+        }
         for step in self.workflows:
             action_lower = step.action.lower()
             if any(keyword in action_lower for keyword in login_keywords):

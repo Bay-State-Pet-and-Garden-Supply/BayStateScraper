@@ -27,6 +27,11 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from scraper_backend.core.api_client import ScraperAPIClient, JobConfig
+from scraper_backend.core.config_fetcher import (
+    fetch_and_validate_config,
+    ConfigFetchError,
+    ConfigValidationError,
+)
 from scraper_backend.core.events import create_emitter
 from scraper_backend.scrapers.parser import ScraperConfigParser
 from scraper_backend.scrapers.executor.workflow_executor import WorkflowExecutor
@@ -241,6 +246,30 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
 
         print(json.dumps(results, indent=2))
 
+    except ConfigValidationError as e:
+        logger.error(
+            f"[Full Mode] Config validation failed: {e.message}"
+            f" (slug={e.config_slug}, schema_version={e.schema_version})"
+        )
+        client.submit_results(
+            job_id,
+            "failed",
+            runner_name=runner_name,
+            error_message=f"Config validation failed for {e.config_slug}: {e.message}",
+        )
+        sys.exit(1)
+    except ConfigFetchError as e:
+        logger.error(
+            f"[Full Mode] Config fetch failed: {e}"
+            f" (slug={getattr(e, 'config_slug', None)})"
+        )
+        client.submit_results(
+            job_id,
+            "failed",
+            runner_name=runner_name,
+            error_message=f"Config fetch failed: {e}",
+        )
+        sys.exit(1)
     except Exception as e:
         logger.exception("Job failed with error")
         client.submit_results(
