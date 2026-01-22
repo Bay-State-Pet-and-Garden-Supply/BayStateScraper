@@ -40,11 +40,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from core.api_client import ScraperAPIClient, JobConfig
-
-
-class NoHttpFilter(logging.Filter):
-    def filter(self, record):
-        return not (record.name.startswith("httpx") or record.name.startswith("httpcore"))
+from utils.logger import NoHttpFilter, setup_logging
 
 
 # Configuration
@@ -53,11 +49,7 @@ MAX_JOBS_BEFORE_RESTART = int(os.environ.get("MAX_JOBS_BEFORE_RESTART", "100"))
 HEARTBEAT_INTERVAL = 60  # Send heartbeat every 60 seconds when idle
 
 # Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+setup_logging(debug_mode=False)
 logger = logging.getLogger("daemon")
 
 # Global shutdown flag

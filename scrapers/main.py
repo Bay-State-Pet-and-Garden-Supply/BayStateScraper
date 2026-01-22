@@ -32,6 +32,7 @@ if project_root not in sys.path:
 
 from core.events import EventEmitter, create_emitter, event_bus
 from core.settings_manager import settings
+from utils.logger import setup_logging
 
 if TYPE_CHECKING:
     pass  # EventEmitter is already imported above
@@ -84,9 +85,8 @@ def run_scraping(
     quiet_mode = test_mode and not debug_mode
 
     if debug_mode:
-        logging.basicConfig(level=logging.DEBUG, force=True)
+        setup_logging(debug_mode=True)
         logger.setLevel(logging.DEBUG)
-        logging.getLogger().setLevel(logging.DEBUG) # Set root logger too just in case
 
     # Helper for logging
     def log(msg: str, level: str = "INFO", essential: bool = False) -> None:
@@ -281,9 +281,9 @@ def run_scraping(
     # Execute scraping
     total_operations = 0
     for config in configs:
-        scraper_skus = skus if skus else (config.test_skus if test_mode and hasattr(config, 'test_skus') and config.test_skus else [])
+        scraper_skus = skus if skus else (config.test_skus if test_mode and hasattr(config, "test_skus") and config.test_skus else [])
         total_operations += len(scraper_skus)
-        
+
     completed_operations = 0
     successful_results = 0
     failed_results = 0
@@ -376,14 +376,14 @@ def run_scraping(
 
         # Create a shared queue for this scraper's SKUs
         sku_queue: Queue = Queue()
-        
+
         # In test mode with no provided SKUs, use scraper's configured test_skus
-        scraper_skus = skus if skus else (config.test_skus if test_mode and hasattr(config, 'test_skus') and config.test_skus else [])
-        
+        scraper_skus = skus if skus else (config.test_skus if test_mode and hasattr(config, "test_skus") and config.test_skus else [])
+
         if not scraper_skus:
             log(f"{config.name}: No SKUs to process (no input SKUs and no test_skus configured)", "WARNING")
             continue
-            
+
         for sku in scraper_skus:
             sku_queue.put(sku)
         scraper_queues[config.name] = sku_queue
@@ -616,13 +616,13 @@ def run_scraping(
 
                 if result.get("success"):
                     extracted_data = result.get("results", {})
-                    
+
                     # ALWAYS check for no_results (not just in test mode)
                     # Note: no_results_found is stored in self.results by CheckNoResultsAction
                     no_results_found = extracted_data.get("no_results_found", False)
-                    
+
                     # Determine SKU type ONCE at the start
-                    fake_skus_list = getattr(config, 'fake_skus', []) or []
+                    fake_skus_list = getattr(config, "fake_skus", []) or []
                     sku_type = "fake" if sku in fake_skus_list else "test"
 
                     # In test mode, log selector results for the debugger (always, not just on success)
@@ -649,40 +649,36 @@ def run_scraping(
                                 )
 
                     # Check if we actually found product data (not just "no results")
-                    has_data = any(
-                        extracted_data.get(field) for field in ["Name", "Brand", "Weight"]
-                    )
-                    
+                    has_data = any(extracted_data.get(field) for field in ["Name", "Brand", "Weight"])
+
                     # Determine outcome and is_passing using centralized logic
                     # Import the helper function from the new model
                     from scrapers.models.result import calculate_is_passing
-                    
+
                     if has_data:
                         outcome = "success"
                     elif no_results_found:
                         outcome = "no_results"
                     else:
                         outcome = "not_found"
-                    
+
                     is_passing = calculate_is_passing(sku_type, outcome)
-                    
+
                     # Calculate SKU duration for event
                     sku_duration = time.time() - sku_start_time
-                    
+
                     # Update counters based on is_passing
                     if is_passing:
                         scraper_success += 1
                     else:
                         scraper_failed += 1
-                    
+
                     # Emit appropriate event with sku_type and is_passing
                     if outcome == "success":
                         # Add to collector (JSON storage)
                         image_quality = result.get("image_quality", 50)
-                        collector.add_result(
-                            sku, config.name, extracted_data, image_quality=image_quality
-                        )
-                        
+                        collector.add_result(sku, config.name, extracted_data, image_quality=image_quality)
+
                         emitter.sku_success(
                             scraper=config.name,
                             worker_id=worker_id,
@@ -692,17 +688,17 @@ def run_scraping(
                             sku_type=sku_type,
                             is_passing=is_passing,
                         )
-                        
+
                         if not test_mode:
                             supabase_sync.record_scrape_status(sku, config.name, "scraped")
                         else:
                             emitter.data_synced(sku=sku, scraper=config.name, data=extracted_data)
-                        
+
                         name = extracted_data.get("Name", "N/A")
                         brand = extracted_data.get("Brand", "N/A")
                         weight = extracted_data.get("Weight", "N/A")
                         log(f"{prefix} Found: {name} | Brand: {brand} | Weight: {weight}", "INFO")
-                        
+
                     elif outcome == "no_results":
                         emitter.sku_no_results(
                             scraper=config.name,
@@ -711,16 +707,16 @@ def run_scraping(
                             sku_type=sku_type,
                             is_passing=is_passing,
                         )
-                        
+
                         if is_passing:
                             log(f"{prefix} Verified no results for fake SKU: {sku}", "INFO")
                         else:
                             log(f"{prefix} No results for test SKU (expected data): {sku}", "WARNING")
-                        
+
                         if not test_mode:
                             status = "no_results" if is_passing else "not_found"
                             supabase_sync.record_scrape_status(sku, config.name, status)
-                            
+
                     else:  # not_found
                         emitter.sku_not_found(
                             scraper=config.name,
@@ -729,12 +725,12 @@ def run_scraping(
                             sku_type=sku_type,
                             is_passing=is_passing,
                         )
-                        
+
                         if not test_mode:
                             supabase_sync.record_scrape_status(sku, config.name, "not_found")
                 else:
                     scraper_failed += 1
-                    fake_skus_list = getattr(config, 'fake_skus', []) or []
+                    fake_skus_list = getattr(config, "fake_skus", []) or []
                     sku_type = "fake" if sku in fake_skus_list else "test"
                     log(f"{prefix} Failed to scrape SKU: {sku}", "ERROR")
 
@@ -754,14 +750,12 @@ def run_scraping(
 
                     # Emit selector_missing for all selectors on failure (always, for debug panel)
                     for s in config.selectors:
-                        emitter.selector_missing(
-                            scraper=config.name, sku=sku, selector_name=s.name
-                        )
+                        emitter.selector_missing(scraper=config.name, sku=sku, selector_name=s.name)
 
                 if test_mode:
                     # Use already-computed values from centralized logic above
                     # sku_type, outcome, is_passing are already set
-                    
+
                     # Map outcome to status for test details
                     if outcome == "success":
                         status = "success"
@@ -769,7 +763,7 @@ def run_scraping(
                         status = "no_results"  # Success for fake SKUs
                     else:
                         status = "failed"
-                    
+
                     # Capture detail for this SKU
                     sku_detail = {
                         "sku": sku,
@@ -784,10 +778,7 @@ def run_scraping(
                     # Analyze selectors
                     for s in config.selectors:
                         if outcome == "no_results" and is_passing:
-                            sku_detail["selectors"][s.name] = {
-                                "status": "skipped",
-                                "value": None
-                            }
+                            sku_detail["selectors"][s.name] = {"status": "skipped", "value": None}
                         else:
                             val = extracted_data.get(s.name)
                             sku_detail["selectors"][s.name] = {
@@ -820,10 +811,7 @@ def run_scraping(
                             "sku": sku,
                             "status": "error",
                             "error": str(e),
-                            "selectors": {
-                                s.name: {"status": "failed", "value": None}
-                                for s in config.selectors
-                            },
+                            "selectors": {s.name: {"status": "failed", "value": None} for s in config.selectors},
                         }
                     )
 
@@ -995,15 +983,11 @@ def run_scraping(
 
                         if sel_res["status"] == "success":
                             prev_count = selector_stats[sel_name].get("success_count", 0)
-                            selector_stats[sel_name]["success_count"] = (
-                                int(prev_count) if prev_count is not None else 0
-                            ) + 1
+                            selector_stats[sel_name]["success_count"] = (int(prev_count) if prev_count is not None else 0) + 1
                             selector_stats[sel_name]["last_value"] = sel_res.get("value")
                         elif sel_res["status"] == "failed":
                             prev_count = selector_stats[sel_name].get("fail_count", 0)
-                            selector_stats[sel_name]["fail_count"] = (
-                                int(prev_count) if prev_count is not None else 0
-                            ) + 1
+                            selector_stats[sel_name]["fail_count"] = (int(prev_count) if prev_count is not None else 0) + 1
                         # If status is "skipped" or "unknown", do not increment success or fail counts
 
                 # Determine overall selector status
@@ -1040,51 +1024,56 @@ def run_scraping(
                 # Calculate and update health status based on REQUIRED selectors only
                 # Optional fields (required=False) don't affect health status
                 # Note: 'required' may not be defined on SelectorConfig, default to True
-                required_selectors = [sel for sel in s_config.selectors if getattr(sel, 'required', True)]
-                
+                required_selectors = [sel for sel in s_config.selectors if getattr(sel, "required", True)]
+
                 # Use the centralized health calculation from the new model
                 from scrapers.models.result import SkuResult, calculate_health
-                
+
                 # Convert test details to SkuResult objects for health calculation
                 sku_results = []
                 for detail in details:
-                    sku_results.append(SkuResult(
-                        sku=detail["sku"],
-                        sku_type=detail.get("sku_type", "test"),
-                        outcome=detail.get("outcome", "failed"),
-                        data=detail.get("data"),
-                    ))
-                
+                    sku_results.append(
+                        SkuResult(
+                            sku=detail["sku"],
+                            sku_type=detail.get("sku_type", "test"),
+                            outcome=detail.get("outcome", "failed"),
+                            data=detail.get("data"),
+                        )
+                    )
+
                 # Check if fake SKUs are configured
-                config_has_fake_skus = bool(getattr(s_config, 'fake_skus', None))
-                
+                config_has_fake_skus = bool(getattr(s_config, "fake_skus", None))
+
                 # Calculate health using centralized logic
                 health_status = calculate_health(sku_results, config_has_fake_skus)
-                
+
                 # Count passing results for the summary
                 test_passing = sum(1 for r in sku_results if r.sku_type == "test" and r.is_passing)
                 fake_passing = sum(1 for r in sku_results if r.sku_type == "fake" and r.is_passing)
                 total_passing = test_passing + fake_passing
 
                 # Update health status
-                supabase_sync.update_scraper_health(s_name, {
-                    "status": health_status,
-                    "last_tested": final_result["timestamp"],
-                    "selectors_passed": sum(1 for s in selector_stats.values() if s.get("status") in ("success", "mixed")),
-                    "selectors_total": len(selector_stats),
-                    "test_skus_passed": total_passing,
-                    "test_skus_total": final_result["summary"]["total"],
-                    "selectors": [
-                        {
-                            "name": name,
-                            "status": stat.get("status", "unknown"),
-                            "value": stat.get("last_value"),
-                            "success_count": stat.get("success_count", 0),
-                            "fail_count": stat.get("fail_count", 0),
-                        }
-                        for name, stat in selector_stats.items()
-                    ],
-                })
+                supabase_sync.update_scraper_health(
+                    s_name,
+                    {
+                        "status": health_status,
+                        "last_tested": final_result["timestamp"],
+                        "selectors_passed": sum(1 for s in selector_stats.values() if s.get("status") in ("success", "mixed")),
+                        "selectors_total": len(selector_stats),
+                        "test_skus_passed": total_passing,
+                        "test_skus_total": final_result["summary"]["total"],
+                        "selectors": [
+                            {
+                                "name": name,
+                                "status": stat.get("status", "unknown"),
+                                "value": stat.get("last_value"),
+                                "success_count": stat.get("success_count", 0),
+                                "fail_count": stat.get("fail_count", 0),
+                            }
+                            for name, stat in selector_stats.items()
+                        ],
+                    },
+                )
                 log(f"Updated health status for {s_name}: {health_status}", "INFO")
 
         except Exception as e:

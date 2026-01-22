@@ -32,6 +32,7 @@ from core.events import create_emitter
 from scrapers.parser import ScraperConfigParser
 from scrapers.executor.workflow_executor import WorkflowExecutor
 from scrapers.result_collector import ResultCollector
+from utils.logger import NoHttpFilter, setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -188,10 +189,9 @@ def main():
         parser.error("--job-id is required unless --version is specified")
 
     log_level = logging.DEBUG if args.debug else logging.INFO
-    logging.basicConfig(
-        level=log_level,
-        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    )
+    if args.debug:
+        os.environ["LOG_LEVEL"] = "DEBUG"
+    setup_logging(debug_mode=args.debug)
 
     api_url = args.api_url or os.environ.get("SCRAPER_API_URL")
     if not api_url:
@@ -205,11 +205,6 @@ def main():
         from utils.api_handler import ScraperAPIHandler
 
         api_handler = ScraperAPIHandler(client, args.job_id)
-
-        # Prevent infinite loops from http client logging
-        class NoHttpFilter(logging.Filter):
-            def filter(self, record):
-                return not (record.name.startswith("httpx") or record.name.startswith("httpcore"))
 
         api_handler.addFilter(NoHttpFilter())
         logging.getLogger().addHandler(api_handler)
