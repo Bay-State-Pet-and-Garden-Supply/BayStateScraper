@@ -8,8 +8,10 @@ from __future__ import annotations
 
 import logging
 import os
+import random
+import re
 import time
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 
 # Selenium imports removed - migrated to Playwright
