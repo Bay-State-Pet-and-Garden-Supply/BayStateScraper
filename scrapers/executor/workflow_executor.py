@@ -256,7 +256,12 @@ class WorkflowExecutor:
             WorkflowExecutionError: If workflow execution fails critically
         """
         try:
-            logger.info(f"Starting workflow execution for: {self.config.name}")
+            total_steps = len(self.config.workflows)
+            logger.info(f"Starting workflow execution for: {self.config.name} ({total_steps} steps)")
+
+            if total_steps == 0:
+                logger.warning(f"No workflow steps defined for {self.config.name} - config may be incomplete")
+
             self.results = {}  # Reset results for new run
             self.workflow_stopped = False  # Reset stop flag for new run
             self.step_errors = []  # Reset error tracking
@@ -271,8 +276,8 @@ class WorkflowExecutor:
             if context:
                 self.context = context  # Update instance context
                 self.results.update(context)
+                logger.debug(f"Workflow context: {context}")
 
-            total_steps = len(self.config.workflows)
             for i, step in enumerate(self.config.workflows, 1):
                 self.current_step_index = i
 
@@ -281,6 +286,7 @@ class WorkflowExecutor:
                     break
 
                 logger.info(f"Step {i}/{total_steps}: Executing {step.action}")
+                logger.debug(f"Step {i} params: {step.params}")
 
                 try:
                     self._execute_step_with_retry(step, context, step_index=i)

@@ -66,21 +66,36 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
     configs = []
     for scraper_cfg in job_config.scrapers:
         try:
+            # Extract options - API nests workflows inside options
+            options = scraper_cfg.options or {}
+
             config_dict = {
                 "name": scraper_cfg.name,
                 "base_url": scraper_cfg.base_url,
                 "search_url_template": scraper_cfg.search_url_template,
                 "selectors": scraper_cfg.selectors or {},
-                "options": scraper_cfg.options or {},
                 "test_skus": scraper_cfg.test_skus or [],
             }
+
+            # Extract workflows from options (API nests them there)
+            if "workflows" in options:
+                config_dict["workflows"] = options["workflows"]
+                logger.debug(f"[Runner] {scraper_cfg.name}: Found {len(options['workflows'])} workflow steps")
+            else:
+                logger.warning(f"[Runner] {scraper_cfg.name}: No workflows defined in config!")
+
+            # Extract timeout and retries from options
+            if "timeout" in options:
+                config_dict["timeout"] = options["timeout"]
+            if "retries" in options:
+                config_dict["retries"] = options["retries"]
 
             if scraper_cfg.options and "_credentials" in scraper_cfg.options:
                 config_dict["_credentials"] = scraper_cfg.options["_credentials"]
 
             config = parser.load_from_dict(config_dict)
             configs.append(config)
-            logger.info(f"[Runner] Loaded scraper config: {config.name}")
+            logger.info(f"[Runner] Loaded scraper config: {config.name} ({len(config.workflows)} steps)")
         except Exception as e:
             logger.error(f"[Runner] Failed to parse config for {scraper_cfg.name}: {e}")
 
