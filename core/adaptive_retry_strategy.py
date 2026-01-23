@@ -8,11 +8,13 @@ Learns from past failures to optimize scraping efficiency and success rates.
 from __future__ import annotations
 
 
+import json
 import logging
 import time
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from enum import Enum
+from pathlib import Path
 from typing import Any
 
 from core.failure_classifier import FailureType
