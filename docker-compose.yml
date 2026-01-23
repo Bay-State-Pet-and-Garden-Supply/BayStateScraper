@@ -11,6 +11,7 @@ services:
       - RUNNER_NAME=${RUNNER_NAME:-default-runner}
       - POLL_INTERVAL=${POLL_INTERVAL:-30}
       - MAX_JOBS_BEFORE_RESTART=${MAX_JOBS_BEFORE_RESTART:-100}
+      - LOG_LEVEL=DEBUG
     deploy:
       resources:
         limits:

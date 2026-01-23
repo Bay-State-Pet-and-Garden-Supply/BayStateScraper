@@ -4,17 +4,16 @@ Adaptive Retry Strategy for Intelligent Scraping Operations
 Provides dynamic retry configuration based on failure history and patterns.
 Learns from past failures to optimize scraping efficiency and success rates.
 """
+
 from __future__ import annotations
 
 
-import json
 import logging
 import time
 from collections import defaultdict
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from enum import Enum
-from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 from core.failure_classifier import FailureType
 
@@ -260,9 +259,7 @@ class AdaptiveRetryStrategy:
             f"(retry_count: {failure_context.retry_count}, success: {final_success})"
         )
 
-    def get_adaptive_config(
-        self, failure_type: FailureType, site_name: str, current_retry_count: int = 0
-    ) -> AdaptiveRetryConfig:
+    def get_adaptive_config(self, failure_type: FailureType, site_name: str, current_retry_count: int = 0) -> AdaptiveRetryConfig:
         """
         Generate adaptive retry configuration based on failure history.
 
@@ -300,9 +297,7 @@ class AdaptiveRetryStrategy:
         patterns_to_analyze = self.failure_patterns
 
         if site_name:
-            patterns_to_analyze = {
-                k: v for k, v in self.failure_patterns.items() if k[0] == site_name
-            }
+            patterns_to_analyze = {k: v for k, v in self.failure_patterns.items() if k[0] == site_name}
 
         analysis: dict[str, Any] = {
             "total_failures": len(self.failure_history),
@@ -348,31 +343,21 @@ class AdaptiveRetryStrategy:
         # Count recent occurrences (last 24 hours)
         recent_threshold = current_time - (24 * 60 * 60)
         pattern.recent_occurrences = sum(
-            1
-            for r in self.failure_history
-            if r.site_name == record.site_name
-            and r.failure_type == record.failure_type
-            and r.timestamp > recent_threshold
+            1 for r in self.failure_history if r.site_name == record.site_name and r.failure_type == record.failure_type and r.timestamp > recent_threshold
         )
 
         # Update success rate and retry statistics
         successful_retries = [
             r
             for r in self.failure_history
-            if r.site_name == record.site_name
-            and r.failure_type == record.failure_type
-            and (r.success_after_retry or r.final_success)
+            if r.site_name == record.site_name and r.failure_type == record.failure_type and (r.success_after_retry or r.final_success)
         ]
 
         if pattern.total_occurrences > 0:
             pattern.success_rate = len(successful_retries) / pattern.total_occurrences
 
         # Update average retry count
-        all_retries = [
-            r.retry_count
-            for r in self.failure_history
-            if r.site_name == record.site_name and r.failure_type == record.failure_type
-        ]
+        all_retries = [r.retry_count for r in self.failure_history if r.site_name == record.site_name and r.failure_type == record.failure_type]
         if all_retries:
             pattern.average_retry_count = sum(all_retries) / len(all_retries)
 
@@ -384,9 +369,7 @@ class AdaptiveRetryStrategy:
 
         # Analyze peak failure hours
         failure_hours = [
-            time.localtime(r.timestamp).tm_hour
-            for r in self.failure_history
-            if r.site_name == record.site_name and r.failure_type == record.failure_type
+            time.localtime(r.timestamp).tm_hour for r in self.failure_history if r.site_name == record.site_name and r.failure_type == record.failure_type
         ]
         if failure_hours:
             hour_counts: dict[int, int] = defaultdict(int)
@@ -394,9 +377,7 @@ class AdaptiveRetryStrategy:
                 hour_counts[hour] += 1
             pattern.peak_failure_hour = max(hour_counts.keys(), key=lambda h: hour_counts[h])
 
-    def _adapt_config_from_pattern(
-        self, config: AdaptiveRetryConfig, pattern: FailurePattern, current_retry_count: int
-    ) -> AdaptiveRetryConfig:
+    def _adapt_config_from_pattern(self, config: AdaptiveRetryConfig, pattern: FailurePattern, current_retry_count: int) -> AdaptiveRetryConfig:
         """Adapt retry configuration based on failure pattern analysis."""
         adapted_config = AdaptiveRetryConfig(**asdict(config))
 
@@ -415,25 +396,15 @@ class AdaptiveRetryStrategy:
 
         # Increase timeout multiplier for element missing failures
         if pattern.failure_type == FailureType.ELEMENT_MISSING:
-            adapted_config.timeout_multiplier = min(
-                config.timeout_multiplier + TIMEOUT_MULTIPLIER_INCREMENT, TIMEOUT_MULTIPLIER_CAP
-            )
+            adapted_config.timeout_multiplier = min(config.timeout_multiplier + TIMEOUT_MULTIPLIER_INCREMENT, TIMEOUT_MULTIPLIER_CAP)
 
         # Lower session rotation threshold for access denied failures
-        if (
-            pattern.failure_type == FailureType.ACCESS_DENIED
-            and pattern.consecutive_failures > CONSECUTIVE_FAILURES_THRESHOLD
-        ):
-            adapted_config.session_rotation_threshold = max(
-                config.session_rotation_threshold - 1, 1
-            )
+        if pattern.failure_type == FailureType.ACCESS_DENIED and pattern.consecutive_failures > CONSECUTIVE_FAILURES_THRESHOLD:
+            adapted_config.session_rotation_threshold = max(config.session_rotation_threshold - 1, 1)
 
         # Adjust for peak failure hours
         current_hour = time.localtime().tm_hour
-        if (
-            pattern.peak_failure_hour is not None
-            and abs(current_hour - pattern.peak_failure_hour) <= PEAK_HOUR_WINDOW
-        ):
+        if pattern.peak_failure_hour is not None and abs(current_hour - pattern.peak_failure_hour) <= PEAK_HOUR_WINDOW:
             adapted_config.base_delay *= PEAK_HOUR_DELAY_MULTIPLIER  # Increase delay in peak hours
 
         return adapted_config
@@ -457,26 +428,20 @@ class AdaptiveRetryStrategy:
 
         if analysis["failure_frequency_per_hour"] > 1.0:
             insights.append(
-                f"High failure frequency for {pattern.failure_type.value} on {pattern.site_name}: "
-                f"{analysis['failure_frequency_per_hour']:.1f} failures/hour"
+                f"High failure frequency for {pattern.failure_type.value} on {pattern.site_name}: {analysis['failure_frequency_per_hour']:.1f} failures/hour"
             )
 
         if analysis["success_rate"] < LOW_SUCCESS_RATE_INSIGHT_THRESHOLD:
-            insights.append(
-                f"Low success rate for {pattern.failure_type.value} on {pattern.site_name}: "
-                f"{analysis['success_rate']:.1%}"
-            )
+            insights.append(f"Low success rate for {pattern.failure_type.value} on {pattern.site_name}: {analysis['success_rate']:.1%}")
 
         if analysis["consecutive_failures"] > CONSECUTIVE_FAILURES_INSIGHT_THRESHOLD:
             insights.append(
-                f"Consecutive failures for {pattern.failure_type.value} on {pattern.site_name}: "
-                f"{analysis['consecutive_failures']} failures in a row"
+                f"Consecutive failures for {pattern.failure_type.value} on {pattern.site_name}: {analysis['consecutive_failures']} failures in a row"
             )
 
         if analysis["average_retry_count"] > HIGH_RETRY_COUNT_INSIGHT_THRESHOLD:
             insights.append(
-                f"High retry count needed for {pattern.failure_type.value} on {pattern.site_name}: "
-                f"{analysis['average_retry_count']:.1f} average retries"
+                f"High retry count needed for {pattern.failure_type.value} on {pattern.site_name}: {analysis['average_retry_count']:.1f} average retries"
             )
 
         return insights
@@ -524,9 +489,7 @@ class AdaptiveRetryStrategy:
                 self.failure_history.append(record)
                 self._update_patterns(record)
 
-            logger.info(
-                f"Loaded {len(self.failure_history)} failure records from {self.history_file}"
-            )
+            logger.info(f"Loaded {len(self.failure_history)} failure records from {self.history_file}")
 
         except Exception as e:
             logger.warning(f"Failed to load failure history: {e}")
@@ -558,9 +521,7 @@ class AdaptiveRetryStrategy:
                 return data
 
             data: dict[str, Any] = {  # type: ignore
-                "failure_history": [
-                    serialize_record(record) for record in self.failure_history[-1000:]
-                ],  # Keep last 1000
+                "failure_history": [serialize_record(record) for record in self.failure_history[-1000:]],  # Keep last 1000
                 "timestamp": time.time(),
             }
 

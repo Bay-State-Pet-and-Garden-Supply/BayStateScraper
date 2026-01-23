@@ -74,9 +74,7 @@ def map_shopsite_fields(product_data):
         if editor_field == "Category" and value:
             # Split by "|", deduplicate, and rejoin with "|"
             categories = [cat.strip() for cat in str(value).split("|") if cat.strip()]
-            unique_categories = list(
-                dict.fromkeys(categories)
-            )  # Preserve order while removing duplicates
+            unique_categories = list(dict.fromkeys(categories))  # Preserve order while removing duplicates
             value = "|".join(unique_categories)
 
         # Special handling for Product_Type - ensure unique values
@@ -125,25 +123,3 @@ def map_shopsite_fields(product_data):
         mapped_product["Image_URLs"] = images
 
     return mapped_product
-
-
-def should_include_field(field_name):
-    """
-    Check if a ShopSite field should be included in the mapped data.
-
-    Args:
-        field_name: ShopSite field name
-
-    Returns:
-        bool: True if field should be included
-    """
-    # Include if it's in our mapping
-    for shopsite_fields in EDITOR_FIELD_MAPPING.values():
-        if field_name in shopsite_fields:
-            return True
-
-    # Include if it's an image field
-    if field_name in IMAGE_FIELDS:
-        return True
-
-    return False

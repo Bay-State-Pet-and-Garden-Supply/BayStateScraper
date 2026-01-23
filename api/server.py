@@ -8,6 +8,7 @@ Event System Integration:
     This server now uses the structured event system for observability.
     Events are exposed via the /events endpoint for the frontend to consume.
 """
+
 from __future__ import annotations
 
 
@@ -19,9 +20,9 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Annotated, Any
 
-from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel
 
 # Ensure backend is in path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -56,9 +57,7 @@ class JobState:
         self.active_scrapers: set[str] = set()
         self.total_skus = 0
         self.completed_skus = 0
-        self.worker_stats: dict[
-            str, dict
-        ] = {}  # worker_id -> {scraper, current_sku, completed, failed}
+        self.worker_stats: dict[str, dict] = {}  # worker_id -> {scraper, current_sku, completed, failed}
         self._lock = threading.Lock()
 
     def reset(self):
@@ -532,8 +531,6 @@ async def list_event_types():
             "system": [e.value for e in EventType if e.value.startswith("system.")],
         },
     }
-
-
 
 
 # =============================================================================

@@ -51,5 +51,9 @@ class SupabaseSyncStub:
         self._warn_once("get_scraper_config")
         return None
 
+    def record_scrape_status(self, sku: str, scraper_name: str, status: str, error_message: str | None = None) -> None:
+        """Record scrape status for tracking."""
+        self._warn_once("record_scrape_status")
+
 
 supabase_sync = SupabaseSyncStub()

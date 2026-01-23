@@ -8,10 +8,8 @@ from __future__ import annotations
 
 import logging
 import os
-import random
-import re
 import time
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 
 # Selenium imports removed - migrated to Playwright
@@ -120,9 +118,7 @@ class AntiDetectionConfig(BaseModel):
     )
     rate_limit_min_delay: float = Field(1.0, description="Minimum delay for rate limiting")
     rate_limit_max_delay: float = Field(5.0, description="Maximum delay for rate limiting")
-    human_simulation_enabled: bool = Field(
-        True, description="Enable human simulation (legacy alias)"
-    )
+    human_simulation_enabled: bool = Field(True, description="Enable human simulation (legacy alias)")
     session_rotation_interval: int = Field(100, description="Requests before session rotation")
     max_retries_on_detection: int = Field(3, description="Max retries on detection")
     captcha_solver_config: CaptchaSolverConfig = Field(
@@ -180,36 +176,18 @@ class AntiDetectionManager:
 
         # Initialize modules
         self.captcha_solver = (
-            CaptchaSolver(self.config.captcha_solver_config)
-            if config.enable_captcha_detection and self.config.captcha_solver_config.enabled
-            else None
+            CaptchaSolver(self.config.captcha_solver_config) if config.enable_captcha_detection and self.config.captcha_solver_config.enabled else None
         )
-        self.captcha_detector = (
-            CaptchaDetector(self.config, self.captcha_solver)
-            if config.enable_captcha_detection
-            else None
-        )
+        self.captcha_detector = CaptchaDetector(self.config, self.captcha_solver) if config.enable_captcha_detection else None
         # Get adaptive config for rate limiting
         rate_limit_adaptive_config = None
         if hasattr(self, "adaptive_retry_strategy"):
-            rate_limit_adaptive_config = self.adaptive_retry_strategy.get_adaptive_config(
-                FailureType.RATE_LIMITED, self.site_name
-            )
+            rate_limit_adaptive_config = self.adaptive_retry_strategy.get_adaptive_config(FailureType.RATE_LIMITED, self.site_name)
 
-        self.rate_limiter = (
-            RateLimiter(self.config, rate_limit_adaptive_config)
-            if config.enable_rate_limiting
-            else None
-        )
-        self.human_simulator = (
-            HumanBehaviorSimulator(self.config) if config.enable_human_simulation else None
-        )
-        self.session_manager = (
-            SessionManager(self.config) if config.enable_session_rotation else None
-        )
-        self.blocking_handler = (
-            BlockingHandler(self.config) if config.enable_blocking_handling else None
-        )
+        self.rate_limiter = RateLimiter(self.config, rate_limit_adaptive_config) if config.enable_rate_limiting else None
+        self.human_simulator = HumanBehaviorSimulator(self.config) if config.enable_human_simulation else None
+        self.session_manager = SessionManager(self.config) if config.enable_session_rotation else None
+        self.blocking_handler = BlockingHandler(self.config) if config.enable_blocking_handling else None
 
         enabled_modules = [
             module
@@ -228,13 +206,7 @@ class AntiDetectionManager:
                     else (
                         f"{module}_handler"
                         if module == "blocking"
-                        else (
-                            f"{module}_manager"
-                            if module == "session"
-                            else (
-                                f"{module}_simulator" if module == "human" else f"{module}_limiter"
-                            )
-                        )
+                        else (f"{module}_manager" if module == "session" else (f"{module}_simulator" if module == "human" else f"{module}_limiter"))
                     )
                 ),
                 None,
@@ -344,15 +316,12 @@ class AntiDetectionManager:
             failure_context = failure_classifier.classify_exception(error, {"action": action})
 
             # Get adaptive retry configuration
-            adaptive_config = self.adaptive_retry_strategy.get_adaptive_config(
-                failure_context.failure_type, self.site_name, retry_count
-            )
+            adaptive_config = self.adaptive_retry_strategy.get_adaptive_config(failure_context.failure_type, self.site_name, retry_count)
 
             # Check if we should retry based on adaptive config
             if retry_count >= adaptive_config.max_retries:
                 logger.warning(
-                    f"Adaptive max retries ({adaptive_config.max_retries}) exceeded for "
-                    f"action: {action} (failure: {failure_context.failure_type.value})"
+                    f"Adaptive max retries ({adaptive_config.max_retries}) exceeded for action: {action} (failure: {failure_context.failure_type.value})"
                 )
                 return False
 
@@ -398,10 +367,7 @@ class AntiDetectionManager:
                     )
                 return success
 
-            elif (
-                any(term in error_str for term in ["blocked", "banned", "access denied"])
-                and self.blocking_handler
-            ):
+            elif any(term in error_str for term in ["blocked", "banned", "access denied"]) and self.blocking_handler:
                 logger.info("Blocking-related error detected, attempting recovery")
                 success = self.blocking_handler.handle_blocking(self.browser.driver)
                 if success:
@@ -460,9 +426,7 @@ class AntiDetectionManager:
 
             # Default session rotation on persistent failures
             if self.session_manager and retry_count >= adaptive_config.session_rotation_threshold:
-                logger.info(
-                    f"Persistent failures detected ({retry_count} retries), rotating session"
-                )
+                logger.info(f"Persistent failures detected ({retry_count} retries), rotating session")
                 success = self.session_manager.rotate_session(self)
                 if success:
                     # Record successful session rotation for analytics
@@ -561,24 +525,15 @@ class CaptchaDetector:
                 # Try to solve CAPTCHA using external service if available
                 if self.captcha_solver:
                     current_url = driver.current_url
-                    logger.info(
-                        f"Attempting CAPTCHA resolution using external service "
-                        f"(attempt {attempt + 1}/{max_retries + 1})"
-                    )
+                    logger.info(f"Attempting CAPTCHA resolution using external service (attempt {attempt + 1}/{max_retries + 1})")
                     if self.captcha_solver.solve_captcha(driver, current_url):
                         logger.info("CAPTCHA solved successfully using external service")
                         return True
                     else:
-                        logger.warning(
-                            f"External CAPTCHA solving failed (attempt {attempt + 1}), "
-                            "trying fallback"
-                        )
+                        logger.warning(f"External CAPTCHA solving failed (attempt {attempt + 1}), trying fallback")
 
                 # Fallback: just wait and retry
-                logger.info(
-                    f"Attempting CAPTCHA resolution (waiting strategy, "
-                    f"attempt {attempt + 1}/{max_retries + 1})"
-                )
+                logger.info(f"Attempting CAPTCHA resolution (waiting strategy, attempt {attempt + 1}/{max_retries + 1})")
                 wait_time = random.uniform(5, 10) * (attempt + 1)
                 # Increase wait time with each attempt
                 time.sleep(wait_time)
@@ -631,9 +586,7 @@ class RateLimiter:
             page_title = driver.title.lower()
 
             for pattern in self.config.rate_limiting_text_patterns:
-                if re.search(pattern, page_text, re.IGNORECASE) or re.search(
-                    pattern, page_title, re.IGNORECASE
-                ):
+                if re.search(pattern, page_text, re.IGNORECASE) or re.search(pattern, page_title, re.IGNORECASE):
                     logger.info(f"Rate limiting detected using text pattern: {pattern}")
                     return True
 
@@ -691,11 +644,7 @@ class RateLimiter:
             )
             time.sleep(applied_delay)
         else:
-            logger.debug(
-                f"Rate limiter - CI: {is_ci}, no delay needed "
-                f"(time_since_last: {time_since_last:.2f}s >= "
-                f"required_delay: {required_delay:.2f}s)"
-            )
+            logger.debug(f"Rate limiter - CI: {is_ci}, no delay needed (time_since_last: {time_since_last:.2f}s >= required_delay: {required_delay:.2f}s)")
 
         self.last_request_time = time.time()
 
@@ -707,9 +656,7 @@ class RateLimiter:
             float(self.config.rate_limit_max_delay * float(2**self.consecutive_failures)),
             MAX_BACKOFF_DELAY,
         )
-        logger.info(
-            f"Applying backoff delay: {backoff_delay:.2f}s (failure #{self.consecutive_failures}, max={MAX_BACKOFF_DELAY}s)"
-        )
+        logger.info(f"Applying backoff delay: {backoff_delay:.2f}s (failure #{self.consecutive_failures}, max={MAX_BACKOFF_DELAY}s)")
         time.sleep(backoff_delay)
 
     def update_after_action(self, success: bool) -> None:
