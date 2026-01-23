@@ -125,6 +125,8 @@ def main():
     logger.info(f"Max Jobs Before Restart: {MAX_JOBS_BEFORE_RESTART}")
     logger.info("=" * 60)
 
+    # Set up API log handler (job_id will be updated per-job)
+    api_handler = None
     try:
         from utils.api_handler import ScraperAPIHandler
 
@@ -152,6 +154,10 @@ def main():
             if job:
                 logger.info(f"[Job {job.job_id}] Claimed - {len(job.skus)} SKUs, {len(job.scrapers)} scrapers")
 
+                # Update API handler to log with correct job_id
+                if api_handler:
+                    api_handler.set_job_id(job.job_id)
+
                 try:
                     # Update status to running
                     client.update_status(job.job_id, "running")
@@ -178,6 +184,10 @@ def main():
                         "failed",
                         error_message=str(e),
                     )
+                finally:
+                    # Flush logs to API before moving to next job
+                    if api_handler:
+                        api_handler.flush()
 
             else:
                 # No work available - send heartbeat if interval elapsed

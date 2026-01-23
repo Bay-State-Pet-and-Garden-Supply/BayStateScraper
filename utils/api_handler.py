@@ -61,6 +61,15 @@ class ScraperAPIHandler(logging.Handler):
         self._registered_atexit = False
         self._register_atexit()
 
+    def set_job_id(self, job_id: str) -> None:
+        """
+        Update the job ID for log shipping.
+
+        Call this when starting a new job to ensure logs are
+        associated with the correct job in the database.
+        """
+        self.job_id = job_id
+
     def _register_atexit(self) -> None:
         """Register atexit handler to ensure graceful flush."""
         try:
@@ -181,15 +190,19 @@ class ScraperAPIHandler(logging.Handler):
 
     def flush(self) -> None:
         """
-        Flush the buffer to the API.
+        Flush the buffer to the API synchronously.
 
-        This method signals the shipping thread and waits briefly for completion.
+        This method ships any buffered logs immediately, blocking until complete.
+        Call this after job completion to ensure all logs are delivered.
         """
-        self._flush_event.set()
-
-        # Brief wait for shipping thread to process
-        if self._shipping_thread and self._shipping_thread.is_alive():
-            self._shipping_thread.join(timeout=0.5)
+        # Ship buffer directly (synchronous) to ensure logs are sent
+        if self._buffer:
+            with threading.Lock():
+                if self._buffer:
+                    logs_to_send = list(self._buffer)
+                    self._buffer.clear()
+            if logs_to_send:
+                self._send_with_retry(logs_to_send)
 
     def close(self) -> None:
         """
