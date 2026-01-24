@@ -8,6 +8,7 @@ Event System Integration:
     This server now uses the structured event system for observability.
     Events are exposed via the /events endpoint for the frontend to consume.
 """
+
 from __future__ import annotations
 
 
@@ -289,8 +290,12 @@ def run_scraper_job(
                 debug_context.capture_snapshot(
                     job_id=job_id,
                     sku=str(data.get("sku")) if data.get("sku") else "unknown",
-                    page_source=str(data.get("page_source")) if data.get("page_source") else None,
-                    screenshot=str(data.get("screenshot")) if data.get("screenshot") else None,
+                    page_source=str(data.get("page_source"))
+                    if data.get("page_source")
+                    else None,
+                    screenshot=str(data.get("screenshot"))
+                    if data.get("screenshot")
+                    else None,
                 )
 
         run_scraping(
@@ -445,7 +450,10 @@ async def list_scrapers():
 
     if os.path.exists(configs_dir):
         for filename in os.listdir(configs_dir):
-            if filename.endswith((".yaml", ".yml")) and filename != "sample_config.yaml":
+            if (
+                filename.endswith((".yaml", ".yml"))
+                and filename != "sample_config.yaml"
+            ):
                 name = filename.replace(".yaml", "").replace(".yml", "")
                 scrapers.append(
                     {
@@ -473,7 +481,9 @@ class EventsResponse(BaseModel):
 @app.get("/events")
 async def get_events(
     job_id: str | None = Query(None, description="Filter events by job ID"),
-    event_types: str | None = Query(None, description="Comma-separated event types to filter"),
+    event_types: str | None = Query(
+        None, description="Comma-separated event types to filter"
+    ),
     since: str | None = Query(None, description="ISO timestamp to get events after"),
     limit: int = Query(100, ge=1, le=500, description="Maximum events to return"),
 ):
@@ -534,6 +544,327 @@ async def list_event_types():
     }
 
 
+# =============================================================================
+# Test Endpoints
+# =============================================================================
+
+
+class TestRequest(BaseModel):
+    """Request model for running scraper tests."""
+
+    config_id: str | None = None
+    scraper_name: str | None = None
+    skus: list[str] | None = None
+    headless: bool = True
+
+    @field_validator("skus")
+    @classmethod
+    def validate_skus(cls, v):
+        if v and len(v) > 20:
+            raise ValueError("Too many SKUs for test (max 20)")
+        return v if v else []
+
+
+class TestResultSku(BaseModel):
+    """Individual SKU test result."""
+
+    sku: str
+    sku_type: str  # "test" or "fake"
+    status: str  # "success", "no_results", "failed", "error"
+    is_passing: bool
+    outcome: str
+    selectors: dict[str, dict[str, str | None]]  # selector_name -> {status, value}
+    data: dict[str, str] | None = None
+    error: str | None = None
+
+
+class TestResultSelector(BaseModel):
+    """Selector-level test result."""
+
+    name: str
+    status: str  # "success", "failed", "mixed", "unknown", "skipped"
+    success_count: int
+    fail_count: int
+    last_value: str | None = None
+
+
+class TestResponse(BaseModel):
+    """Response model for test results."""
+
+    status: str
+    scraper_name: str
+    success: bool
+    summary: dict[str, int]  # total, success, no_results, failed
+    skus: list[TestResultSku]
+    selectors: dict[str, TestResultSelector]
+    execution_time_seconds: float
+    timestamp: str
+    errors: list[str] = []
+
+
+@app.post("/test", response_model=TestResponse)
+async def run_test(
+    request: TestRequest,
+    background_tasks: BackgroundTasks,
+    job_state: JobStateDep,
+):
+    """Run a scraper test and return detailed results.
+
+    This endpoint runs a scraper in test mode, executing against configured
+    test_skus (or provided SKUs) and returning detailed results including
+    selector-level analysis.
+    """
+    import uuid
+    from datetime import datetime
+
+    # Determine scraper name from config_id or scraper_name
+    scraper_name = request.scraper_name
+
+    if not scraper_name and not request.config_id:
+        raise HTTPException(
+            status_code=400, detail="Either config_id or scraper_name must be provided"
+        )
+
+    # If config_id provided, fetch the scraper name from Supabase
+    if request.config_id and not scraper_name:
+        try:
+            from scraper_backend.core.database.supabase_sync import supabase_sync
+
+            if supabase_sync.initialize():
+                config = supabase_sync.get_scraper_by_id(request.config_id)
+                if config and config.get("slug"):
+                    scraper_name = config["slug"]
+                else:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"Config with ID {request.config_id} not found",
+                    )
+        except ImportError:
+            raise HTTPException(status_code=500, detail="Supabase sync not available")
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to fetch config: {str(e)}"
+            )
+
+    if not scraper_name:
+        raise HTTPException(status_code=400, detail="Could not determine scraper name")
+
+    # Check if a test is already running
+    if job_state.is_running:
+        raise HTTPException(status_code=409, detail="A scraping job is already running")
+
+    # Generate job ID
+    job_id = f"test_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+
+    # Start the job
+    stop_event = job_state.start_job(job_id)
+
+    # Initialize job state
+    job_state.set_totals(len(request.skus) if request.skus else 1)
+    job_state.add_active_scraper(scraper_name)
+
+    test_results: dict = {}
+    test_results_lock = threading.Lock()
+
+    def test_log_callback(msg: str):
+        job_state.add_log(msg)
+
+    def test_progress_callback(pct: int):
+        job_state.update_progress(pct)
+        job_state.increment_completed()
+
+    def test_scraper_progress_callback(data: dict):
+        worker_id = f"{data.get('scraper')}:{data.get('worker_id', 'Main')}"
+        job_state.update_worker(worker_id, data)
+        if data.get("status") == "completed":
+            job_state.remove_active_scraper(data.get("scraper", ""))
+
+    def collect_test_results(result: dict):
+        """Collect test results from the scraper execution."""
+        with test_results_lock:
+            # Extract test_details from the result
+            test_details = result.get("test_details", [])
+            scraper_stats = {
+                "scraper": result.get("scraper", scraper_name),
+                "success": result.get("success", 0),
+                "failed": result.get("failed", 0),
+                "processed": result.get("processed", 0),
+                "duration": result.get("duration", 0),
+                "test_details": test_details,
+            }
+            test_results["stats"] = scraper_stats
+            test_results["timestamp"] = datetime.now().isoformat()
+
+    async def run_test_job():
+        """Run the actual test in a thread pool."""
+        import asyncio
+        from concurrent.futures import ThreadPoolExecutor
+
+        loop = asyncio.get_event_loop()
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            try:
+                await loop.run_in_executor(
+                    executor,
+                    lambda: _execute_test_job(
+                        scraper_name=scraper_name,
+                        skus=request.skus,
+                        headless=request.headless,
+                        log_callback=test_log_callback,
+                        progress_callback=test_progress_callback,
+                        scraper_progress_callback=test_scraper_progress_callback,
+                        stop_event=stop_event,
+                        job_id=job_id,
+                        results_collector=collect_test_results,
+                    ),
+                )
+            except Exception as e:
+                job_state.add_error(str(e))
+            finally:
+                job_state.finish()
+
+    # Run test in background
+    background_tasks.add_task(run_test_job)
+
+    # Wait for test to complete (with timeout)
+    # For now, return immediately with the job ID so frontend can poll
+    return TestResponse(
+        status="started",
+        scraper_name=scraper_name,
+        success=False,  # Will be updated when test completes
+        summary={"total": 0, "success": 0, "no_results": 0, "failed": 0},
+        skus=[],
+        selectors={},
+        execution_time_seconds=0.0,
+        timestamp=datetime.now().isoformat(),
+        errors=[],
+    )
+
+
+def _execute_test_job(
+    scraper_name: str,
+    skus: list[str] | None,
+    headless: bool,
+    log_callback,
+    progress_callback,
+    scraper_progress_callback,
+    stop_event: threading.Event,
+    job_id: str,
+    results_collector,
+):
+    """Execute the actual test job (runs in thread pool)."""
+    import time
+    from datetime import datetime
+
+    start_time = time.time()
+
+    try:
+        from scraper_backend.api.debug_context import debug_context
+        from scraper_backend.scrapers.main import run_scraping
+        from scraper_backend.core.events import create_emitter
+
+        # Create event emitter
+        emitter = create_emitter(job_id)
+
+        # Start debug session
+        debug_context.start_session(job_id, debug_mode=False)
+        logger.info(f"Test mode enabled for job {job_id}")
+
+        # Run scraping in test mode
+        run_scraping(
+            selected_sites=[scraper_name],
+            skus=skus if skus else None,  # Will use test_skus from config if None
+            max_workers=1,
+            test_mode=True,
+            debug_mode=False,
+            log_callback=log_callback,
+            progress_callback=progress_callback,
+            scraper_progress_callback=scraper_progress_callback,
+            stop_event=stop_event,
+            event_emitter=emitter,
+            job_id=job_id,
+            debug_callback=None,
+        )
+
+        # End debug session
+        debug_context.end_session(job_id)
+
+    except Exception as e:
+        log_callback(f"Test failed: {e}")
+        logger.error(f"Test job failed: {e}")
+
+    execution_time = time.time() - start_time
+    logger.info(f"Test completed in {execution_time:.2f}s")
+
+
+@app.get("/test/{scraper_name}/results", response_model=TestResponse)
+async def get_test_results(
+    scraper_name: str,
+    job_id: str | None = Query(None, description="Specific job ID to get results for"),
+):
+    """Get test results for a scraper.
+
+    This endpoint retrieves the most recent test results from Supabase
+    where they are automatically saved when tests complete.
+    """
+    try:
+        from scraper_backend.core.database.supabase_sync import supabase_sync
+
+        if not supabase_sync.initialize():
+            raise HTTPException(status_code=503, detail="Supabase not available")
+
+        # Get the most recent test result for this scraper
+        # This comes from the scraper_health table where test results are stored
+        health = supabase_sync.get_scraper_health(scraper_name)
+
+        if not health:
+            raise HTTPException(
+                status_code=404,
+                detail=f"No test results found for scraper: {scraper_name}",
+            )
+
+        # Parse the health data to extract test results
+        last_tested = health.get("last_tested")
+        selectors_data = health.get("selectors", [])
+
+        # Build selector results from health data
+        selectors: dict[str, TestResultSelector] = {}
+        for sel in selectors_data:
+            selectors[sel["name"]] = TestResultSelector(
+                name=sel["name"],
+                status=sel.get("status", "unknown"),
+                success_count=sel.get("success_count", 0),
+                fail_count=sel.get("fail_count", 0),
+                last_value=sel.get("last_value"),
+            )
+
+        return TestResponse(
+            status="completed",
+            scraper_name=scraper_name,
+            success=health.get("status") == "healthy",
+            summary={
+                "total": health.get("test_skus_total", 0),
+                "success": health.get("test_skus_passed", 0),
+                "no_results": 0,  # Not stored separately in health
+                "failed": health.get("test_skus_total", 0)
+                - health.get("test_skus_passed", 0),
+            },
+            skus=[],  # SKU-level details not persisted in health, only summary
+            selectors=selectors,
+            execution_time_seconds=0.0,  # Not stored
+            timestamp=last_tested or datetime.now().isoformat(),
+            errors=[],
+        )
+
+    except ImportError:
+        raise HTTPException(status_code=500, detail="Supabase sync not available")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get test results: {str(e)}"
+        )
 
 
 # =============================================================================
@@ -543,7 +874,9 @@ async def list_event_types():
 
 @app.get("/debug/session")
 async def get_debug_session(
-    job_id: str | None = Query(None, description="Job ID (uses current if not specified)"),
+    job_id: str | None = Query(
+        None, description="Job ID (uses current if not specified)"
+    ),
 ):
     """Get debug session info."""
     from scraper_backend.api.debug_context import debug_context
@@ -556,7 +889,9 @@ async def get_debug_session(
 
 @app.get("/debug/page-source")
 async def get_debug_page_source(
-    job_id: str | None = Query(None, description="Job ID (uses current if not specified)"),
+    job_id: str | None = Query(
+        None, description="Job ID (uses current if not specified)"
+    ),
 ):
     """Get the current page source HTML from the debug context."""
     from scraper_backend.api.debug_context import debug_context
@@ -577,7 +912,9 @@ async def get_debug_page_source(
 
 @app.get("/debug/screenshot")
 async def get_debug_screenshot(
-    job_id: str | None = Query(None, description="Job ID (uses current if not specified)"),
+    job_id: str | None = Query(
+        None, description="Job ID (uses current if not specified)"
+    ),
 ):
     """Get the current browser screenshot (base64 encoded)."""
     from scraper_backend.api.debug_context import debug_context
@@ -598,7 +935,9 @@ async def get_debug_screenshot(
 
 @app.get("/debug/logs")
 async def get_debug_logs(
-    job_id: str | None = Query(None, description="Job ID (uses current if not specified)"),
+    job_id: str | None = Query(
+        None, description="Job ID (uses current if not specified)"
+    ),
     limit: int = Query(100, ge=1, le=500, description="Maximum logs to return"),
 ):
     """Get verbose debug logs from the current session."""
@@ -614,7 +953,9 @@ async def get_debug_logs(
 
 @app.get("/debug/snapshots")
 async def get_debug_snapshots(
-    job_id: str | None = Query(None, description="Job ID (uses current if not specified)"),
+    job_id: str | None = Query(
+        None, description="Job ID (uses current if not specified)"
+    ),
     sku: str | None = Query(None, description="Filter by SKU"),
     limit: int = Query(20, ge=1, le=100, description="Maximum snapshots to return"),
 ):
