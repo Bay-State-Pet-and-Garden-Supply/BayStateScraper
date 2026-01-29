@@ -117,13 +117,23 @@ class TestScraperAPIHandler:
         logger.info("Test message 1")
         logger.info("Test message 2")
 
-        # Wait for background thread
-        time.sleep(0.2)
-
-        # Buffer should have entries
+        # Check buffer BEFORE shipping thread can flush
+        # The shipping thread waits 60 seconds, so buffer should still have entries
         assert len(handler._buffer) == 2
         assert handler._buffer[0]["message"] == "Test message 1"
         assert handler._buffer[1]["message"] == "Test message 2"
+
+        # Verify that API would be called with these logs on flush
+        handler.flush()
+        time.sleep(0.1)  # Wait for async flush
+
+        # Verify post_logs was called with the buffered entries
+        mock_client.post_logs.assert_called_once()
+        args = mock_client.post_logs.call_args[0]
+        assert args[0] == "test-job"
+        assert len(args[1]) == 2
+        assert args[1][0]["message"] == "Test message 1"
+        assert args[1][1]["message"] == "Test message 2"
 
         handler.close()
 
@@ -149,14 +159,22 @@ class TestScraperAPIHandler:
             extra={"job_id": "job-456", "scraper_name": "amazon", "sku": "XYZ123", "step": "extract"},
         )
 
-        time.sleep(0.2)
-
+        # Check buffer BEFORE shipping thread can flush
         assert len(handler._buffer) == 1
         entry = handler._buffer[0]
         assert entry["job_id"] == "job-456"
         assert entry["scraper_name"] == "amazon"
         assert entry["sku"] == "XYZ123"
         assert entry["step"] == "extract"
+
+        # Verify API receives context fields
+        handler.flush()
+        time.sleep(0.1)
+
+        mock_client.post_logs.assert_called_once()
+        args = mock_client.post_logs.call_args[0]
+        assert args[1][0]["job_id"] == "job-456"
+        assert args[1][0]["scraper_name"] == "amazon"
 
         handler.close()
 
@@ -249,21 +267,40 @@ class TestSetupLogging:
 
         setup_logging(debug_mode=False)
 
-        # Capture output
-        stream = io.StringIO()
-        handler = logging.StreamHandler(stream)
-        handler.setFormatter(logging.Formatter("%(message)s"))
+        # Capture output from the root logger's handler (which uses JSONFormatter)
+        root = logging.getLogger()
 
-        logger = logging.getLogger("test_json")
-        logger.handlers = []  # Clear existing handlers
-        logger.addHandler(handler)
-        logger.setLevel(logging.INFO)
+        # Find the stream handler that was added by setup_logging
+        stream_handler = None
+        for handler in root.handlers:
+            if isinstance(handler, logging.StreamHandler) and hasattr(handler, "stream"):
+                if hasattr(handler.formatter, "__class__") and handler.formatter.__class__.__name__ == "JSONFormatter":
+                    stream_handler = handler
+                    break
 
-        logger.info("Test message")
+        assert stream_handler is not None, "JSONFormatter handler not found"
 
-        output = stream.getvalue()
-        # Should be valid JSON
-        parsed = json.loads(output.strip())
+        # Capture output using a custom stream
+        captured = io.StringIO()
+        old_stream = stream_handler.stream
+        try:
+            stream_handler.stream = captured
+
+            logger = logging.getLogger("test_json")
+            logger.handlers = []  # Clear existing handlers
+            logger.setLevel(logging.INFO)
+            logger.addHandler(stream_handler)  # Use the JSON handler
+
+            logger.info("Test message")
+
+            output = captured.getvalue()
+        finally:
+            stream_handler.stream = old_stream  # Restore original stream
+
+        # Should be valid JSON - take the last line (the actual test message)
+        lines = output.strip().split("\n")
+        last_line = lines[-1]
+        parsed = json.loads(last_line)
         assert parsed["message"] == "Test message"
 
 
