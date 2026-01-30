@@ -298,7 +298,6 @@ class ScraperAPIClient:
 
             job_data = data.get("job")
             if not job_data:
-                logger.debug("No pending jobs available")
                 return None
 
             # Parse scrapers from response
@@ -332,7 +331,6 @@ class ScraperAPIClient:
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 404:
                 # 404 means no jobs available - not an error
-                logger.debug("No pending jobs (404)")
                 return None
             logger.error(f"Failed to poll for work: {e.response.status_code} - {e.response.text}")
             return None

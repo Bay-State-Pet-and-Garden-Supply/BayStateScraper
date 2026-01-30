@@ -11,9 +11,12 @@ Key behaviors:
 - Fetches credentials on-demand from coordinator (never stored locally)
 - Recycles browser after MAX_JOBS_BEFORE_RESTART to prevent memory leaks
 - Graceful shutdown on SIGTERM/SIGINT
+- Optional SINGLE_JOB_MODE to exit after processing one job (useful for batch runs)
 
 Usage:
-    python daemon.py
+    python daemon.py                              # Run continuously
+    python daemon.py --run-once                   # Process one job then exit
+    SINGLE_JOB_MODE=1 python daemon.py            # Exit after one job via env var
 
 Environment Variables:
     SCRAPER_API_URL: Base URL for BayStateApp API (required)
@@ -21,10 +24,12 @@ Environment Variables:
     RUNNER_NAME: Identifier for this runner (defaults to hostname)
     POLL_INTERVAL: Seconds between polls when idle (default: 30)
     MAX_JOBS_BEFORE_RESTART: Recycle after N jobs to prevent leaks (default: 100)
+    SINGLE_JOB_MODE: If set to "1", exit after processing one job
 """
 
 from __future__ import annotations
 
+import argparse
 import logging
 import os
 import platform
@@ -47,6 +52,7 @@ from utils.logger import NoHttpFilter, setup_logging
 POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "30"))
 MAX_JOBS_BEFORE_RESTART = int(os.environ.get("MAX_JOBS_BEFORE_RESTART", "100"))
 HEARTBEAT_INTERVAL = 60  # Send heartbeat every 60 seconds when idle
+SINGLE_JOB_MODE = os.environ.get("SINGLE_JOB_MODE", "").lower() in ("1", "true", "yes")
 
 # Setup logging
 setup_logging(debug_mode=False)
@@ -102,6 +108,19 @@ def main():
     signal.signal(signal.SIGTERM, signal_handler)
     signal.signal(signal.SIGINT, signal_handler)
 
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="Bay State Scraper Daemon")
+    parser.add_argument(
+        "--run-once",
+        action="store_true",
+        help="Process one job then exit (useful for batch runs)",
+    )
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    args = parser.parse_args()
+
+    # Combine environment variable and CLI argument for single job mode
+    run_once = args.run_once or SINGLE_JOB_MODE
+
     # Initialize API client
     client = ScraperAPIClient()
 
@@ -123,6 +142,7 @@ def main():
     logger.info(f"Platform: {platform.system()} {platform.release()}")
     logger.info(f"Poll Interval: {POLL_INTERVAL}s")
     logger.info(f"Max Jobs Before Restart: {MAX_JOBS_BEFORE_RESTART}")
+    logger.info(f"Run Once Mode: {run_once}")
     logger.info("=" * 60)
 
     # Set up API log handler (job_id will be updated per-job)
@@ -177,6 +197,11 @@ def main():
                     jobs_completed += 1
                     logger.info(f"[Job {job.job_id}] Completed in {elapsed:.1f}s - {results.get('skus_processed', 0)} SKUs processed")
 
+                    # Exit after one job if run-once mode is enabled
+                    if run_once:
+                        logger.info("Run-once mode: exiting after completing one job")
+                        return
+
                 except Exception as e:
                     logger.exception(f"[Job {job.job_id}] Failed with error")
                     client.submit_results(
@@ -184,13 +209,23 @@ def main():
                         "failed",
                         error_message=str(e),
                     )
+                    # In run-once mode, exit even on failure
+                    if run_once:
+                        logger.info("Run-once mode: exiting after job failure")
+                        return
                 finally:
                     # Flush logs to API before moving to next job
                     if api_handler:
                         api_handler.flush()
 
             else:
-                # No work available - send heartbeat if interval elapsed
+                # No work available
+                # In run-once mode, exit if no work is available (job batch is complete)
+                if run_once:
+                    logger.info("Run-once mode: no pending jobs, exiting")
+                    break
+
+                # Send heartbeat if interval elapsed
                 now = time.time()
                 if now - last_heartbeat >= HEARTBEAT_INTERVAL:
                     client.heartbeat()
