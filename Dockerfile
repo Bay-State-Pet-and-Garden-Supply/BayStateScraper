@@ -14,7 +14,7 @@
 #     baystate-scraper:latest \
 #     python runner.py --job-id <uuid>
 
-FROM mcr.microsoft.com/playwright/python:v1.57.0-jammy
+FROM mcr.microsoft.com/playwright/python:v1.58.0-jammy
 
 WORKDIR /app
 
