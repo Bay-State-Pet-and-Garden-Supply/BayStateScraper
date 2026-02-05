@@ -478,8 +478,9 @@ class ScraperAPIClient:
             self._make_request("POST", "/api/scraper/v1/logs", payload=payload)
             return True
 
-        except Exception:
-            # Allow exception to bubble up to the handler
+        except (httpx.HTTPError, AuthenticationError) as e:
+            # Specific HTTP and authentication exceptions from _make_request
+            logger.exception(f"Failed to send logs for job {job_id}")
             raise
 
     def get_credentials(self, scraper_name: str) -> dict[str, str] | None:
