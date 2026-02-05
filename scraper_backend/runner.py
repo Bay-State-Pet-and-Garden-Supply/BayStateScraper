@@ -17,10 +17,15 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import logging
 import os
+import re
 import sys
+import uuid
 from datetime import datetime
+from logging import LogRecord
+from typing import Any
 
 # Ensure project root is in path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +46,168 @@ from scraper_backend.scrapers.result_collector import ResultCollector
 
 logger = logging.getLogger(__name__)
 
+# =============================================================================
+# Structured Logging Classes
+# =============================================================================
+
+
+class SensitiveDataFilter(logging.Filter):
+    """
+    Log filter that redacts sensitive data from log records.
+
+    Sensitive patterns include:
+    - API keys (bsr_*, X-API-Key headers)
+    - Passwords
+    - Tokens
+    - Authorization headers
+    """
+
+    # Patterns that match sensitive data
+    SENSITIVE_PATTERNS = [
+        (r"bsr_[a-zA-Z0-9]{32,}", "[API_KEY_REDACTED]"),
+        (r'X-API-Key["\']?\s*[:=]\s*["\']?[a-zA-Z0-9_-]+', "[API_KEY_REDACTED]"),
+        (r'["\']?password["\']?\s*[:=]\s*["\']?[^\s"\']+', "[PASSWORD_REDACTED]"),
+        (r"Bearer\s+[a-zA-Z0-9_\-\.]+", "[TOKEN_REDACTED]"),
+        (r'Authorization["\']?\s*[:=]\s*["\']?[^\s"\']+', "[AUTH_REDACTED]"),
+    ]
+
+    def filter(self, record: LogRecord) -> bool:
+        """Redact sensitive data from log message and extra fields."""
+        # Redact from message
+        record.msg = self._redact(str(record.msg))
+
+        # Redact from args (formatted message arguments)
+        if record.args:
+            record.args = tuple(self._redact(str(arg)) if isinstance(arg, (str, bytes)) else arg for arg in record.args)
+
+        # Redact from extra fields that will be included in JSON
+        if hasattr(record, "job_id"):
+            record.job_id = self._redact(str(record.job_id)) if record.job_id else None
+        if hasattr(record, "scraper_name"):
+            record.scraper_name = self._redact(str(record.scraper_name)) if record.scraper_name else None
+        if hasattr(record, "trace_id"):
+            record.trace_id = self._redact(str(record.trace_id)) if record.trace_id else None
+
+        return True
+
+    def _redact(self, text: str) -> str:
+        """Apply all redaction patterns to text."""
+        result = text
+        for pattern, replacement in self.SENSITIVE_PATTERNS:
+            result = re.sub(pattern, replacement, result, flags=re.IGNORECASE)
+        return result
+
+
+class JSONFormatter(logging.Formatter):
+    """
+    JSON formatter for structured log output.
+
+    Outputs logs as JSON objects with consistent fields:
+    - timestamp: ISO format timestamp
+    - level: Log level (INFO, ERROR, etc.)
+    - logger: Logger name
+    - message: Log message
+    - job_id: Job context (if available)
+    - scraper_name: Scraper context (if available)
+    - trace_id: Trace ID for debugging (if available)
+    - module: Module name
+    - function: Function name
+    - line: Line number
+    """
+
+    def format(self, record: LogRecord) -> str:
+        """Format log record as JSON string."""
+        log_data: dict[str, Any] = {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+            "module": record.module,
+            "function": record.funcName,
+            "line": record.lineno,
+        }
+
+        # Add context fields if present
+        if hasattr(record, "job_id") and record.job_id:
+            log_data["job_id"] = record.job_id
+        if hasattr(record, "scraper_name") and record.scraper_name:
+            log_data["scraper_name"] = record.scraper_name
+        if hasattr(record, "trace_id") and record.trace_id:
+            log_data["trace_id"] = record.trace_id
+
+        # Add exception info if present
+        if record.exc_info:
+            log_data["exception"] = self.formatException(record.exc_info)
+
+        # Add extra fields
+        for key, value in record.__dict__.items():
+            if key not in (
+                "name",
+                "msg",
+                "args",
+                "created",
+                "filename",
+                "funcName",
+                "levelname",
+                "levelno",
+                "lineno",
+                "module",
+                "msecs",
+                "pathname",
+                "process",
+                "processName",
+                "relativeCreated",
+                "stack_info",
+                "exc_info",
+                "exc_text",
+                "thread",
+                "message",
+                "job_id",
+                "scraper_name",
+                "trace_id",
+            ):
+                try:
+                    # Only include JSON-serializable values
+                    json.dumps(value)
+                    log_data[key] = value
+                except (TypeError, ValueError):
+                    pass
+
+        return json.dumps(log_data)
+
+
+def generate_trace_id() -> str:
+    """Generate a unique trace ID for request tracking."""
+    return str(uuid.uuid4())[:8]
+
+
+def setup_structured_logging(debug: bool = False) -> None:
+    """
+    Configure structured logging with JSON output and sensitive data redaction.
+
+    Args:
+        debug: Enable debug logging level
+    """
+    log_level = logging.DEBUG if debug else logging.INFO
+
+    # Create JSON formatter
+    json_formatter = JSONFormatter()
+
+    # Create console handler
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(json_formatter)
+    handler.addFilter(SensitiveDataFilter())
+
+    # Configure root logger
+    root_logger = logging.getLogger()
+    root_logger.handlers.clear()
+    root_logger.addHandler(handler)
+    root_logger.setLevel(log_level)
+
+    # Also configure our module logger
+    module_logger = logging.getLogger(__name__)
+    module_logger.setLevel(log_level)
+
 
 def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
     """
@@ -54,6 +221,7 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
         Dictionary with results to send back to the callback
     """
     job_id = job_config.job_id
+    job_trace_id = generate_trace_id()
     emitter = create_emitter(job_id)
     parser = ScraperConfigParser()
     collector = ResultCollector(test_mode=job_config.test_mode)
@@ -64,9 +232,19 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
         "data": {},
     }
 
-    logger.info(f"[Runner] Starting job {job_id}")
-    logger.info(f"[Runner] SKUs: {len(job_config.skus)}, Scrapers: {len(job_config.scrapers)}")
-    logger.info(f"[Runner] Test mode: {job_config.test_mode}, Max workers: {job_config.max_workers}")
+    logger.info(
+        f"[Runner] Starting job {job_id}",
+        extra={
+            "job_id": job_id,
+            "trace_id": job_trace_id,
+            "sku_count": len(job_config.skus),
+            "scraper_count": len(job_config.scrapers),
+            "test_mode": job_config.test_mode,
+            "max_workers": job_config.max_workers,
+        },
+    )
+    logger.info(f"[Runner] SKUs: {len(job_config.skus)}, Scrapers: {len(job_config.scrapers)}", extra={"job_id": job_id, "trace_id": job_trace_id})
+    logger.info(f"[Runner] Test mode: {job_config.test_mode}, Max workers: {job_config.max_workers}", extra={"job_id": job_id, "trace_id": job_trace_id})
 
     # Parse scraper configs into internal format
     configs = []
@@ -83,12 +261,29 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
             }
             config = parser.load_from_dict(config_dict)
             configs.append(config)
-            logger.info(f"[Runner] Loaded scraper config: {config.name}")
+            logger.info(f"[Runner] Loaded scraper config: {config.name}", extra={"job_id": job_id, "trace_id": job_trace_id, "scraper_name": config.name})
         except Exception as e:
-            logger.error(f"[Runner] Failed to parse config for {scraper_cfg.name}: {e}")
+            logger.error(
+                f"[Runner] Failed to parse config for {scraper_cfg.name}: {e}",
+                extra={
+                    "job_id": job_id,
+                    "trace_id": job_trace_id,
+                    "scraper_name": scraper_cfg.name,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e),
+                },
+            )
 
     if not configs:
-        logger.error("[Runner] No valid scraper configurations")
+        logger.error(
+            "[Runner] No valid scraper configurations",
+            extra={
+                "job_id": job_id,
+                "trace_id": job_trace_id,
+                "error_type": "ConfigurationError",
+                "scraper_count": len(job_config.scrapers),
+            },
+        )
         return results
 
     # Determine SKUs to process
@@ -99,15 +294,24 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
             if hasattr(config, "test_skus") and config.test_skus:
                 skus.extend(config.test_skus)
         skus = list(set(skus))  # Deduplicate
-        logger.info(f"[Runner] Test mode: using {len(skus)} test SKUs from configs")
+        logger.info(f"[Runner] Test mode: using {len(skus)} test SKUs from configs", extra={"job_id": job_id, "trace_id": job_trace_id, "sku_count": len(skus)})
 
     if not skus:
-        logger.warning("[Runner] No SKUs to process")
+        logger.warning("[Runner] No SKUs to process", extra={"job_id": job_id, "trace_id": job_trace_id})
         return results
 
     # Run scraping for each config
     for config in configs:
-        logger.info(f"[Runner] Running scraper: {config.name}")
+        scraper_trace_id = generate_trace_id()
+        logger.info(
+            f"[Runner] Running scraper: {config.name}",
+            extra={
+                "job_id": job_id,
+                "trace_id": job_trace_id,
+                "scraper_name": config.name,
+                "scraper_trace_id": scraper_trace_id,
+            },
+        )
         results["scrapers_run"].append(config.name)
 
         executor = None
@@ -152,17 +356,69 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
                             # Also add to collector for JSON output
                             collector.add_result(sku, config.name, extracted_data)
 
-                            logger.info(f"[Runner] {config.name}/{sku}: Found data")
+                            logger.info(
+                                f"[Runner] {config.name}/{sku}: Found data",
+                                extra={
+                                    "job_id": job_id,
+                                    "trace_id": job_trace_id,
+                                    "scraper_name": config.name,
+                                    "scraper_trace_id": scraper_trace_id,
+                                    "sku": sku,
+                                    "status": "success",
+                                },
+                            )
                         else:
-                            logger.info(f"[Runner] {config.name}/{sku}: No data found")
+                            logger.info(
+                                f"[Runner] {config.name}/{sku}: No data found",
+                                extra={
+                                    "job_id": job_id,
+                                    "trace_id": job_trace_id,
+                                    "scraper_name": config.name,
+                                    "scraper_trace_id": scraper_trace_id,
+                                    "sku": sku,
+                                    "status": "no_data",
+                                },
+                            )
                     else:
-                        logger.warning(f"[Runner] {config.name}/{sku}: Workflow failed")
+                        logger.warning(
+                            f"[Runner] {config.name}/{sku}: Workflow failed",
+                            extra={
+                                "job_id": job_id,
+                                "trace_id": job_trace_id,
+                                "scraper_name": config.name,
+                                "scraper_trace_id": scraper_trace_id,
+                                "sku": sku,
+                                "status": "workflow_failed",
+                            },
+                        )
 
                 except Exception as e:
-                    logger.error(f"[Runner] {config.name}/{sku}: Error - {e}")
+                    logger.error(
+                        f"[Runner] {config.name}/{sku}: Error - {e}",
+                        extra={
+                            "job_id": job_id,
+                            "trace_id": job_trace_id,
+                            "scraper_name": config.name,
+                            "scraper_trace_id": scraper_trace_id,
+                            "sku": sku,
+                            "error_type": type(e).__name__,
+                            "error_message": str(e),
+                        },
+                        exc_info=True,
+                    )
 
         except Exception as e:
-            logger.error(f"[Runner] Failed to initialize {config.name}: {e}")
+            logger.error(
+                f"[Runner] Failed to initialize {config.name}: {e}",
+                extra={
+                    "job_id": job_id,
+                    "trace_id": job_trace_id,
+                    "scraper_name": config.name,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e),
+                },
+                exc_info=True,
+            )
         finally:
             if executor and hasattr(executor, "browser") and executor.browser:
                 try:
@@ -170,7 +426,15 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
                 except Exception:
                     pass
 
-    logger.info(f"[Runner] Job complete. Processed {results['skus_processed']} SKUs")
+    logger.info(
+        f"[Runner] Job complete. Processed {results['skus_processed']} SKUs",
+        extra={
+            "job_id": job_id,
+            "trace_id": job_trace_id,
+            "skus_processed": results["skus_processed"],
+            "scrapers_run": results["scrapers_run"],
+        },
+    )
     return results
 
 
@@ -189,12 +453,8 @@ def main():
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
 
-    # Configure logging
-    log_level = logging.DEBUG if args.debug else logging.INFO
-    logging.basicConfig(
-        level=log_level,
-        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    )
+    # Configure structured logging
+    setup_structured_logging(debug=args.debug)
 
     # Initialize API client
     api_url = args.api_url or os.environ.get("SCRAPER_API_URL")
@@ -225,14 +485,23 @@ def main():
 
 def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> None:
     """Legacy mode: process all SKUs in a single job."""
-    logger.info(f"[Full Mode] Starting job {job_id}")
-    logger.info(f"[Full Mode] Runner: {runner_name}, API: {client.api_url}")
-    logger.info(f"[Full Mode] Fetching job config for {job_id}...")
+    mode_trace_id = generate_trace_id()
+    logger.info(f"[Full Mode] Starting job {job_id}", extra={"job_id": job_id, "trace_id": mode_trace_id, "runner_name": runner_name})
+    logger.info(f"[Full Mode] Runner: {runner_name}, API: {client.api_url}", extra={"job_id": job_id, "trace_id": mode_trace_id, "runner_name": runner_name})
+    logger.info(f"[Full Mode] Fetching job config for {job_id}...", extra={"job_id": job_id, "trace_id": mode_trace_id})
     client.update_status(job_id, "running", runner_name=runner_name)
 
     job_config = client.get_job_config(job_id)
     if not job_config:
-        logger.error("Failed to fetch job config")
+        logger.error(
+            "Failed to fetch job config",
+            extra={
+                "job_id": job_id,
+                "trace_id": mode_trace_id,
+                "runner_name": runner_name,
+                "error_type": "ConfigFetchError",
+            },
+        )
         client.submit_results(
             job_id,
             "failed",
@@ -255,7 +524,17 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
         print(json.dumps(results, indent=2))
 
     except ConfigValidationError as e:
-        logger.error(f"[Full Mode] Config validation failed: {e.message} (slug={e.config_slug}, schema_version={e.schema_version})")
+        logger.error(
+            f"[Full Mode] Config validation failed: {e.message} (slug={e.config_slug}, schema_version={e.schema_version})",
+            extra={
+                "job_id": job_id,
+                "trace_id": mode_trace_id,
+                "runner_name": runner_name,
+                "error_type": "ConfigValidationError",
+                "config_slug": e.config_slug,
+                "schema_version": e.schema_version,
+            },
+        )
         client.submit_results(
             job_id,
             "failed",
@@ -264,7 +543,16 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
         )
         sys.exit(1)
     except ConfigFetchError as e:
-        logger.error(f"[Full Mode] Config fetch failed: {e} (slug={getattr(e, 'config_slug', None)})")
+        logger.error(
+            f"[Full Mode] Config fetch failed: {e} (slug={getattr(e, 'config_slug', None)})",
+            extra={
+                "job_id": job_id,
+                "trace_id": mode_trace_id,
+                "runner_name": runner_name,
+                "error_type": "ConfigFetchError",
+                "config_slug": getattr(e, "config_slug", None),
+            },
+        )
         client.submit_results(
             job_id,
             "failed",
@@ -273,7 +561,15 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
         )
         sys.exit(1)
     except Exception as e:
-        logger.exception("Job failed with error")
+        logger.exception(
+            "Job failed with error",
+            extra={
+                "job_id": job_id,
+                "trace_id": mode_trace_id,
+                "runner_name": runner_name,
+                "error_type": type(e).__name__,
+            },
+        )
         client.submit_results(
             job_id,
             "failed",
@@ -285,7 +581,8 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
 
 def run_chunk_worker_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> None:
     """Chunk worker mode: claim and process chunks until none remain."""
-    logger.info(f"[Chunk Worker] Starting for job {job_id}")
+    chunk_trace_id = generate_trace_id()
+    logger.info(f"[Chunk Worker] Starting for job {job_id}", extra={"job_id": job_id, "trace_id": chunk_trace_id, "runner_name": runner_name})
 
     chunks_processed = 0
     total_skus_processed = 0
@@ -296,15 +593,34 @@ def run_chunk_worker_mode(client: ScraperAPIClient, job_id: str, runner_name: st
         chunk = client.claim_chunk(job_id, runner_name)
 
         if not chunk:
-            logger.info(f"[Chunk Worker] No more chunks. Processed {chunks_processed} chunks, {total_skus_processed} SKUs")
+            logger.info(
+                f"[Chunk Worker] No more chunks. Processed {chunks_processed} chunks, {total_skus_processed} SKUs",
+                extra={
+                    "job_id": job_id,
+                    "trace_id": chunk_trace_id,
+                    "chunks_processed": chunks_processed,
+                    "total_skus_processed": total_skus_processed,
+                },
+            )
             break
 
         chunk_id = chunk["chunk_id"]
         chunk_index = chunk["chunk_index"]
         skus = chunk.get("skus", [])
         scrapers_filter = chunk.get("scrapers", [])
+        chunk_worker_trace_id = generate_trace_id()
 
-        logger.info(f"[Chunk Worker] Processing chunk {chunk_index} with {len(skus)} SKUs")
+        logger.info(
+            f"[Chunk Worker] Processing chunk {chunk_index} with {len(skus)} SKUs",
+            extra={
+                "job_id": job_id,
+                "trace_id": chunk_trace_id,
+                "chunk_id": chunk_id,
+                "chunk_index": chunk_index,
+                "sku_count": len(skus),
+                "scrapers_filter": scrapers_filter,
+            },
+        )
 
         try:
             job_config = client.get_job_config(job_id)
@@ -331,14 +647,43 @@ def run_chunk_worker_mode(client: ScraperAPIClient, job_id: str, runner_name: st
             total_successful += chunk_results["skus_successful"]
             total_failed += chunk_results["skus_failed"]
 
-            logger.info(f"[Chunk Worker] Completed chunk {chunk_index}: {chunk_results['skus_successful']}/{chunk_results['skus_processed']} successful")
+            logger.info(
+                f"[Chunk Worker] Completed chunk {chunk_index}: {chunk_results['skus_successful']}/{chunk_results['skus_processed']} successful",
+                extra={
+                    "job_id": job_id,
+                    "trace_id": chunk_trace_id,
+                    "chunk_id": chunk_id,
+                    "chunk_index": chunk_index,
+                    "skus_successful": chunk_results["skus_successful"],
+                    "skus_processed": chunk_results["skus_processed"],
+                },
+            )
 
         except Exception as e:
-            logger.exception(f"[Chunk Worker] Chunk {chunk_index} failed")
+            logger.exception(
+                f"[Chunk Worker] Chunk {chunk_index} failed",
+                extra={
+                    "job_id": job_id,
+                    "trace_id": chunk_trace_id,
+                    "chunk_id": chunk_id,
+                    "chunk_index": chunk_index,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e),
+                },
+            )
             client.submit_chunk_results(chunk_id, "failed", error_message=str(e))
             chunks_processed += 1
 
-    logger.info(f"[Chunk Worker] Finished. Total: {chunks_processed} chunks, {total_successful}/{total_skus_processed} successful")
+    logger.info(
+        f"[Chunk Worker] Finished. Total: {chunks_processed} chunks, {total_successful}/{total_skus_processed} successful",
+        extra={
+            "job_id": job_id,
+            "trace_id": chunk_trace_id,
+            "chunks_processed": chunks_processed,
+            "total_successful": total_successful,
+            "total_skus_processed": total_skus_processed,
+        },
+    )
 
 
 async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
@@ -359,33 +704,40 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
     """
     realtime_key = os.environ.get("BSR_SUPABASE_REALTIME_KEY")
     if not realtime_key:
-        logger.error("[Realtime Runner] BSR_SUPABASE_REALTIME_KEY not set")
+        logger.error("[Realtime Runner] BSR_SUPABASE_REALTIME_KEY not set", extra={"runner_name": runner_name})
         return
 
     supabase_url = os.environ.get("SUPABASE_URL")
     if not supabase_url:
-        logger.error("[Realtime Runner] SUPABASE_URL not set")
+        logger.error("[Realtime Runner] SUPABASE_URL not set", extra={"runner_name": runner_name})
         return
 
-    logger.info(f"[Realtime Runner] Starting with runner name: {runner_name}")
+    realtime_trace_id = generate_trace_id()
+    logger.info(
+        f"[Realtime Runner] Starting with runner name: {runner_name}",
+        extra={
+            "runner_name": runner_name,
+            "trace_id": realtime_trace_id,
+        },
+    )
 
     # Initialize RealtimeManager and connect
     rm = RealtimeManager(supabase_url, realtime_key, runner_name)
 
     connected = await rm.connect()
     if not connected:
-        logger.error("[Realtime Runner] Failed to connect to Supabase Realtime")
+        logger.error("[Realtime Runner] Failed to connect to Supabase Realtime", extra={"runner_name": runner_name, "trace_id": realtime_trace_id})
         return
 
     # Enable presence tracking
     presence_enabled = await rm.enable_presence()
     if not presence_enabled:
-        logger.warning("[Realtime Runner] Failed to enable presence tracking")
+        logger.warning("[Realtime Runner] Failed to enable presence tracking", extra={"runner_name": runner_name, "trace_id": realtime_trace_id})
 
     # Enable broadcast channels
     broadcast_enabled = await rm.enable_broadcast()
     if not broadcast_enabled:
-        logger.warning("[Realtime Runner] Failed to enable broadcast channels")
+        logger.warning("[Realtime Runner] Failed to enable broadcast channels", extra={"runner_name": runner_name, "trace_id": realtime_trace_id})
 
     # Broadcast runner startup
     if rm._connected:
@@ -398,10 +750,19 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
         """Handle incoming job from Supabase Realtime."""
         job_id = job_data.get("job_id")
         if not job_id:
-            logger.warning("[Realtime Runner] Received job without job_id")
+            logger.warning("[Realtime Runner] Received job without job_id", extra={"runner_name": runner_name, "trace_id": realtime_trace_id})
             return
 
-        logger.info(f"[Realtime Runner] Received job: {job_id}")
+        job_trace_id = generate_trace_id()
+        logger.info(
+            f"[Realtime Runner] Received job: {job_id}",
+            extra={
+                "job_id": job_id,
+                "runner_name": runner_name,
+                "trace_id": realtime_trace_id,
+                "job_trace_id": job_trace_id,
+            },
+        )
 
         # Broadcast job started
         if rm._connected:
@@ -433,7 +794,16 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
             # Fetch job configuration
             job_config = client.get_job_config(job_id)
             if not job_config:
-                logger.error(f"[Realtime Runner] Failed to fetch config for job {job_id}")
+                logger.error(
+                    f"[Realtime Runner] Failed to fetch config for job {job_id}",
+                    extra={
+                        "job_id": job_id,
+                        "runner_name": runner_name,
+                        "trace_id": realtime_trace_id,
+                        "job_trace_id": job_trace_id,
+                        "error_type": "ConfigFetchError",
+                    },
+                )
                 if rm._connected:
                     await rm.broadcast_job_progress(
                         job_id=job_id,
@@ -495,10 +865,30 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
                 runner_name=runner_name,
                 results=results,
             )
-            logger.info(f"[Realtime Runner] Job {job_id} completed successfully")
+            logger.info(
+                f"[Realtime Runner] Job {job_id} completed successfully",
+                extra={
+                    "job_id": job_id,
+                    "runner_name": runner_name,
+                    "trace_id": realtime_trace_id,
+                    "job_trace_id": job_trace_id,
+                    "status": "completed",
+                },
+            )
 
         except ConfigValidationError as e:
-            logger.error(f"[Realtime Runner] Config validation failed for job {job_id}: {e.message}")
+            logger.error(
+                f"[Realtime Runner] Config validation failed for job {job_id}: {e.message}",
+                extra={
+                    "job_id": job_id,
+                    "runner_name": runner_name,
+                    "trace_id": realtime_trace_id,
+                    "job_trace_id": job_trace_id,
+                    "error_type": "ConfigValidationError",
+                    "config_slug": e.config_slug,
+                    "schema_version": e.schema_version,
+                },
+            )
             if rm._connected:
                 await rm.broadcast_job_progress(
                     job_id=job_id,
@@ -518,7 +908,17 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
                 error_message=f"Config validation failed: {e.message}",
             )
         except ConfigFetchError as e:
-            logger.error(f"[Realtime Runner] Config fetch failed for job {job_id}: {e}")
+            logger.error(
+                f"[Realtime Runner] Config fetch failed for job {job_id}: {e}",
+                extra={
+                    "job_id": job_id,
+                    "runner_name": runner_name,
+                    "trace_id": realtime_trace_id,
+                    "job_trace_id": job_trace_id,
+                    "error_type": "ConfigFetchError",
+                    "config_slug": getattr(e, "config_slug", None),
+                },
+            )
             if rm._connected:
                 await rm.broadcast_job_progress(
                     job_id=job_id,
@@ -538,7 +938,16 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
                 error_message=f"Config fetch failed: {e}",
             )
         except Exception as e:
-            logger.exception(f"[Realtime Runner] Job {job_id} failed with error")
+            logger.exception(
+                f"[Realtime Runner] Job {job_id} failed with error",
+                extra={
+                    "job_id": job_id,
+                    "runner_name": runner_name,
+                    "trace_id": realtime_trace_id,
+                    "job_trace_id": job_trace_id,
+                    "error_type": type(e).__name__,
+                },
+            )
             if rm._connected:
                 await rm.broadcast_job_progress(
                     job_id=job_id,
@@ -560,13 +969,13 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
 
     await rm.subscribe_to_jobs(on_job)
 
-    logger.info("[Realtime Runner] Waiting for jobs... Press Ctrl+C to stop")
+    logger.info("[Realtime Runner] Waiting for jobs... Press Ctrl+C to stop", extra={"runner_name": runner_name, "trace_id": realtime_trace_id})
 
     try:
         # Keep running until interrupted
         await asyncio.Future()
     except KeyboardInterrupt:
-        logger.info("[Realtime Runner] Interrupted, shutting down...")
+        logger.info("[Realtime Runner] Interrupted, shutting down...", extra={"runner_name": runner_name, "trace_id": realtime_trace_id})
     finally:
         # Broadcast shutdown
         if rm._connected:
@@ -575,7 +984,7 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
                 details={"message": "Runner shutting down"},
             )
         await rm.disconnect()
-        logger.info("[Realtime Runner] Disconnected")
+        logger.info("[Realtime Runner] Disconnected", extra={"runner_name": runner_name, "trace_id": realtime_trace_id})
 
 
 if __name__ == "__main__":
