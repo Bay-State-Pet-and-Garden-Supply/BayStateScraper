@@ -10,12 +10,18 @@ from __future__ import annotations
 import json
 import logging
 import os
+import time
 from dataclasses import dataclass
 from typing import Any
 
 import httpx
 
 logger = logging.getLogger(__name__)
+
+# Retry configuration constants
+DEFAULT_MAX_RETRIES = 3
+RETRY_BACKOFF_MULTIPLIER = 2  # Exponential backoff: 1s, 2s, 4s, 8s
+RETRY_INITIAL_DELAY = 1.0  # Initial delay in seconds
 
 
 @dataclass
@@ -48,6 +54,37 @@ class AuthenticationError(Exception):
     pass
 
 
+def _is_retryable_error(status_code: int | None, exception: Exception) -> bool:
+    """
+    Determine if an error is retryable based on HTTP status code and exception type.
+
+    Args:
+        status_code: HTTP status code (None if no response received)
+        exception: The exception that was raised
+
+    Returns:
+        True if the error should be retried, False otherwise
+    """
+    # Network errors, timeouts, and connection issues are retryable
+    if isinstance(exception, (httpx.NetworkError, httpx.TimeoutException)):
+        return True
+
+    # 5xx server errors are retryable
+    if status_code is not None and 500 <= status_code < 600:
+        return True
+
+    # 429 Too Many Requests (rate limiting) is retryable
+    if status_code == 429:
+        return True
+
+    # 4xx client errors are NOT retryable (except 401 which is handled separately)
+    if status_code is not None and 400 <= status_code < 500:
+        return False
+
+    # For any other case, be conservative and allow retry
+    return True
+
+
 class ScraperAPIClient:
     """
     HTTP client for communicating with the BayStateApp coordinator API.
@@ -57,6 +94,7 @@ class ScraperAPIClient:
     - Fetching job configurations and scraper configs
     - Submitting scrape results
     - Status updates and heartbeats
+    - Retry logic with exponential backoff for transient failures
     """
 
     def __init__(
@@ -65,11 +103,13 @@ class ScraperAPIClient:
         api_key: str | None = None,
         runner_name: str | None = None,
         timeout: float = 30.0,
+        max_retries: int | None = None,
     ):
         self.api_url = api_url or os.environ.get("SCRAPER_API_URL", "")
         self.api_key = api_key or os.environ.get("SCRAPER_API_KEY", "")
         self.runner_name = runner_name or os.environ.get("RUNNER_NAME", "unknown-runner")
         self.timeout = timeout
+        self.max_retries = max_retries if max_retries is not None else int(os.environ.get("SCRAPER_API_MAX_RETRIES", str(DEFAULT_MAX_RETRIES)))
 
         if not self.api_url:
             logger.warning("SCRAPER_API_URL not configured")
@@ -92,21 +132,69 @@ class ScraperAPIClient:
         endpoint: str,
         payload: str | None = None,
     ) -> dict[str, Any]:
-        """Make an authenticated HTTP request."""
+        """
+        Make an authenticated HTTP request with retry logic and exponential backoff.
+
+        Retries on transient failures (network errors, timeouts, 5xx errors).
+        Fails immediately on non-retryable errors (4xx client errors, auth failures).
+        """
         url = f"{self.api_url.rstrip('/')}{endpoint}"
         headers = self._get_headers()
 
-        with httpx.Client(timeout=self.timeout) as client:
-            if method.upper() == "GET":
-                response = client.get(url, headers=headers)
-            else:
-                response = client.post(url, headers=headers, content=payload)
+        last_exception: Exception | None = None
+        delay = RETRY_INITIAL_DELAY
 
-            if response.status_code == 401:
-                raise AuthenticationError("Invalid API key")
+        for attempt in range(self.max_retries + 1):
+            try:
+                with httpx.Client(timeout=self.timeout) as client:
+                    if method.upper() == "GET":
+                        response = client.get(url, headers=headers)
+                    else:
+                        response = client.post(url, headers=headers, content=payload)
 
-            response.raise_for_status()
-            return response.json()
+                    # Authentication failure - not retryable
+                    if response.status_code == 401:
+                        raise AuthenticationError("Invalid API key")
+
+                    # Raise for status on HTTP errors
+                    response.raise_for_status()
+                    return response.json()
+
+            except httpx.HTTPStatusError as e:
+                status_code = e.response.status_code
+                is_retryable = _is_retryable_error(status_code, e)
+
+                if not is_retryable or attempt >= self.max_retries:
+                    # Non-retryable error or max retries exceeded
+                    raise
+
+                last_exception = e
+                logger.warning(
+                    f"API request failed (attempt {attempt + 1}/{self.max_retries + 1}): {status_code} - {e.response.text[:200]}. Retrying in {delay:.1f}s..."
+                )
+
+            except (httpx.NetworkError, httpx.TimeoutException) as e:
+                if attempt >= self.max_retries:
+                    raise
+
+                last_exception = e
+                logger.warning(
+                    f"API request failed (attempt {attempt + 1}/{self.max_retries + 1}): {type(e).__name__} - {str(e)[:200]}. Retrying in {delay:.1f}s..."
+                )
+
+            except Exception as e:
+                # Other exceptions (e.g., JSON decode errors) - not retryable
+                raise
+
+            # Wait before retrying with exponential backoff
+            if attempt < self.max_retries:
+                time.sleep(delay)
+                delay *= RETRY_BACKOFF_MULTIPLIER
+
+        # This should not be reached, but just in case
+        if last_exception:
+            raise last_exception
+        raise Exception("Unexpected error in retry loop")
 
     def get_job_config(self, job_id: str) -> JobConfig | None:
         """Fetch job details and scraper configurations from the coordinator."""

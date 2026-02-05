@@ -1,7 +1,9 @@
 import os
+import time
 from unittest.mock import MagicMock, patch
 
 import pytest
+import httpx
 
 from core.api_client import (
     AuthenticationError,
@@ -28,10 +30,12 @@ class TestScraperAPIClient:
         assert headers["X-API-Key"] == "test-api-key"
 
     def test_get_headers_raises_if_no_key(self):
-        client = ScraperAPIClient(api_url="https://app.example.com")
-        # Ensure env var doesn't interfere
+        # Create client with empty api_key to test auth error
         with patch.dict(os.environ, {}, clear=True):
-            client.api_key = None
+            client = ScraperAPIClient(
+                api_url="https://app.example.com",
+                api_key="",  # Empty key to trigger auth error
+            )
             with pytest.raises(AuthenticationError):
                 client._get_headers()
 
@@ -108,3 +112,221 @@ class TestScraperAPIClient:
 
             payload = json.loads(call_args[1]["content"])
             assert payload["runner_name"] == "test-runner"
+
+
+class TestRetryLogic:
+    """Tests for retry logic with exponential backoff."""
+
+    def setup_method(self):
+        self.client = ScraperAPIClient(
+            api_url="https://app.example.com",
+            api_key="test-api-key",
+            runner_name="test-runner",
+            max_retries=2,  # Fewer retries for faster tests
+        )
+
+    def test_succeeds_on_first_attempt(self):
+        """Request succeeds without any retries."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"success": True}
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.return_value = mock_response
+
+            result = self.client._make_request("GET", "/api/test")
+
+            assert result == {"success": True}
+            assert mock_instance.get.call_count == 1
+
+    def test_retries_on_500_error(self):
+        """Request retries on 500 server error and succeeds on second attempt."""
+        error_response = MagicMock()
+        error_response.status_code = 500
+        error_response.text = "Internal Server Error"
+
+        success_response = MagicMock()
+        success_response.status_code = 200
+        success_response.json.return_value = {"success": True}
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.side_effect = [
+                httpx.HTTPStatusError("500", request=MagicMock(), response=error_response),
+                success_response,
+            ]
+
+            result = self.client._make_request("GET", "/api/test")
+
+            assert result == {"success": True}
+            assert mock_instance.get.call_count == 2
+
+    def test_retries_on_503_error(self):
+        """Request retries on 503 service unavailable and succeeds on third attempt."""
+        error_response = MagicMock()
+        error_response.status_code = 503
+        error_response.text = "Service Unavailable"
+
+        success_response = MagicMock()
+        success_response.status_code = 200
+        success_response.json.return_value = {"success": True}
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.side_effect = [
+                httpx.HTTPStatusError("503", request=MagicMock(), response=error_response),
+                httpx.HTTPStatusError("503", request=MagicMock(), response=error_response),
+                success_response,
+            ]
+
+            result = self.client._make_request("GET", "/api/test")
+
+            assert result == {"success": True}
+            assert mock_instance.get.call_count == 3
+
+    def test_no_retry_on_400_error(self):
+        """Request fails immediately on 400 client error (not retryable)."""
+        error_response = MagicMock()
+        error_response.status_code = 400
+        error_response.text = "Bad Request"
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.return_value = error_response
+            # Patch raise_for_status to raise HTTPStatusError
+            mock_instance.get.return_value.raise_for_status.side_effect = httpx.HTTPStatusError("400", request=MagicMock(), response=error_response)
+
+            with pytest.raises(httpx.HTTPStatusError):
+                self.client._make_request("GET", "/api/test")
+
+            assert mock_instance.get.call_count == 1
+
+    def test_no_retry_on_404_error(self):
+        """Request fails immediately on 404 not found (not retryable)."""
+        error_response = MagicMock()
+        error_response.status_code = 404
+        error_response.text = "Not Found"
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.return_value = error_response
+            mock_instance.get.return_value.raise_for_status.side_effect = httpx.HTTPStatusError("404", request=MagicMock(), response=error_response)
+
+            with pytest.raises(httpx.HTTPStatusError):
+                self.client._make_request("GET", "/api/test")
+
+            assert mock_instance.get.call_count == 1
+
+    def test_no_retry_on_401_error(self):
+        """Request fails immediately on 401 unauthorized (not retryable)."""
+        error_response = MagicMock()
+        error_response.status_code = 401
+        error_response.text = "Unauthorized"
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.return_value = error_response
+
+            with pytest.raises(AuthenticationError):
+                self.client._make_request("GET", "/api/test")
+
+            assert mock_instance.get.call_count == 1
+
+    def test_retries_on_network_error(self):
+        """Request retries on network error and succeeds on retry."""
+        success_response = MagicMock()
+        success_response.status_code = 200
+        success_response.json.return_value = {"success": True}
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.side_effect = [
+                httpx.NetworkError("Connection refused"),
+                success_response,
+            ]
+
+            result = self.client._make_request("GET", "/api/test")
+
+            assert result == {"success": True}
+            assert mock_instance.get.call_count == 2
+
+    def test_retries_on_timeout(self):
+        """Request retries on timeout and succeeds on retry."""
+        success_response = MagicMock()
+        success_response.status_code = 200
+        success_response.json.return_value = {"success": True}
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.side_effect = [
+                httpx.TimeoutException("Request timed out"),
+                success_response,
+            ]
+
+            result = self.client._make_request("GET", "/api/test")
+
+            assert result == {"success": True}
+            assert mock_instance.get.call_count == 2
+
+    def test_fails_after_max_retries(self):
+        """Request fails after exhausting all retry attempts."""
+        error_response = MagicMock()
+        error_response.status_code = 500
+        error_response.text = "Internal Server Error"
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.side_effect = httpx.HTTPStatusError("500", request=MagicMock(), response=error_response)
+
+            with pytest.raises(httpx.HTTPStatusError):
+                self.client._make_request("GET", "/api/test")
+
+            # Should attempt 3 times (initial + 2 retries with max_retries=2)
+            assert mock_instance.get.call_count == 3
+
+    def test_exponential_backoff_timing(self):
+        """Verify exponential backoff delays are applied between retries."""
+        success_response = MagicMock()
+        success_response.status_code = 200
+        success_response.json.return_value = {"success": True}
+
+        with patch("httpx.Client") as mock_client:
+            with patch("time.sleep") as mock_sleep:
+                mock_instance = mock_client.return_value.__enter__.return_value
+                mock_instance.get.side_effect = [
+                    httpx.NetworkError("Connection refused"),
+                    httpx.NetworkError("Connection refused"),
+                    success_response,
+                ]
+
+                result = self.client._make_request("GET", "/api/test")
+
+                assert result == {"success": True}
+                # Check that sleep was called with exponential backoff delays
+                # First retry: 1s, Second retry: 2s
+                assert mock_sleep.call_count == 2
+                mock_sleep.assert_any_call(1.0)  # First retry
+                mock_sleep.assert_any_call(2.0)  # Second retry
+
+    def test_retries_on_429_rate_limit(self):
+        """Request retries on 429 rate limit and succeeds on retry."""
+        error_response = MagicMock()
+        error_response.status_code = 429
+        error_response.text = "Too Many Requests"
+
+        success_response = MagicMock()
+        success_response.status_code = 200
+        success_response.json.return_value = {"success": True}
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.side_effect = [
+                httpx.HTTPStatusError("429", request=MagicMock(), response=error_response),
+                success_response,
+            ]
+
+            result = self.client._make_request("GET", "/api/test")
+
+            assert result == {"success": True}
+            assert mock_instance.get.call_count == 2
