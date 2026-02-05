@@ -36,6 +36,12 @@ from utils.logger import NoHttpFilter, setup_logging
 logger = logging.getLogger(__name__)
 
 
+class ConfigurationError(Exception):
+    """Raised when configuration parsing fails."""
+
+    pass
+
+
 def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
     """
     Execute a scrape job using configuration from the API.
@@ -59,35 +65,37 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
     }
 
     logger.info(f"[Runner] Starting job {job_id}")
-    logger.info(
-        f"[Runner] SKUs: {len(job_config.skus)}, Scrapers: {len(job_config.scrapers)}"
-    )
-    logger.info(
-        f"[Runner] Test mode: {job_config.test_mode}, Max workers: {job_config.max_workers}"
-    )
+    logger.info(f"[Runner] SKUs: {len(job_config.skus)}, Scrapers: {len(job_config.scrapers)}")
+    logger.info(f"[Runner] Test mode: {job_config.test_mode}, Max workers: {job_config.max_workers}")
 
     # Parse scraper configs into internal format
     configs = []
+    config_errors = []
     for scraper_cfg in job_config.scrapers:
         try:
             # Convert API config to internal format
+            # Note: Use proper None checks to preserve empty lists
             config_dict = {
                 "name": scraper_cfg.name,
                 "base_url": scraper_cfg.base_url,
                 "search_url_template": scraper_cfg.search_url_template,
-                "selectors": scraper_cfg.selectors or {},
-                "options": scraper_cfg.options or {},
-                "test_skus": scraper_cfg.test_skus or [],
+                "selectors": scraper_cfg.selectors if scraper_cfg.selectors is not None else {},
+                "options": scraper_cfg.options if scraper_cfg.options is not None else {},
+                "test_skus": scraper_cfg.test_skus if scraper_cfg.test_skus is not None else [],
             }
             config = parser.load_from_dict(config_dict)
             configs.append(config)
             logger.info(f"[Runner] Loaded scraper config: {config.name}")
         except Exception as e:
+            config_errors.append((scraper_cfg.name, str(e)))
             logger.error(f"[Runner] Failed to parse config for {scraper_cfg.name}: {e}")
 
+    if config_errors:
+        error_details = "; ".join([f"{name}: {err}" for name, err in config_errors])
+        raise ConfigurationError(f"[Runner] Configuration parsing failed for {len(config_errors)} scraper(s): {error_details}")
+
     if not configs:
-        logger.error("[Runner] No valid scraper configurations")
-        return results
+        raise ConfigurationError("[Runner] No valid scraper configurations")
 
     # Determine SKUs to process
     skus = job_config.skus
@@ -131,10 +139,7 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
 
                     if result.get("success"):
                         extracted_data = result.get("results", {})
-                        has_data = any(
-                            extracted_data.get(field)
-                            for field in ["Name", "Brand", "Weight"]
-                        )
+                        has_data = any(extracted_data.get(field) for field in ["Name", "Brand", "Weight"])
 
                         if has_data:
                             # Store result by SKU
@@ -180,9 +185,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run a scrape job from the API")
     parser.add_argument("--job-id", required=True, help="Job ID to execute")
     parser.add_argument("--api-url", help="API base URL (or set SCRAPER_API_URL)")
-    parser.add_argument(
-        "--runner-name", default=os.environ.get("RUNNER_NAME", "unknown")
-    )
+    parser.add_argument("--runner-name", default=os.environ.get("RUNNER_NAME", "unknown"))
     parser.add_argument(
         "--mode",
         choices=["full", "chunk_worker"],
@@ -218,6 +221,7 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
     client.update_status(job_id, "running", runner_name=runner_name)
 
     job_config = client.get_job_config(job_id)
+    if not job_config:
         logger.error("Failed to fetch job config")
         client.submit_results(
             job_id,
@@ -251,9 +255,7 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
         sys.exit(1)
 
 
-def run_chunk_worker_mode(
-    client: ScraperAPIClient, job_id: str, runner_name: str
-) -> None:
+def run_chunk_worker_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> None:
     """Chunk worker mode: claim and process chunks until none remain."""
     logger.info(f"[Chunk Worker] Starting for job {job_id}")
 
@@ -266,9 +268,7 @@ def run_chunk_worker_mode(
         chunk = client.claim_chunk(job_id, runner_name)
 
         if not chunk:
-            logger.info(
-                f"[Chunk Worker] No more chunks. Processed {chunks_processed} chunks, {total_skus_processed} SKUs"
-            )
+            logger.info(f"[Chunk Worker] No more chunks. Processed {chunks_processed} chunks, {total_skus_processed} SKUs")
             break
 
         chunk_id = chunk["chunk_id"]
@@ -276,9 +276,7 @@ def run_chunk_worker_mode(
         skus = chunk.get("skus", [])
         scrapers_filter = chunk.get("scrapers", [])
 
-        logger.info(
-            f"[Chunk Worker] Processing chunk {chunk_index} with {len(skus)} SKUs"
-        )
+        logger.info(f"[Chunk Worker] Processing chunk {chunk_index} with {len(skus)} SKUs")
 
         try:
             job_config = client.get_job_config(job_id)
@@ -287,17 +285,14 @@ def run_chunk_worker_mode(
 
             job_config.skus = skus
             if scrapers_filter:
-                job_config.scrapers = [
-                    s for s in job_config.scrapers if s.name in scrapers_filter
-                ]
+                job_config.scrapers = [s for s in job_config.scrapers if s.name in scrapers_filter]
 
             results = run_job(job_config, runner_name=runner_name)
 
             chunk_results = {
                 "skus_processed": results.get("skus_processed", 0),
                 "skus_successful": len(results.get("data", {})),
-                "skus_failed": results.get("skus_processed", 0)
-                - len(results.get("data", {})),
+                "skus_failed": results.get("skus_processed", 0) - len(results.get("data", {})),
                 "data": results.get("data", {}),
             }
 
@@ -308,18 +303,14 @@ def run_chunk_worker_mode(
             total_successful += chunk_results["skus_successful"]
             total_failed += chunk_results["skus_failed"]
 
-            logger.info(
-                f"[Chunk Worker] Completed chunk {chunk_index}: {chunk_results['skus_successful']}/{chunk_results['skus_processed']} successful"
-            )
+            logger.info(f"[Chunk Worker] Completed chunk {chunk_index}: {chunk_results['skus_successful']}/{chunk_results['skus_processed']} successful")
 
         except Exception as e:
             logger.exception(f"[Chunk Worker] Chunk {chunk_index} failed")
             client.submit_chunk_results(chunk_id, "failed", error_message=str(e))
             chunks_processed += 1
 
-    logger.info(
-        f"[Chunk Worker] Finished. Total: {chunks_processed} chunks, {total_successful}/{total_skus_processed} successful"
-    )
+    logger.info(f"[Chunk Worker] Finished. Total: {chunks_processed} chunks, {total_successful}/{total_skus_processed} successful")
 
 
 if __name__ == "__main__":
