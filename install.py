@@ -62,7 +62,9 @@ def print_header():
     header.append("Bay State Scraper", style="bold blue")
     header.append(" - Runner Installation Wizard", style="dim")
 
-    console.print(Panel(header, subtitle="v2.0.0 (API Key Auth)", border_style="blue"))
+    console.print(
+        Panel(header, subtitle="v2.1.0 (Realtime + API Key Auth)", border_style="blue")
+    )
     console.print()
 
 
@@ -246,6 +248,34 @@ def configure_runner() -> dict[str, str]:
     if config["SCRAPER_API_KEY"] and not config["SCRAPER_API_KEY"].startswith("bsr_"):
         console.print("[yellow]Warning: API key should start with 'bsr_'[/yellow]")
 
+    # Supabase Realtime configuration for real-time job updates
+    console.print("\n[bold]Supabase Realtime (Optional)[/bold]")
+    console.print("[dim]For real-time job updates and runner presence tracking.[/dim]")
+    console.print("[dim]Get the service_role key from:[/dim]")
+    console.print(
+        "  [dim]- Supabase Dashboard > Settings > API > service_role key[/dim]"
+    )
+    console.print("[dim]Leave empty to use polling mode instead.[/dim]\n")
+
+    existing_realtime_key = existing.get("BSR_SUPABASE_REALTIME_KEY", "")
+    if existing_realtime_key:
+        masked = (
+            existing_realtime_key[:12] + "..."
+            if len(existing_realtime_key) > 12
+            else "***"
+        )
+        console.print(f"[dim]Current key: {masked}[/dim]")
+        if Confirm.ask("  Keep existing Realtime key?", default=True):
+            config["BSR_SUPABASE_REALTIME_KEY"] = existing_realtime_key
+        else:
+            config["BSR_SUPABASE_REALTIME_KEY"] = Prompt.ask(
+                "  Paste your service_role key (or press Enter to skip)"
+            )
+    else:
+        config["BSR_SUPABASE_REALTIME_KEY"] = Prompt.ask(
+            "  Paste your service_role key (or press Enter to skip)"
+        )
+
     return config
 
 
@@ -265,6 +295,18 @@ def save_config(config: dict[str, str]) -> bool:
 
             f.write("# API Key Authentication\n")
             f.write(f"SCRAPER_API_KEY={config['SCRAPER_API_KEY']}\n")
+
+            # Supabase Realtime (optional)
+            if config.get("BSR_SUPABASE_REALTIME_KEY"):
+                f.write(
+                    "\n# Supabase Realtime (Optional - for real-time job updates)\n"
+                )
+                f.write(
+                    f"BSR_SUPABASE_REALTIME_KEY={config['BSR_SUPABASE_REALTIME_KEY']}\n"
+                )
+                f.write(
+                    "# Required channels: scrape_jobs INSERT, runner-presence, job-broadcast\n"
+                )
 
         os.chmod(ENV_FILE, 0o600)
 
@@ -421,7 +463,13 @@ def print_next_steps(config: dict[str, str], registered: bool = False):
             else "***"
         )
         console.print(f"  SCRAPER_API_KEY={masked}")
-    console.print(f"  RUNNER_NAME={config['RUNNER_NAME']}\n")
+    console.print(f"  RUNNER_NAME={config['RUNNER_NAME']}")
+    if config.get("BSR_SUPABASE_REALTIME_KEY"):
+        console.print("  # Supabase Realtime (optional)")
+        console.print("  BSR_SUPABASE_REALTIME_KEY=<service_role_key>")
+    else:
+        console.print("  # BSR_SUPABASE_REALTIME_KEY=<optional - for realtime mode>")
+    console.print()
 
 
 def main():
