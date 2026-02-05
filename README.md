@@ -1,6 +1,14 @@
-# BayStateScraper
+# BayStateScraper v0.2.0
 
 Distributed headless scraper runners for Bay State Pet & Garden Supply.
+
+## What's New in v0.2.0
+
+- **Supabase Realtime v2** - Real-time job dispatch and presence tracking
+- **Structured JSON Logging** - Centralized logging with job context
+- **Simplified Architecture** - Polling daemon mode for reliability
+- **Test Lab Events** - Real-time event system for testing
+- **Enhanced Installation** - Guided setup with realtime key configuration
 
 ## Quick Install
 
@@ -34,12 +42,21 @@ curl -sSL https://raw.githubusercontent.com/Bay-State-Pet-and-Garden-Supply/BayS
 
 ## How It Works
 
-The runner:
+The runner supports two modes:
+
+### Polling Mode (Default)
 1. **Polls** the coordinator every 30 seconds for new jobs
 2. **Fetches credentials** on-demand (never stored locally)
 3. **Executes** scraping jobs using Playwright
 4. **Reports** results back via API callback
-5. **Restarts automatically** if it crashes
+
+### Realtime Mode (v0.2.0+)
+1. **Connects** to Supabase Realtime for instant job dispatch
+2. **Tracks presence** so coordinators see active runners
+3. **Receives** jobs via websocket broadcast
+4. **Reports** results via API callbacks
+
+Both modes restart automatically on crash.
 
 ## Manual Installation
 
@@ -70,6 +87,19 @@ docker-compose up -d
 | `RUNNER_NAME` | No | hostname | Identifier for this runner |
 | `POLL_INTERVAL` | No | 30 | Seconds between job polls |
 | `MAX_JOBS_BEFORE_RESTART` | No | 100 | Restart for memory hygiene |
+| `BSR_SUPABASE_REALTIME_KEY` | No | - | Service role key for realtime mode (optional) |
+
+### Supabase Realtime (Optional)
+
+For real-time job dispatch and runner presence, configure:
+
+```bash
+BSR_SUPABASE_REALTIME_KEY=service_role_key_from_supabase
+```
+
+Get the key from: **Supabase Dashboard → Settings → API → service_role key**
+
+When configured, runners connect via websocket and receive jobs instantly instead of polling.
 
 ## Architecture
 
@@ -80,13 +110,15 @@ docker-compose up -d
 │  POST /api/scraper/v1/heartbeat → Updates runner status     │
 │  GET  /api/scraper/v1/credentials → On-demand credentials   │
 │  POST /api/admin/scraping/callback → Receives results       │
+│  Supabase Realtime: scrape_jobs INSERT, presence, broadcast  │
 └──────────────────────────────────────────────────────────────┘
                               ▲
                               │ HTTPS (X-API-Key: bsr_...)
+                              │ OR WebSocket (if realtime key configured)
                               │
 ┌─────────────────────────────┴─────────────────────────────────┐
 │  Docker Container (always running)                            │
-│  daemon.py polls → executes → reports → repeats              │
+│  daemon.py polls or connects via realtime → executes → reports│
 └───────────────────────────────────────────────────────────────┘
 ```
 
