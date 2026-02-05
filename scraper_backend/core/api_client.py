@@ -458,6 +458,27 @@ class ScraperAPIClient:
             logger.error(f"Error submitting chunk results: {e}")
             return False
 
+    def get_supabase_config(self) -> dict[str, Any] | None:
+        """
+        Fetch Supabase configuration from the coordinator API.
+
+        This implements "credential vending" - runners only need their API key,
+        and Supabase credentials are fetched automatically from the coordinator.
+
+        Returns:
+            Dict with 'supabase_url' and 'supabase_realtime_key', or None if fetch fails.
+        """
+        try:
+            data = self._make_request("GET", "/api/scraper/v1/supabase-config")
+
+            return {
+                "supabase_url": data.get("supabase_url"),
+                "supabase_realtime_key": data.get("supabase_realtime_key"),
+            }
+        except Exception as e:
+            logger.warning(f"Failed to fetch Supabase config from API: {e}")
+            return None
+
 
 # Global instance for convenience
 api_client = ScraperAPIClient()

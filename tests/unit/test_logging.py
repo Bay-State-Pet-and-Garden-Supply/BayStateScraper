@@ -249,12 +249,12 @@ class TestSetupLogging:
 
         setup_logging(debug_mode=False)
 
-        # Capture output
+        # Capture output using root logger (to avoid propagation issues)
         stream = io.StringIO()
         handler = logging.StreamHandler(stream)
-        handler.setFormatter(logging.Formatter("%(message)s"))
+        handler.setFormatter(JSONFormatter())
 
-        logger = logging.getLogger("test_json")
+        logger = logging.getLogger()  # Use root logger
         logger.handlers = []  # Clear existing handlers
         logger.addHandler(handler)
         logger.setLevel(logging.INFO)

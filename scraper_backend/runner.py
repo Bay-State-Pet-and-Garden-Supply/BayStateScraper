@@ -696,25 +696,38 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
     - Real-time log streaming
     - Heartbeat updates
 
-    Requires BSR_SUPABASE_REALTIME_KEY and SUPABASE_URL environment variables.
+    Supabase credentials are fetched via "credential vending" from the API.
+    Falls back to environment variables if API fetch fails.
 
     Args:
         client: ScraperAPIClient instance for job config and result submission
         runner_name: Unique identifier for this runner instance
     """
-    realtime_key = os.environ.get("BSR_SUPABASE_REALTIME_KEY")
+    # Try to fetch Supabase config from API (credential vending)
+    # Falls back to environment variables if API is unavailable
+    supabase_config = client.get_supabase_config()
+
+    if supabase_config:
+        supabase_url = supabase_config.get("supabase_url")
+        realtime_key = supabase_config.get("supabase_realtime_key")
+        config_source = "API (credential vending)"
+    else:
+        # Fall back to environment variables
+        realtime_key = os.environ.get("BSR_SUPABASE_REALTIME_KEY")
+        supabase_url = os.environ.get("SUPABASE_URL")
+        config_source = "environment variables"
+
     if not realtime_key:
-        logger.error("[Realtime Runner] BSR_SUPABASE_REALTIME_KEY not set", extra={"runner_name": runner_name})
+        logger.error("[Realtime Runner] Supabase realtime key not configured", extra={"runner_name": runner_name})
         return
 
-    supabase_url = os.environ.get("SUPABASE_URL")
     if not supabase_url:
-        logger.error("[Realtime Runner] SUPABASE_URL not set", extra={"runner_name": runner_name})
+        logger.error("[Realtime Runner] Supabase URL not configured", extra={"runner_name": runner_name})
         return
 
     realtime_trace_id = generate_trace_id()
     logger.info(
-        f"[Realtime Runner] Starting with runner name: {runner_name}",
+        f"[Realtime Runner] Starting with runner name: {runner_name} (config source: {config_source})",
         extra={
             "runner_name": runner_name,
             "trace_id": realtime_trace_id,

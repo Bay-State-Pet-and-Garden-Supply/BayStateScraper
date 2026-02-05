@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 from enum import Enum
-from typing import Any
+from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -49,9 +49,7 @@ class ScraperTestingClient:
     Provides interface for local scraper testing only.
     """
 
-    def __init__(
-        self, mode: TestingMode = TestingMode.LOCAL, headless: bool = True, **kwargs
-    ):
+    def __init__(self, mode: TestingMode = TestingMode.LOCAL, headless: bool = True, **kwargs):
         """
         Initialize the testing client.
 
@@ -65,6 +63,8 @@ class ScraperTestingClient:
 
         self.mode = mode
         self.headless = headless
+        self.event_emitter: Callable[..., Any] | None = None
+        self.context: dict[str, Any] = {}
 
     async def __aenter__(self):
         """Enter async context."""
@@ -74,9 +74,7 @@ class ScraperTestingClient:
         """Exit async context."""
         pass
 
-    async def run_scraper(
-        self, scraper_name: str, skus: list[str], **kwargs
-    ) -> dict[str, Any]:
+    async def run_scraper(self, scraper_name: str, skus: list[str], **kwargs) -> dict[str, Any]:
         """
         Run a scraper locally with the specified SKUs.
 
@@ -90,21 +88,15 @@ class ScraperTestingClient:
         """
         return await self._run_local_scraper(scraper_name, skus, **kwargs)
 
-    async def _run_local_scraper(
-        self, scraper_name: str, skus: list[str], **kwargs
-    ) -> dict[str, Any]:
+    async def _run_local_scraper(self, scraper_name: str, skus: list[str], **kwargs) -> dict[str, Any]:
         """
         Run scraper locally.
         """
         import asyncio
 
-        return await asyncio.to_thread(
-            self._run_local_scraper_sync, scraper_name, skus, **kwargs
-        )
+        return await asyncio.to_thread(self._run_local_scraper_sync, scraper_name, skus, **kwargs)
 
-    def _run_local_scraper_sync(
-        self, scraper_name: str, skus: list[str], **kwargs
-    ) -> dict[str, Any]:
+    def _run_local_scraper_sync(self, scraper_name: str, skus: list[str], **kwargs) -> dict[str, Any]:
         """
         Synchronous implementation of local scraper run.
         """
@@ -132,27 +124,19 @@ class ScraperTestingClient:
                     config_dict = supabase_sync.get_scraper(scraper_name)
                     if config_dict:
                         config = parser.load_from_dict(config_dict)
-                        logger.info(
-                            f"Loaded config from Supabase for test: {scraper_name}"
-                        )
+                        logger.info(f"Loaded config from Supabase for test: {scraper_name}")
             except Exception as e:
                 logger.warning(f"Failed to load config from Supabase: {e}")
 
             # 2. Fallback to local file
             if not config:
                 # assume project root relative to this file
-                project_root = os.path.dirname(
-                    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                )
+                project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
                 # Check multiple possible locations for local configs
                 config_paths = [
-                    os.path.join(
-                        project_root, "scrapers/configs", f"{scraper_name}.yaml"
-                    ),
-                    os.path.join(
-                        project_root, "src/scrapers/configs", f"{scraper_name}.yaml"
-                    ),
+                    os.path.join(project_root, "scrapers/configs", f"{scraper_name}.yaml"),
+                    os.path.join(project_root, "src/scrapers/configs", f"{scraper_name}.yaml"),
                 ]
 
                 for path in config_paths:
@@ -162,9 +146,7 @@ class ScraperTestingClient:
                         break
 
             if not config:
-                raise FileNotFoundError(
-                    f"Config for {scraper_name} not found in Supabase or locally"
-                )
+                raise FileNotFoundError(f"Config for {scraper_name} not found in Supabase or locally")
 
             # Initialize executor
             executor = WorkflowExecutor(config, headless=self.headless)
@@ -173,9 +155,7 @@ class ScraperTestingClient:
                 for sku in skus:
                     try:
                         # Use execute_workflow API (returns dict)
-                        result = executor.execute_workflow(
-                            context={"sku": sku}, quit_browser=False
-                        )
+                        result = executor.execute_workflow(context={"sku": sku}, quit_browser=False)
 
                         if result.get("success"):
                             if result.get("no_results_found"):

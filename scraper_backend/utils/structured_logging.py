@@ -35,8 +35,8 @@ class SensitiveDataFilter(logging.Filter):
     SENSITIVE_PATTERNS = [
         (r"bsr_[a-zA-Z0-9]{32,}", "[API_KEY_REDACTED]"),
         (r'X-API-Key["\']?\s*[:=]\s*["\']?[a-zA-Z0-9_-]+', "[API_KEY_REDACTED]"),
-        (r'["\']?password["\']?\s*[:=]\s*["\']?[^\s"\']+', "[PASSWORD_REDACTED]"),
         (r"Bearer\s+[a-zA-Z0-9_\-\.]+", "[TOKEN_REDACTED]"),
+        (r'["\']?password["\']?\s*[:=]\s*["\']?[^\s"\']+', "[PASSWORD_REDACTED]"),
         (r'Authorization["\']?\s*[:=]\s*["\']?[^\s"\']+', "[AUTH_REDACTED]"),
     ]
 

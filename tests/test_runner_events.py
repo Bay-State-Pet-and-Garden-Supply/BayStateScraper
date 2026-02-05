@@ -79,7 +79,7 @@ class TestScraperTestingClientEvents:
     def test_testing_client_has_event_emitter(self):
         """Test ScraperTestingClient has event_emitter."""
         try:
-            from scrapers.core.scraper_testing_client import ScraperTestingClient
+            from core.scraper_testing_client import ScraperTestingClient
 
             client = ScraperTestingClient()
 

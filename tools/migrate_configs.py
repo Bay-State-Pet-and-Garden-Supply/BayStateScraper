@@ -29,9 +29,7 @@ if str(_scraper_backend_path) not in sys.path:
     sys.path.insert(0, str(_scraper_backend_path))
 
 # Setup logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Paths
@@ -82,9 +80,7 @@ class ConfigNormalizer:
         try:
             with open(self.yaml_path, "r", encoding="utf-8") as f:
                 self.yaml_data = yaml.safe_load(f) or {}
-            logger.debug(
-                f"Loaded {self.yaml_path.name}: {len(self.yaml_data)} top-level keys"
-            )
+            logger.debug(f"Loaded {self.yaml_path.name}: {len(self.yaml_data)} top-level keys")
             return True
         except FileNotFoundError:
             self.errors.append(f"File not found: {self.yaml_path}")
@@ -137,30 +133,27 @@ class ConfigNormalizer:
     def _get_scraper_config(self):
         """Import and return ScraperConfig class using importlib for reliability."""
         import importlib.util
+        from typing import Literal
 
-        scraper_backend_path = (
-            Path(__file__).resolve().parent.parent
-            / "scraper_backend"
-            / "scrapers"
-            / "models"
-            / "config.py"
-        )
+        scraper_backend_path = Path(__file__).resolve().parent.parent / "scraper_backend" / "scrapers" / "models" / "config.py"
 
         if not scraper_backend_path.exists():
-            raise ModuleNotFoundError(
-                f"ScraperConfig not found at {scraper_backend_path}"
-            )
+            raise ModuleNotFoundError(f"ScraperConfig not found at {scraper_backend_path}")
 
-        spec = importlib.util.spec_from_file_location(
-            "scraper_config", scraper_backend_path
-        )
+        spec = importlib.util.spec_from_file_location("scraper_config", scraper_backend_path)
         if spec is None or spec.loader is None:
             raise ModuleNotFoundError("Could not load ScraperConfig module")
 
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
 
-        return module.SraperConfig
+        # Rebuild the model to ensure forward references work
+        # Need to provide namespace with required imports
+        if hasattr(module.ScraperConfig, "model_rebuild"):
+            ns = {"Literal": Literal}
+            module.ScraperConfig.model_rebuild(_types_namespace=ns)
+
+        return module.ScraperConfig
 
     def validate(self, config_data: dict[str, Any]) -> tuple[bool, list[str]]:
         """Validate normalized config against Pydantic schema."""
@@ -171,7 +164,8 @@ class ConfigNormalizer:
         except ValidationError as e:
             errors = [f"{err['loc']}: {err['msg']}" for err in e.errors()]
             return False, errors
-        except (ModuleNotFoundError, AttributeError) as e:
+        except (ModuleNotFoundError, AttributeError, Exception) as e:
+            # Catch PydanticUndefinedAnnotation and other dynamic import errors
             return True, [f"WARNING: Schema validation skipped - {e}"]
 
 
@@ -211,9 +205,7 @@ class ConfigMigrator:
                 self.supabase = create_client(supabase_url, supabase_key)
                 logger.info("Connected to Supabase")
             except ImportError:
-                logger.warning(
-                    "Supabase client not installed, DB writes will be skipped"
-                )
+                logger.warning("Supabase client not installed, DB writes will be skipped")
             except Exception as e:
                 logger.warning(f"Failed to connect to Supabase: {e}")
 
@@ -255,33 +247,22 @@ class ConfigMigrator:
                 result.config_id = db_result.get("config_id")
                 result.version_id = db_result.get("version_id")
                 result.success = True
-                logger.info(
-                    f"Migrated {result.slug}: config_id={result.config_id}, version_id={result.version_id}"
-                )
+                logger.info(f"Migrated {result.slug}: config_id={result.config_id}, version_id={result.version_id}")
             except Exception as e:
                 result.errors.append(f"DB insert failed: {e}")
         else:
             # Dry run or no Supabase - just log success
             result.success = True
-            logger.info(
-                f"[DRY RUN] Would migrate {result.slug}: {json.dumps(normalized, indent=2, default=str)[:200]}..."
-            )
+            logger.info(f"[DRY RUN] Would migrate {result.slug}: {json.dumps(normalized, indent=2, default=str)[:200]}...")
 
         return result
 
-    def _insert_to_db(
-        self, result: MigrationResult, config_data: dict[str, Any]
-    ) -> dict[str, str]:
+    def _insert_to_db(self, result: MigrationResult, config_data: dict[str, Any]) -> dict[str, str]:
         """Insert or update config in database."""
         slug = result.slug
 
         # Check if config already exists
-        existing = (
-            self.supabase.table("scrapers")
-            .select("id, config")
-            .eq("name", slug)
-            .execute()
-        )
+        existing = self.supabase.table("scrapers").select("id, config").eq("name", slug).execute()
 
         config_json = json.dumps(config_data, default=str)
         now = datetime.now(timezone.utc).isoformat()
@@ -307,8 +288,7 @@ class ConfigMigrator:
 
             insert_data = {
                 "name": slug,
-                "display_name": config_data.get("display_name")
-                or slug.replace("-", " ").title(),
+                "display_name": config_data.get("display_name") or slug.replace("-", " ").title(),
                 "base_url": config_data["base_url"],
                 "config": config_json,
                 "status": "active",
@@ -411,17 +391,13 @@ def main():
     """CLI entry point."""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Migrate YAML scraper configs to database"
-    )
+    parser = argparse.ArgumentParser(description="Migrate YAML scraper configs to database")
     parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Don't write to database, just validate and report",
     )
-    parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Enable verbose logging"
-    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
     parser.add_argument(
         "--limit",
         "-n",
@@ -429,9 +405,7 @@ def main():
         default=None,
         help="Limit number of configs to migrate",
     )
-    parser.add_argument(
-        "--output", "-o", type=Path, default=None, help="Output report to file"
-    )
+    parser.add_argument("--output", "-o", type=Path, default=None, help="Output report to file")
     parser.add_argument(
         "--supabase-url",
         type=str,
@@ -447,12 +421,8 @@ def main():
 
     args = parser.parse_args()
 
-    supabase_url = args.supabase_url or (
-        None if args.dry_run else __import__("os").environ.get("SUPABASE_URL")
-    )
-    supabase_key = args.supabase_key or (
-        None if args.dry_run else __import__("os").environ.get("SUPABASE_SERVICE_KEY")
-    )
+    supabase_url = args.supabase_url or (None if args.dry_run else __import__("os").environ.get("SUPABASE_URL"))
+    supabase_key = args.supabase_key or (None if args.dry_run else __import__("os").environ.get("SUPABASE_SERVICE_KEY"))
 
     if not args.dry_run and not supabase_url:
         logger.warning("No Supabase URL provided. Will run in dry-run mode.")

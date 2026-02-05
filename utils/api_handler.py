@@ -172,9 +172,6 @@ class ScraperAPIHandler(logging.Handler):
                 except IndexError:
                     pass  # Still full, drop this log
 
-            # Signal shipping thread to check flush
-            self._flush_event.set()
-
         except Exception:
             # Best effort - don't let logging failures affect scraper
             pass

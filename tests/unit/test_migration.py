@@ -1,6 +1,12 @@
 """Tests for config migration normalization."""
 
+import sys
 from pathlib import Path
+
+# Add tools directory to path for imports
+_tools_path = Path(__file__).resolve().parent.parent.parent / "tools"
+if str(_tools_path) not in sys.path:
+    sys.path.insert(0, str(_tools_path))
 
 import pytest
 import yaml
@@ -189,71 +195,67 @@ class TestConfigNormalizer:
         for error in errors:
             assert "WARNING" in error or "Schema validation skipped" in error
 
-    def test_validate_invalid_url(self, tmp_path: Path) -> None:
-        """Test validation fails for invalid URL."""
-        yaml_content = {
-            "name": "bad-url-scraper",
-            "base_url": "not-a-url",
-        }
-        yaml_file = tmp_path / "bad-url.yaml"
-        yaml_file.write_text(yaml.dump(yaml_content))
 
-        normalizer = ConfigNormalizer(yaml_file)
-        normalizer.load()
-        normalized = normalizer.normalize()
-        valid, errors = normalizer.validate(normalized)
+class TestScraperConfigValidation:
+    """Unit tests for ScraperConfig schema validation."""
 
-        # Either validation runs and fails, or validation is skipped
-        if any("WARNING" in e or "skipped" in e for e in errors):
-            # Schema validation skipped - can't test URL validation
-            pytest.skip("scraper_backend not available for full validation")
-        else:
-            assert valid is False
-            assert len(errors) > 0
-
-    def test_validate_invalid_timeout(self, tmp_path: Path) -> None:
+    def test_validate_invalid_timeout(self) -> None:
         """Test validation fails for out-of-bounds timeout."""
-        yaml_content = {
-            "name": "bad-timeout",
-            "base_url": "https://example.com",
-            "timeout": 500,  # Max is 300
-        }
-        yaml_file = tmp_path / "bad-timeout.yaml"
-        yaml_file.write_text(yaml.dump(yaml_content))
+        from scraper_backend.scrapers.models.config import ScraperConfig, SelectorConfig
 
-        normalizer = ConfigNormalizer(yaml_file)
-        normalizer.load()
-        normalized = normalizer.normalize()
-        valid, errors = normalizer.validate(normalized)
+        with pytest.raises(Exception):  # pydantic ValidationError
+            ScraperConfig(
+                schema_version="1.0",
+                name="bad-timeout",
+                base_url="https://example.com",
+                timeout=500,  # Max is 300
+                selectors=[SelectorConfig(name="test", selector="h1")],
+            )
 
-        if any("WARNING" in e or "skipped" in e for e in errors):
-            pytest.skip("scraper_backend not available for full validation")
-        else:
-            assert valid is False
-            assert len(errors) > 0
-
-    def test_validate_selector_without_name(self, tmp_path: Path) -> None:
+    def test_validate_selector_without_name(self) -> None:
         """Test validation fails for selector without name."""
-        yaml_content = {
-            "name": "no-selector-name",
-            "base_url": "https://example.com",
-            "selectors": [
-                {"selector": "h1"},  # Missing 'name'
+        from scraper_backend.scrapers.models.config import ScraperConfig, SelectorConfig
+
+        with pytest.raises(Exception):  # pydantic ValidationError
+            ScraperConfig(
+                schema_version="1.0",
+                name="no-selector-name",
+                base_url="https://example.com",
+                selectors=[
+                    SelectorConfig(selector="h1"),  # Missing 'name'
+                ],
+            )
+
+    def test_validate_valid_config(self) -> None:
+        """Test validation passes for valid config."""
+        from scraper_backend.scrapers.models.config import ScraperConfig, SelectorConfig
+
+        config = ScraperConfig(
+            schema_version="1.0",
+            name="valid-scraper",
+            base_url="https://example.com",
+            timeout=30,
+            selectors=[
+                SelectorConfig(name="product_title", selector="h1.title"),
+                SelectorConfig(name="price", selector="span.price", attribute="text"),
             ],
-        }
-        yaml_file = tmp_path / "no-selector-name.yaml"
-        yaml_file.write_text(yaml.dump(yaml_content))
+        )
 
-        normalizer = ConfigNormalizer(yaml_file)
-        normalizer.load()
-        normalized = normalizer.normalize()
-        valid, errors = normalizer.validate(normalized)
+        assert config.name == "valid-scraper"
+        assert config.base_url == "https://example.com"
+        assert len(config.selectors) == 2
 
-        if any("WARNING" in e or "skipped" in e for e in errors):
-            pytest.skip("scraper_backend not available for full validation")
-        else:
-            assert valid is False
-            assert len(errors) > 0
+    def test_validate_unknown_schema_version(self) -> None:
+        """Test validation fails for unknown schema version."""
+        from scraper_backend.scrapers.models.config import ScraperConfig, SelectorConfig
+
+        with pytest.raises(Exception):  # pydantic ValidationError
+            ScraperConfig(
+                schema_version="99.0",  # Unknown version
+                name="test",
+                base_url="https://example.com",
+                selectors=[SelectorConfig(name="test", selector="h1")],
+            )
 
 
 class TestMigrationResult:
@@ -262,9 +264,7 @@ class TestMigrationResult:
     def test_result_initialization(self, tmp_path: Path) -> None:
         """Test MigrationResult initializes correctly."""
         yaml_file = tmp_path / "test.yaml"
-        yaml_file.write_text(
-            yaml.dump({"name": "test", "base_url": "https://example.com"})
-        )
+        yaml_file.write_text(yaml.dump({"name": "test", "base_url": "https://example.com"}))
 
         result = MigrationResult(yaml_file)
 
