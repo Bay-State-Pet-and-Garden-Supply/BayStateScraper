@@ -4,6 +4,7 @@ Concurrent scraping manager for parallel execution of scrapers.
 Provides browser pooling, task distribution, and resource throttling
 to achieve 3+ simultaneous scraper operations.
 """
+
 from __future__ import annotations
 
 
@@ -21,7 +22,7 @@ from typing import Any
 
 from core.database.supabase_sync import supabase_sync
 from core.memory_manager import MemoryManager, get_memory_manager
-from core.performance_profiler import OperationType, PerformanceProfiler
+from core.performance_profiler import PerformanceProfiler
 
 logger = logging.getLogger(__name__)
 
@@ -406,9 +407,7 @@ class TaskQueue:
             max_size: Maximum queue size
         """
         self.max_size = max_size
-        self._queue: queue.PriorityQueue[tuple[int, float, ScrapingTask]] = queue.PriorityQueue(
-            maxsize=max_size
-        )
+        self._queue: queue.PriorityQueue[tuple[int, float, ScrapingTask]] = queue.PriorityQueue(maxsize=max_size)
         self._lock = threading.Lock()
         self._task_count = 0
         self._completed_count = 0
@@ -470,9 +469,7 @@ class TaskQueue:
                 "completed": self._completed_count,
                 "failed": self._failed_count,
                 "pending": self._queue.qsize(),
-                "success_rate": self._completed_count / self._task_count
-                if self._task_count > 0
-                else 0,
+                "success_rate": self._completed_count / self._task_count if self._task_count > 0 else 0,
             }
 
 
@@ -714,9 +711,7 @@ class ConcurrentScraperManager:
         task.status = TaskStatus.RUNNING
 
         # Record pending status
-        supabase_sync.record_scrape_status(
-            sku=task.sku, scraper_name=task.scraper_name, status="pending"
-        )
+        supabase_sync.record_scrape_status(sku=task.sku, scraper_name=task.scraper_name, status="pending")
 
         try:
             # Acquire resources
@@ -736,9 +731,7 @@ class ConcurrentScraperManager:
                 task.status = TaskStatus.COMPLETED
 
                 # Record success status
-                supabase_sync.record_scrape_status(
-                    sku=task.sku, scraper_name=task.scraper_name, status="scraped"
-                )
+                supabase_sync.record_scrape_status(sku=task.sku, scraper_name=task.scraper_name, status="scraped")
 
         except Exception as e:
             task.error = e

@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import logging
 import threading
-import time
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +29,7 @@ class DebugContext:
                 "debug_mode": debug_mode,
                 "logs": [],
                 "page_sources": [],  # List of {timestamp, sku, source}
-                "screenshots": [],   # List of {timestamp, sku, base64}
+                "screenshots": [],  # List of {timestamp, sku, base64}
                 "current_page_source": None,
                 "current_screenshot": None,
             }
@@ -47,10 +46,7 @@ class DebugContext:
         with self._lock:
             session = self._sessions.get(job_id)
             if session:
-                entry = {
-                    "timestamp": datetime.now().isoformat(),
-                    "message": message
-                }
+                entry = {"timestamp": datetime.now().isoformat(), "message": message}
                 session["logs"].append(entry)
 
     def capture_snapshot(self, job_id: str, sku: str, page_source: str | None = None, screenshot: str | None = None):
@@ -61,21 +57,13 @@ class DebugContext:
                 return
 
             timestamp = datetime.now().isoformat()
-            
+
             if page_source:
-                session["page_sources"].append({
-                    "timestamp": timestamp,
-                    "sku": sku,
-                    "content": page_source
-                })
+                session["page_sources"].append({"timestamp": timestamp, "sku": sku, "content": page_source})
                 session["current_page_source"] = page_source
-            
+
             if screenshot:
-                session["screenshots"].append({
-                    "timestamp": timestamp,
-                    "sku": sku,
-                    "content": screenshot
-                })
+                session["screenshots"].append({"timestamp": timestamp, "sku": sku, "content": screenshot})
                 session["current_screenshot"] = screenshot
 
     def _resolve_job_id(self, job_id: str | None) -> str | None:
@@ -94,7 +82,7 @@ class DebugContext:
             session = self._sessions.get(actual_job_id)
             if not session:
                 return None
-            
+
             # Return summary (exclude heavy content)
             return {
                 "job_id": session["job_id"],
@@ -110,7 +98,7 @@ class DebugContext:
         actual_job_id = self._resolve_job_id(job_id)
         if not actual_job_id:
             return None
-            
+
         with self._lock:
             session = self._sessions.get(actual_job_id)
             return session.get("current_page_source") if session else None
@@ -120,7 +108,7 @@ class DebugContext:
         actual_job_id = self._resolve_job_id(job_id)
         if not actual_job_id:
             return None
-            
+
         with self._lock:
             session = self._sessions.get(actual_job_id)
             return session.get("current_screenshot") if session else None
@@ -147,7 +135,7 @@ class DebugContext:
             session = self._sessions.get(actual_job_id)
             if not session:
                 return []
-            
+
             # Combine sources and screenshots
             snapshots = []
             # This is a bit simplified; in reality we might want to pair them up
@@ -155,24 +143,14 @@ class DebugContext:
             for src in session["page_sources"]:
                 if sku and src["sku"] != sku:
                     continue
-                snapshots.append({
-                    "type": "html",
-                    "timestamp": src["timestamp"],
-                    "sku": src["sku"],
-                    "length": len(src["content"])
-                })
-            
+                snapshots.append({"type": "html", "timestamp": src["timestamp"], "sku": src["sku"], "length": len(src["content"])})
+
             # Add screenshots too?
             for screen in session["screenshots"]:
-                 if sku and screen["sku"] != sku:
+                if sku and screen["sku"] != sku:
                     continue
-                 snapshots.append({
-                    "type": "screenshot",
-                    "timestamp": screen["timestamp"],
-                    "sku": screen["sku"],
-                    "length": len(screen["content"])
-                 })
-                 
+                snapshots.append({"type": "screenshot", "timestamp": screen["timestamp"], "sku": screen["sku"], "length": len(screen["content"])})
+
             # Sort by timestamp desc and limit
             snapshots.sort(key=lambda x: x["timestamp"], reverse=True)
             return snapshots[:limit]

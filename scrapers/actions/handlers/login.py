@@ -30,9 +30,7 @@ class LoginAction(BaseAction):
 
         if self.executor.is_session_authenticated():
             if test_mode:
-                logger.info(
-                    f"Session already authenticated for {scraper_name}, but verifying selectors in test_mode"
-                )
+                logger.info(f"Session already authenticated for {scraper_name}, but verifying selectors in test_mode")
                 # If we are already authenticated, we might not be on the login page.
                 # In test mode, we should try to go to the login page to verify selectors,
                 # UNLESS the success indicator is present (which implies we are logged in).
@@ -59,31 +57,19 @@ class LoginAction(BaseAction):
                 # So we should probably navigate to login URL even if authenticated in test_mode.
                 pass  # Fall through to execute login logic
             else:
-                logger.info(
-                    f"Skipping login for {scraper_name} - session already authenticated"
-                )
+                logger.info(f"Skipping login for {scraper_name} - session already authenticated")
                 return
 
-        # Merge login details from config into params (safely, if not already done)
         if self.executor.config.login and not params.get("url"):
             params.update(self.executor.config.login.model_dump())
 
-        # Get credentials from settings manager
-        if scraper_name == "phillips":
-            username, password = self.executor.settings.phillips_credentials
-            params["username"] = username  # type: ignore
-            params["password"] = password  # type: ignore
-        elif scraper_name == "orgill":
-            username, password = self.executor.settings.orgill_credentials
-            params["username"] = username  # type: ignore
-            params["password"] = password  # type: ignore
-        elif scraper_name == "petfoodex":
-            username, password = self.executor.settings.petfoodex_credentials
-            params["username"] = username  # type: ignore
-            params["password"] = password  # type: ignore
+        creds = getattr(self.executor.config, "options", {}) or {}
+        if "_credentials" in creds:
+            params["username"] = creds["_credentials"].get("username")
+            params["password"] = creds["_credentials"].get("password")
 
-        username = params.get("username")  # type: ignore
-        password = params.get("password")  # type: ignore
+        username = params.get("username")
+        password = params.get("password")
 
         # Ensure credentials are strings
         if username is not None:
@@ -152,27 +138,17 @@ class LoginAction(BaseAction):
                     )
                 )
                 # Input username
-                self.executor._execute_step(
-                    WorkflowStep(
-                        action="input_text", params={"selector": username_field, "text": username}
-                    )
-                )
+                self.executor._execute_step(WorkflowStep(action="input_text", params={"selector": username_field, "text": username}))
 
             # Input password
             password_field = params.get("password_field")
             if password_field:
-                self.executor._execute_step(
-                    WorkflowStep(
-                        action="input_text", params={"selector": password_field, "text": password}
-                    )
-                )
+                self.executor._execute_step(WorkflowStep(action="input_text", params={"selector": password_field, "text": password}))
 
             # Click submit
             submit_button = params.get("submit_button")
             if submit_button:
-                self.executor._execute_step(
-                    WorkflowStep(action="click", params={"selector": submit_button})
-                )
+                self.executor._execute_step(WorkflowStep(action="click", params={"selector": submit_button}))
 
             # Wait for success
             timeout = params.get("timeout", 30)

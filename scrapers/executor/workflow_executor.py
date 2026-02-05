@@ -1,6 +1,7 @@
 """
-Workflow executor for scraper automation using Selenium WebDriver.
+Workflow executor for scraper automation using Playwright.
 """
+
 from __future__ import annotations
 
 
@@ -11,8 +12,6 @@ import threading
 import time
 from typing import Any
 
-# Selenium imports removed
-# from selenium.webdriver.common.by import By
 from core.adaptive_retry_strategy import AdaptiveRetryStrategy
 from core.anti_detection_manager import AntiDetectionManager
 from core.failure_analytics import FailureAnalytics
@@ -43,12 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 class WorkflowExecutor:
-    """
-    Executes scraper workflows defined in YAML configurations using Selenium WebDriver.
-
-    Supports actions like navigate, wait_for, extract_single, extract_multiple, input_text, click.
-    Includes comprehensive error handling, intelligent retry logic, and result collection.
-    """
+    """Executes scraper workflows defined in YAML configurations using Playwright."""
 
     def __init__(
         self,
@@ -103,9 +97,7 @@ class WorkflowExecutor:
         self.context: dict[str, Any] = {}  # Store execution context
 
         # Build selector lookup dictionaries (ID-based primary, name-based fallback)
-        self.selectors_by_id: dict[str, SelectorConfig] = {
-            s.id: s for s in config.selectors if s.id
-        }
+        self.selectors_by_id: dict[str, SelectorConfig] = {s.id: s for s in config.selectors if s.id}
         self.selectors: dict[str, SelectorConfig] = {s.name: s for s in config.selectors}
 
         self.anti_detection_manager: AntiDetectionManager | None = None
@@ -115,12 +107,8 @@ class WorkflowExecutor:
         self.adaptive_retry_strategy = AdaptiveRetryStrategy(history_file=history_path)
 
         # Initialize failure classifier with site-specific patterns
-        no_results_selectors = (
-            self.config.validation.no_results_selectors if self.config.validation else []
-        )
-        no_results_text_patterns = (
-            self.config.validation.no_results_text_patterns if self.config.validation else []
-        )
+        no_results_selectors = self.config.validation.no_results_selectors if self.config.validation else []
+        no_results_text_patterns = self.config.validation.no_results_text_patterns if self.config.validation else []
         self.failure_classifier = FailureClassifier(
             site_specific_no_results_selectors=no_results_selectors,
             site_specific_no_results_text_patterns=no_results_text_patterns,
@@ -172,9 +160,7 @@ class WorkflowExecutor:
                     timeout=self.timeout,
                 )
             else:
-                raise BrowserError(
-                    "Selenium backend is no longer supported. Please use Playwright."
-                )
+                raise BrowserError("Selenium backend is no longer supported. Please use Playwright.")
 
             logger.info(f"Browser initialized for scraper: {self.config.name} (Backend: {backend})")
 
@@ -191,9 +177,7 @@ class WorkflowExecutor:
         # Initialize anti-detection manager if configured
         if config.anti_detection:
             try:
-                self.anti_detection_manager = AntiDetectionManager(
-                    self.browser, config.anti_detection, config.name
-                )
+                self.anti_detection_manager = AntiDetectionManager(self.browser, config.anti_detection, config.name)
                 logger.info(f"Anti-detection manager initialized for scraper: {self.config.name}")
             except Exception as e:
                 logger.warning(f"Failed to initialize anti-detection manager: {e}")
@@ -255,13 +239,9 @@ class WorkflowExecutor:
         # Register handlers
         self.retry_executor.register_recovery_handler(FailureType.CAPTCHA_DETECTED, handle_captcha)
         self.retry_executor.register_recovery_handler(FailureType.RATE_LIMITED, handle_rate_limit)
-        self.retry_executor.register_recovery_handler(
-            FailureType.ACCESS_DENIED, handle_access_denied
-        )
+        self.retry_executor.register_recovery_handler(FailureType.ACCESS_DENIED, handle_access_denied)
 
-    def execute_workflow(
-        self, context: dict[str, Any] | None = None, quit_browser: bool = True
-    ) -> dict[str, Any]:
+    def execute_workflow(self, context: dict[str, Any] | None = None, quit_browser: bool = True) -> dict[str, Any]:
         """
         Execute the complete workflow defined in the configuration.
 
@@ -276,7 +256,12 @@ class WorkflowExecutor:
             WorkflowExecutionError: If workflow execution fails critically
         """
         try:
-            logger.info(f"Starting workflow execution for: {self.config.name}")
+            total_steps = len(self.config.workflows)
+            logger.info(f"Starting workflow execution for: {self.config.name} ({total_steps} steps)")
+
+            if total_steps == 0:
+                logger.warning(f"No workflow steps defined for {self.config.name} - config may be incomplete")
+
             self.results = {}  # Reset results for new run
             self.workflow_stopped = False  # Reset stop flag for new run
             self.step_errors = []  # Reset error tracking
@@ -284,19 +269,15 @@ class WorkflowExecutor:
 
             # Check for cancellation at start
             if self.stop_event and self.stop_event.is_set():
-                logger.warning(
-                    f"Workflow execution cancelled before starting for: {self.config.name}"
-                )
-                raise WorkflowExecutionError(
-                    "Workflow cancelled", context=ErrorContext(site_name=self.config.name)
-                )
+                logger.warning(f"Workflow execution cancelled before starting for: {self.config.name}")
+                raise WorkflowExecutionError("Workflow cancelled", context=ErrorContext(site_name=self.config.name))
 
             # Merge context into results so they are available
             if context:
                 self.context = context  # Update instance context
                 self.results.update(context)
+                logger.debug(f"Workflow context: {context}")
 
-            total_steps = len(self.config.workflows)
             for i, step in enumerate(self.config.workflows, 1):
                 self.current_step_index = i
 
@@ -305,6 +286,7 @@ class WorkflowExecutor:
                     break
 
                 logger.info(f"Step {i}/{total_steps}: Executing {step.action}")
+                logger.debug(f"Step {i} params: {step.params}")
 
                 try:
                     self._execute_step_with_retry(step, context, step_index=i)
@@ -369,9 +351,7 @@ class WorkflowExecutor:
             if quit_browser and self.browser:
                 self.browser.quit()
 
-    def execute_steps(
-        self, steps: list[Any], context: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    def execute_steps(self, steps: list[Any], context: dict[str, Any] | None = None) -> dict[str, Any]:
         """
         Execute specific workflow steps.
 
@@ -515,10 +495,7 @@ class WorkflowExecutor:
 
     def _on_retry_callback(self, attempt: int, error: Exception, delay: float) -> None:
         """Callback called before each retry attempt."""
-        logger.info(
-            f"Retry attempt {attempt + 2} for {self.config.name} after "
-            f"{type(error).__name__}, waiting {delay:.2f}s"
-        )
+        logger.info(f"Retry attempt {attempt + 2} for {self.config.name} after {type(error).__name__}, waiting {delay:.2f}s")
 
     def _execute_step(self, step: WorkflowStep, context: dict[str, Any] | None = None) -> None:
         """
@@ -535,10 +512,7 @@ class WorkflowExecutor:
                 substituted_params[key] = self._substitute_variables(value, context or {})
             elif isinstance(value, dict):
                 # Recursively substitute in nested dicts
-                substituted_params[key] = {
-                    k: self._substitute_variables(v, context or {}) if isinstance(v, str) else v
-                    for k, v in value.items()
-                }
+                substituted_params[key] = {k: self._substitute_variables(v, context or {}) if isinstance(v, str) else v for k, v in value.items()}
             else:
                 substituted_params[key] = value
 
@@ -562,15 +536,11 @@ class WorkflowExecutor:
                 try:
                     # Capture source
                     src = self.browser.driver.page_source
-                    
+
                     # Also capture screenshot if important step? For now just source to reduce I/O
                     # Actually, user wants "page-source" endpoint to work.
-                    
-                    self.debug_callback({
-                        "scraper": self.config.name,
-                        "step": step.action,
-                        "page_source": src
-                    })
+
+                    self.debug_callback({"scraper": self.config.name, "step": step.action, "page_source": src})
                 except Exception as e:
                     logger.debug(f"Failed to capture success debug artifact: {e}")
         except Exception:
@@ -595,7 +565,8 @@ class WorkflowExecutor:
             if hasattr(self.browser, "page"):
                 return self.browser.page.query_selector(selector)
             return None
-        except Exception:
+        except Exception as e:
+            logger.debug(f"find_element_safe failed for '{selector}': {e}")
             return None
 
     def find_elements_safe(self, selector: str):
@@ -611,7 +582,8 @@ class WorkflowExecutor:
             if hasattr(self.browser, "page"):
                 return self.browser.page.query_selector_all(selector)
             return []
-        except Exception:
+        except Exception as e:
+            logger.debug(f"find_elements_safe failed for '{selector}': {e}")
             return []
 
     def _extract_value_from_element(self, element, attribute: str | None) -> str | None:
@@ -627,9 +599,7 @@ class WorkflowExecutor:
         """
         try:
             # Determine backend based on element type
-            is_playwright_element = hasattr(element, "inner_text") or (
-                hasattr(element, "get_attribute") and not hasattr(element, "tag_name")
-            )
+            is_playwright_element = hasattr(element, "inner_text") or (hasattr(element, "get_attribute") and not hasattr(element, "tag_name"))
 
             if attribute == "text" or attribute is None:
                 if is_playwright_element:
@@ -697,10 +667,7 @@ class WorkflowExecutor:
         if selector:
             # Log usage of name-based lookup if we have IDs available (indicates old config format)
             if self.selectors_by_id:
-                logger.debug(
-                    f"Using name-based selector lookup for '{identifier}'. "
-                    "Consider migrating to ID-based references."
-                )
+                logger.debug(f"Using name-based selector lookup for '{identifier}'. Consider migrating to ID-based references.")
             return selector
 
         return None
@@ -784,9 +751,7 @@ class WorkflowExecutor:
                         # Extract number and unit, convert to lbs
                         # Match number (int or float) followed by optional unit
                         # Handles: "5 lbs", "5.5kg", "Weight: 10 oz", etc.
-                        match = re.search(
-                            r"(\d+(?:\.\d+)?)\s*(lbs?|lb|oz|kg|g)?", value, re.IGNORECASE
-                        )
+                        match = re.search(r"(\d+(?:\.\d+)?)\s*(lbs?|lb|oz|kg|g)?", value, re.IGNORECASE)
                         if match:
                             weight = float(match.group(1))
                             unit = (match.group(2) or "lb").lower()
@@ -866,21 +831,15 @@ class WorkflowExecutor:
             # Store in debug context via callback
             if self.debug_callback:
                 import base64
-                
-                debug_data = {
-                    "sku": sku,
-                    "scraper": self.config.name,
-                    "step": action,
-                    "url": url,
-                    "error": "Step failed"
-                }
+
+                debug_data = {"sku": sku, "scraper": self.config.name, "step": action, "url": url, "error": "Step failed"}
 
                 if page_source:
                     debug_data["page_source"] = page_source
-                
+
                 if screenshot_bytes:
-                    debug_data["screenshot"] = base64.b64encode(screenshot_bytes).decode('utf-8')
-                
+                    debug_data["screenshot"] = base64.b64encode(screenshot_bytes).decode("utf-8")
+
                 try:
                     self.debug_callback(debug_data)
                 except Exception as ex:

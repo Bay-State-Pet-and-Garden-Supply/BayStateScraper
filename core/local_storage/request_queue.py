@@ -1,6 +1,7 @@
 """
 Local request queue implementation using JSON file storage.
 """
+
 from __future__ import annotations
 
 
@@ -155,5 +156,4 @@ class LocalRequestQueue:
 
     def __len__(self) -> int:
         """Return the number of pending requests."""
-        return len(self._pending_requests)
         return len(self._pending_requests)

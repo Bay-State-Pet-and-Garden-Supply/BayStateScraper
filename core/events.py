@@ -13,13 +13,12 @@ Key Design Principles:
 
 from __future__ import annotations
 
-import json
 import logging
 import threading
 import time
 import uuid
 from collections.abc import Callable
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -124,15 +123,11 @@ class ScraperEvent:
     def to_dict(self) -> dict[str, Any]:
         """Convert event to JSON-serializable dictionary."""
         result = {
-            "event_type": self.event_type.value
-            if isinstance(self.event_type, EventType)
-            else self.event_type,
+            "event_type": self.event_type.value if isinstance(self.event_type, EventType) else self.event_type,
             "timestamp": self.timestamp,
             "job_id": self.job_id,
             "event_id": self.event_id,
-            "severity": self.severity.value
-            if isinstance(self.severity, EventSeverity)
-            else self.severity,
+            "severity": self.severity.value if isinstance(self.severity, EventSeverity) else self.severity,
             "data": self.data,
         }
         return result
@@ -183,9 +178,7 @@ class EventBus:
     - Optional event persistence to JSON file
     """
 
-    def __init__(
-        self, buffer_size: int = 500, persist_path: Path | None = None, max_jobs: int = 100
-    ):
+    def __init__(self, buffer_size: int = 500, persist_path: Path | None = None, max_jobs: int = 100):
         self._subscribers: list[EventCallback] = []
         self._events: list[ScraperEvent] = []
         self._buffer_size = buffer_size
@@ -240,9 +233,7 @@ class EventBus:
                 self._job_events[event.job_id].append(event)
                 # Limit per-job buffer
                 if len(self._job_events[event.job_id]) > self._buffer_size:
-                    self._job_events[event.job_id] = self._job_events[event.job_id][
-                        -self._buffer_size :
-                    ]
+                    self._job_events[event.job_id] = self._job_events[event.job_id][-self._buffer_size :]
 
             # Notify subscribers
             for callback in self._subscribers:
@@ -378,9 +369,7 @@ class EventEmitter:
             successful=successful,
             failed=failed,
             duration_seconds=round(duration_seconds, 2),
-            success_rate=round(successful / (successful + failed) * 100, 1)
-            if (successful + failed) > 0
-            else 0,
+            success_rate=round(successful / (successful + failed) * 100, 1) if (successful + failed) > 0 else 0,
         )
 
     def job_failed(self, error: str) -> ScraperEvent:
@@ -650,9 +639,7 @@ class EventEmitter:
         )
 
     # Login events
-    def login_selector_status(
-        self, scraper: str, selector_name: str, status: str
-    ) -> ScraperEvent:
+    def login_selector_status(self, scraper: str, selector_name: str, status: str) -> ScraperEvent:
         return self._emit(
             EventType.LOGIN_SELECTOR_STATUS,
             scraper=scraper,

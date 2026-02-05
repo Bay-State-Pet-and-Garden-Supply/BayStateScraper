@@ -1,0 +1,25 @@
+services:
+  scraper:
+    image: baystate-scraper:latest
+    build: .
+    restart: unless-stopped
+    init: true
+    shm_size: '2gb'
+    environment:
+      - SCRAPER_API_URL=${SCRAPER_API_URL}
+      - SCRAPER_API_KEY=${SCRAPER_API_KEY}
+      - RUNNER_NAME=${RUNNER_NAME:-default-runner}
+      - POLL_INTERVAL=${POLL_INTERVAL:-30}
+      - MAX_JOBS_BEFORE_RESTART=${MAX_JOBS_BEFORE_RESTART:-100}
+      - LOG_LEVEL=DEBUG
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+        reservations:
+          memory: 1g
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"

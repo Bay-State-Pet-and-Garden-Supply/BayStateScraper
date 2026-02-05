@@ -1,0 +1,51 @@
+name: "4health"
+test_skus: ["4health"]
+base_url: "https://www.tractorsupply.com"
+timeout: 30
+retries: 2
+image_quality: 100
+
+selectors:
+  - name: "Title"
+    selector: "h2, .product-title, .product_title"
+    attribute: "text"
+  - name: "Price"
+    selector: ".price, .product-price, .offer-price"
+    attribute: "text"
+  - name: "Images"
+    selector: "img"
+    attribute: "src"
+    multiple: true
+  - name: "Link"
+    selector: "a"
+    attribute: "href"
+
+workflows:
+  - action: "navigate"
+    params:
+      url: "https://www.tractorsupply.com/tsc/search/4health"
+  - action: "wait_for"
+    params:
+      selector: "div[class*='product-tile'], div[class*='product_tile'], .search-result-grid > div"
+      timeout: 15
+  - action: "extract_and_transform"
+    params:
+      selector: "div[class*='product-tile'], div[class*='product_tile'], .search-result-grid > div"
+      fields:
+        - name: "Title"
+          selector: "h2, .product-title, .product_title"
+          attribute: "text"
+        - name: "Price"
+          selector: ".price, .product-price, .offer-price"
+          attribute: "text"
+        - name: "Images"
+          selector: "img"
+          attribute: "src"
+          multiple: false
+        - name: "Link"
+          selector: "a"
+          attribute: "href"
+
+anti_detection:
+  enable_human_simulation: true
+  enable_session_rotation: true
