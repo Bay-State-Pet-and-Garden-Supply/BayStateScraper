@@ -176,7 +176,7 @@ class RealtimeManager:
 
         self._job_callback = callback
 
-        channel = self.client.channel(f"runner:{self.runner_name}")
+        channel = self.client.channel(f"runner:{self.runner_name}", {"private": True})
 
         channel.on_postgres_changes(
             event="INSERT",
@@ -241,7 +241,9 @@ class RealtimeManager:
             return False
 
         try:
-            self._presence_channel = self.client.channel(CHANNEL_RUNNER_PRESENCE)
+            self._presence_channel = self.client.channel(
+                CHANNEL_RUNNER_PRESENCE, {"private": True}
+            )
 
             # Set up presence tracking
             self._presence_channel.on_presence(
@@ -334,7 +336,9 @@ class RealtimeManager:
 
         try:
             # Job progress broadcast channel
-            self._broadcast_channel = self.client.channel(CHANNEL_JOB_BROADCAST)
+            self._broadcast_channel = self.client.channel(
+                CHANNEL_JOB_BROADCAST, {"private": True}
+            )
 
             await self._broadcast_channel.subscribe()
             logger.info(f"[{self.runner_name}] Broadcast channel enabled")
