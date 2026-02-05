@@ -58,6 +58,12 @@ class AuthenticationError(Exception):
     pass
 
 
+class ConnectionError(Exception):
+    """Raised when API connection fails."""
+
+    pass
+
+
 class ConfigFetchError(Exception):
     """Raised when config fetch fails."""
 
@@ -133,6 +139,56 @@ class ScraperAPIClient:
             logger.warning("SCRAPER_API_URL not configured")
         if not self.api_key:
             logger.warning("SCRAPER_API_KEY not configured")
+
+    def health_check(self) -> bool:
+        """
+        Perform a quick health check to verify API connectivity.
+
+        This method makes a lightweight GET request to verify the API is reachable
+        and responding. It does NOT use retry logic - it's intended as a quick
+        connectivity check before job execution.
+
+        Returns:
+            True if API is healthy and responding, False otherwise.
+
+        Raises:
+            ConnectionError: If the API is unreachable or returns an error.
+        """
+        if not self.api_url:
+            error_msg = "Cannot perform health check: SCRAPER_API_URL not configured"
+            logger.error(f"[API Client] {error_msg}")
+            raise ConnectionError(error_msg)
+
+        health_url = f"{self.api_url.rstrip('/')}/api/health"
+
+        try:
+            with httpx.Client(timeout=self.timeout) as client:
+                response = client.get(health_url, headers=self._get_headers())
+
+                if response.status_code == 200:
+                    logger.info(f"[API Client] Health check passed: {self.api_url}")
+                    return True
+                else:
+                    error_msg = f"Health check failed: API returned status {response.status_code} (expected 200 OK)"
+                    logger.error(f"[API Client] {error_msg}")
+                    raise ConnectionError(error_msg)
+
+        except httpx.NetworkError as e:
+            error_msg = f"Health check failed: Network error - {str(e)}"
+            logger.error(f"[API Client] {error_msg}")
+            raise ConnectionError(error_msg)
+        except httpx.TimeoutException as e:
+            error_msg = f"Health check failed: Request timed out ({self.timeout}s) - {str(e)}"
+            logger.error(f"[API Client] {error_msg}")
+            raise ConnectionError(error_msg)
+        except httpx.HTTPStatusError as e:
+            error_msg = f"Health check failed: HTTP error {e.response.status_code} - {str(e)}"
+            logger.error(f"[API Client] {error_msg}")
+            raise ConnectionError(error_msg)
+        except Exception as e:
+            error_msg = f"Health check failed: Unexpected error - {str(e)}"
+            logger.error(f"[API Client] {error_msg}")
+            raise ConnectionError(error_msg)
 
     def _get_headers(self) -> dict[str, str]:
         """Get headers for authenticated requests."""

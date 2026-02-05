@@ -27,7 +27,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from scraper_backend.core.api_client import ScraperAPIClient, JobConfig
+from scraper_backend.core.api_client import ScraperAPIClient, JobConfig, ConnectionError
 from scraper_backend.core.config_fetcher import (
     fetch_and_validate_config,
     ConfigFetchError,
@@ -65,12 +65,8 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
     }
 
     logger.info(f"[Runner] Starting job {job_id}")
-    logger.info(
-        f"[Runner] SKUs: {len(job_config.skus)}, Scrapers: {len(job_config.scrapers)}"
-    )
-    logger.info(
-        f"[Runner] Test mode: {job_config.test_mode}, Max workers: {job_config.max_workers}"
-    )
+    logger.info(f"[Runner] SKUs: {len(job_config.skus)}, Scrapers: {len(job_config.scrapers)}")
+    logger.info(f"[Runner] Test mode: {job_config.test_mode}, Max workers: {job_config.max_workers}")
 
     # Parse scraper configs into internal format
     configs = []
@@ -137,10 +133,7 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
 
                     if result.get("success"):
                         extracted_data = result.get("results", {})
-                        has_data = any(
-                            extracted_data.get(field)
-                            for field in ["Name", "Brand", "Weight"]
-                        )
+                        has_data = any(extracted_data.get(field) for field in ["Name", "Brand", "Weight"])
 
                         if has_data:
                             # Store result by SKU
@@ -186,9 +179,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run a scrape job from the API")
     parser.add_argument("--job-id", required=True, help="Job ID to execute")
     parser.add_argument("--api-url", help="API base URL (or set SCRAPER_API_URL)")
-    parser.add_argument(
-        "--runner-name", default=os.environ.get("RUNNER_NAME", "unknown")
-    )
+    parser.add_argument("--runner-name", default=os.environ.get("RUNNER_NAME", "unknown"))
     parser.add_argument(
         "--mode",
         choices=["full", "chunk_worker", "realtime"],
@@ -213,6 +204,17 @@ def main():
 
     client = ScraperAPIClient(api_url=api_url, runner_name=args.runner_name)
 
+    # Pre-flight health check - fail fast if API is unreachable
+    logger.info(f"[Runner] Performing pre-flight health check against {api_url}")
+    try:
+        healthy = client.health_check()
+        if healthy:
+            logger.info("[Runner] API connection verified - ready to execute jobs")
+    except ConnectionError as e:
+        logger.error(f"[Runner] Pre-flight health check failed: {e}")
+        logger.error("[Runner] Cannot proceed - API is unreachable. Check SCRAPER_API_URL and network connectivity.")
+        sys.exit(1)
+
     if args.mode == "realtime":
         asyncio.run(run_realtime_mode(client, args.runner_name))
     elif args.mode == "chunk_worker":
@@ -223,6 +225,8 @@ def main():
 
 def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> None:
     """Legacy mode: process all SKUs in a single job."""
+    logger.info(f"[Full Mode] Starting job {job_id}")
+    logger.info(f"[Full Mode] Runner: {runner_name}, API: {client.api_url}")
     logger.info(f"[Full Mode] Fetching job config for {job_id}...")
     client.update_status(job_id, "running", runner_name=runner_name)
 
@@ -251,10 +255,7 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
         print(json.dumps(results, indent=2))
 
     except ConfigValidationError as e:
-        logger.error(
-            f"[Full Mode] Config validation failed: {e.message}"
-            f" (slug={e.config_slug}, schema_version={e.schema_version})"
-        )
+        logger.error(f"[Full Mode] Config validation failed: {e.message} (slug={e.config_slug}, schema_version={e.schema_version})")
         client.submit_results(
             job_id,
             "failed",
@@ -263,10 +264,7 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
         )
         sys.exit(1)
     except ConfigFetchError as e:
-        logger.error(
-            f"[Full Mode] Config fetch failed: {e}"
-            f" (slug={getattr(e, 'config_slug', None)})"
-        )
+        logger.error(f"[Full Mode] Config fetch failed: {e} (slug={getattr(e, 'config_slug', None)})")
         client.submit_results(
             job_id,
             "failed",
@@ -285,9 +283,7 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
         sys.exit(1)
 
 
-def run_chunk_worker_mode(
-    client: ScraperAPIClient, job_id: str, runner_name: str
-) -> None:
+def run_chunk_worker_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> None:
     """Chunk worker mode: claim and process chunks until none remain."""
     logger.info(f"[Chunk Worker] Starting for job {job_id}")
 
@@ -300,9 +296,7 @@ def run_chunk_worker_mode(
         chunk = client.claim_chunk(job_id, runner_name)
 
         if not chunk:
-            logger.info(
-                f"[Chunk Worker] No more chunks. Processed {chunks_processed} chunks, {total_skus_processed} SKUs"
-            )
+            logger.info(f"[Chunk Worker] No more chunks. Processed {chunks_processed} chunks, {total_skus_processed} SKUs")
             break
 
         chunk_id = chunk["chunk_id"]
@@ -310,9 +304,7 @@ def run_chunk_worker_mode(
         skus = chunk.get("skus", [])
         scrapers_filter = chunk.get("scrapers", [])
 
-        logger.info(
-            f"[Chunk Worker] Processing chunk {chunk_index} with {len(skus)} SKUs"
-        )
+        logger.info(f"[Chunk Worker] Processing chunk {chunk_index} with {len(skus)} SKUs")
 
         try:
             job_config = client.get_job_config(job_id)
@@ -321,17 +313,14 @@ def run_chunk_worker_mode(
 
             job_config.skus = skus
             if scrapers_filter:
-                job_config.scrapers = [
-                    s for s in job_config.scrapers if s.name in scrapers_filter
-                ]
+                job_config.scrapers = [s for s in job_config.scrapers if s.name in scrapers_filter]
 
             results = run_job(job_config, runner_name=runner_name)
 
             chunk_results = {
                 "skus_processed": results.get("skus_processed", 0),
                 "skus_successful": len(results.get("data", {})),
-                "skus_failed": results.get("skus_processed", 0)
-                - len(results.get("data", {})),
+                "skus_failed": results.get("skus_processed", 0) - len(results.get("data", {})),
                 "data": results.get("data", {}),
             }
 
@@ -342,18 +331,14 @@ def run_chunk_worker_mode(
             total_successful += chunk_results["skus_successful"]
             total_failed += chunk_results["skus_failed"]
 
-            logger.info(
-                f"[Chunk Worker] Completed chunk {chunk_index}: {chunk_results['skus_successful']}/{chunk_results['skus_processed']} successful"
-            )
+            logger.info(f"[Chunk Worker] Completed chunk {chunk_index}: {chunk_results['skus_successful']}/{chunk_results['skus_processed']} successful")
 
         except Exception as e:
             logger.exception(f"[Chunk Worker] Chunk {chunk_index} failed")
             client.submit_chunk_results(chunk_id, "failed", error_message=str(e))
             chunks_processed += 1
 
-    logger.info(
-        f"[Chunk Worker] Finished. Total: {chunks_processed} chunks, {total_successful}/{total_skus_processed} successful"
-    )
+    logger.info(f"[Chunk Worker] Finished. Total: {chunks_processed} chunks, {total_successful}/{total_skus_processed} successful")
 
 
 async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
@@ -448,9 +433,7 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
             # Fetch job configuration
             job_config = client.get_job_config(job_id)
             if not job_config:
-                logger.error(
-                    f"[Realtime Runner] Failed to fetch config for job {job_id}"
-                )
+                logger.error(f"[Realtime Runner] Failed to fetch config for job {job_id}")
                 if rm._connected:
                     await rm.broadcast_job_progress(
                         job_id=job_id,
@@ -515,9 +498,7 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
             logger.info(f"[Realtime Runner] Job {job_id} completed successfully")
 
         except ConfigValidationError as e:
-            logger.error(
-                f"[Realtime Runner] Config validation failed for job {job_id}: {e.message}"
-            )
+            logger.error(f"[Realtime Runner] Config validation failed for job {job_id}: {e.message}")
             if rm._connected:
                 await rm.broadcast_job_progress(
                     job_id=job_id,

@@ -7,6 +7,7 @@ import httpx
 
 from core.api_client import (
     AuthenticationError,
+    ConnectionError,
     ScraperAPIClient,
 )
 
@@ -330,3 +331,94 @@ class TestRetryLogic:
 
             assert result == {"success": True}
             assert mock_instance.get.call_count == 2
+
+
+class TestHealthCheck:
+    """Tests for health check functionality."""
+
+    def setup_method(self):
+        self.client = ScraperAPIClient(
+            api_url="https://app.example.com",
+            api_key="test-api-key",
+            runner_name="test-runner",
+        )
+
+    def test_health_check_returns_true_on_success(self):
+        """Health check returns True when API responds with 200."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.return_value = mock_response
+
+            result = self.client.health_check()
+
+            assert result is True
+            mock_instance.get.assert_called_once()
+            call_args = mock_instance.get.call_args
+            assert "/api/health" in call_args[0][0]
+            assert call_args[1]["headers"]["X-API-Key"] == "test-api-key"
+
+    def test_health_check_raises_connection_error_on_missing_url(self):
+        """Health check raises ConnectionError when API URL is not configured."""
+        client = ScraperAPIClient(
+            api_url="",  # Empty URL
+            api_key="test-api-key",
+        )
+
+        with pytest.raises(ConnectionError) as exc_info:
+            client.health_check()
+
+        assert "SCRAPER_API_URL not configured" in str(exc_info.value)
+
+    def test_health_check_raises_connection_error_on_non_200(self):
+        """Health check raises ConnectionError when API returns non-200 status."""
+        mock_response = MagicMock()
+        mock_response.status_code = 500
+        mock_response.text = "Internal Server Error"
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.return_value = mock_response
+
+            with pytest.raises(ConnectionError) as exc_info:
+                self.client.health_check()
+
+            assert "500" in str(exc_info.value)
+
+    def test_health_check_raises_connection_error_on_network_error(self):
+        """Health check raises ConnectionError on network failure."""
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.side_effect = httpx.NetworkError("Connection refused")
+
+            with pytest.raises(ConnectionError) as exc_info:
+                self.client.health_check()
+
+            assert "Network error" in str(exc_info.value)
+
+    def test_health_check_raises_connection_error_on_timeout(self):
+        """Health check raises ConnectionError when request times out."""
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.side_effect = httpx.TimeoutException("Request timed out")
+
+            with pytest.raises(ConnectionError) as exc_info:
+                self.client.health_check()
+
+            assert "timed out" in str(exc_info.value)
+
+    def test_health_check_does_not_use_retry_logic(self):
+        """Health check should not retry on failure - single attempt only."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.return_value = mock_response
+
+            self.client.health_check()
+
+            # Should only make one request (no retries for health check)
+            assert mock_instance.get.call_count == 1
