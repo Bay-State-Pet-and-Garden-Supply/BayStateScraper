@@ -50,6 +50,8 @@ class JobConfig:
     scrapers: list[JobScraperConfig]
     test_mode: bool = False
     max_workers: int = 3
+    lease_token: str | None = None
+    lease_expires_at: str | None = None
 
 
 class AuthenticationError(Exception):
@@ -298,6 +300,8 @@ class ScraperAPIClient:
                 scrapers=scrapers,
                 test_mode=data.get("test_mode", False),
                 max_workers=data.get("max_workers", 3),
+                lease_token=data.get("lease_token"),
+                lease_expires_at=data.get("lease_expires_at"),
             )
 
         except AuthenticationError as e:
@@ -339,6 +343,7 @@ class ScraperAPIClient:
         job_id: str,
         status: str,
         runner_name: str | None = None,
+        lease_token: str | None = None,
         results: dict[str, Any] | None = None,
         error_message: str | None = None,
     ) -> bool:
@@ -352,6 +357,9 @@ class ScraperAPIClient:
             "status": status,
             "runner_name": runner_name or self.runner_name,
         }
+
+        if lease_token:
+            payload_dict["lease_token"] = lease_token
 
         if results:
             payload_dict["results"] = results
@@ -375,9 +383,15 @@ class ScraperAPIClient:
             logger.error(f"Error submitting results: {e}")
             return False
 
-    def update_status(self, job_id: str, status: str, runner_name: str | None = None) -> bool:
+    def update_status(
+        self,
+        job_id: str,
+        status: str,
+        runner_name: str | None = None,
+        lease_token: str | None = None,
+    ) -> bool:
         """Send a status update (e.g., 'running') without results."""
-        return self.submit_results(job_id, status, runner_name=runner_name)
+        return self.submit_results(job_id, status, runner_name=runner_name, lease_token=lease_token)
 
     def claim_chunk(self, job_id: str, runner_name: str | None = None) -> dict[str, Any] | None:
         """
@@ -459,17 +473,8 @@ class ScraperAPIClient:
             return False
 
     def get_supabase_config(self) -> dict[str, Any] | None:
-        """
-        Fetch Supabase configuration from the coordinator API.
-
-        This implements "credential vending" - runners only need their API key,
-        and Supabase credentials are fetched automatically from the coordinator.
-
-        Returns:
-            Dict with 'supabase_url' and 'supabase_realtime_key', or None if fetch fails.
-        """
         try:
-            data = self._make_request("GET", "/api/scraper/v1/supabase-config")
+            data = self._make_request("POST", "/api/scraper/v1/supabase-config")
 
             return {
                 "supabase_url": data.get("supabase_url"),

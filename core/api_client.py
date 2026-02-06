@@ -46,6 +46,8 @@ class JobConfig:
     scrapers: list[ScraperConfig]
     test_mode: bool = False
     max_workers: int = 3
+    lease_token: str | None = None
+    lease_expires_at: str | None = None
 
 
 class AuthenticationError(Exception):
@@ -297,6 +299,7 @@ class ScraperAPIClient:
         job_id: str,
         status: str,
         runner_name: str | None = None,
+        lease_token: str | None = None,
         results: dict[str, Any] | None = None,
         error_message: str | None = None,
     ) -> bool:
@@ -310,6 +313,9 @@ class ScraperAPIClient:
             "status": status,
             "runner_name": runner_name or self.runner_name,
         }
+
+        if lease_token:
+            payload_dict["lease_token"] = lease_token
 
         if results:
             payload_dict["results"] = results
@@ -333,9 +339,15 @@ class ScraperAPIClient:
             logger.error(f"Error submitting results: {e}")
             return False
 
-    def update_status(self, job_id: str, status: str, runner_name: str | None = None) -> bool:
+    def update_status(
+        self,
+        job_id: str,
+        status: str,
+        runner_name: str | None = None,
+        lease_token: str | None = None,
+    ) -> bool:
         """Send a status update (e.g., 'running') without results."""
-        return self.submit_results(job_id, status, runner_name=runner_name)
+        return self.submit_results(job_id, status, runner_name=runner_name, lease_token=lease_token)
 
     def claim_chunk(self, job_id: str, runner_name: str | None = None) -> dict[str, Any] | None:
         """
@@ -438,6 +450,9 @@ class ScraperAPIClient:
         )
 
         try:
+            # We use _make_raw_request to get access to headers if needed,
+            # but _make_request is standard. Let's use httpx directly for header access
+            # or rely on heartbeat for name sync. Heartbeat is safer.
             data = self._make_request("POST", "/api/scraper/v1/poll", payload=payload)
 
             job_data = data.get("job")
@@ -464,6 +479,8 @@ class ScraperAPIClient:
                 scrapers=scrapers,
                 test_mode=job_data.get("test_mode", False),
                 max_workers=job_data.get("max_workers", 3),
+                lease_token=job_data.get("lease_token"),
+                lease_expires_at=job_data.get("lease_expires_at"),
             )
 
             logger.info(f"Claimed job {job.job_id} with {len(job.skus)} SKUs")
@@ -482,7 +499,12 @@ class ScraperAPIClient:
             logger.error(f"Error polling for work: {e}")
             return None
 
-    def heartbeat(self) -> bool:
+    def heartbeat(
+        self,
+        current_job_id: str | None = None,
+        lease_token: str | None = None,
+        status: str | None = None,
+    ) -> bool:
         """
         Send a heartbeat to the coordinator to indicate the runner is alive.
 
@@ -497,14 +519,26 @@ class ScraperAPIClient:
             logger.error("API client not configured - missing URL")
             return False
 
-        payload = json.dumps(
-            {
-                "runner_name": self.runner_name,
-            }
-        )
+        payload_dict: dict[str, Any] = {
+            "runner_name": self.runner_name,
+        }
+        if current_job_id:
+            payload_dict["current_job_id"] = current_job_id
+        if lease_token:
+            payload_dict["lease_token"] = lease_token
+        if status:
+            payload_dict["status"] = status
+
+        payload = json.dumps(payload_dict)
 
         try:
-            self._make_request("POST", "/api/scraper/v1/heartbeat", payload=payload)
+            response_data = self._make_request("POST", "/api/scraper/v1/heartbeat", payload=payload)
+
+            enforced_name = response_data.get("enforced_runner_name")
+            if enforced_name and self.runner_name != enforced_name:
+                logger.info(f"Runner name sync: '{self.runner_name}' -> '{enforced_name}'")
+                self.runner_name = enforced_name
+
             logger.debug(f"Heartbeat sent for {self.runner_name}")
             return True
 
@@ -580,6 +614,18 @@ class ScraperAPIClient:
             return None
         except Exception as e:
             logger.error(f"Error fetching credentials: {e}")
+            return None
+
+    def get_supabase_config(self) -> dict[str, Any] | None:
+        try:
+            data = self._make_request("GET", "/api/scraper/v1/supabase-config")
+
+            return {
+                "supabase_url": data.get("supabase_url"),
+                "supabase_realtime_key": data.get("supabase_realtime_key"),
+            }
+        except Exception as e:
+            logger.warning(f"Failed to fetch Supabase config from API: {e}")
             return None
 
 

@@ -516,6 +516,7 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
             job_id,
             "completed",
             runner_name=runner_name,
+            lease_token=job_config.lease_token,
             results=results,
         )
 
@@ -539,6 +540,7 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
             job_id,
             "failed",
             runner_name=runner_name,
+            lease_token=job_config.lease_token,
             error_message=f"Config validation failed for {e.config_slug}: {e.message}",
         )
         sys.exit(1)
@@ -557,6 +559,7 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
             job_id,
             "failed",
             runner_name=runner_name,
+            lease_token=job_config.lease_token,
             error_message=f"Config fetch failed: {e}",
         )
         sys.exit(1)
@@ -574,6 +577,7 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
             job_id,
             "failed",
             runner_name=runner_name,
+            lease_token=job_config.lease_token,
             error_message=str(e),
         )
         sys.exit(1)
@@ -762,6 +766,7 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
     async def on_job(job_data: dict) -> None:
         """Handle incoming job from Supabase Realtime."""
         job_id = job_data.get("job_id")
+        job_lease_token: str | None = None
         if not job_id:
             logger.warning("[Realtime Runner] Received job without job_id", extra={"runner_name": runner_name, "trace_id": realtime_trace_id})
             return
@@ -833,9 +838,12 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
                     job_id,
                     "failed",
                     runner_name=runner_name,
+                    lease_token=job_data.get("lease_token"),
                     error_message="Failed to fetch job configuration",
                 )
                 return
+
+            job_lease_token = job_config.lease_token
 
             # Broadcast that config was loaded
             if rm._connected:
@@ -876,6 +884,7 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
                 job_id,
                 "completed",
                 runner_name=runner_name,
+                lease_token=job_lease_token,
                 results=results,
             )
             logger.info(
@@ -918,6 +927,7 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
                 job_id,
                 "failed",
                 runner_name=runner_name,
+                lease_token=job_lease_token,
                 error_message=f"Config validation failed: {e.message}",
             )
         except ConfigFetchError as e:
@@ -948,6 +958,7 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
                 job_id,
                 "failed",
                 runner_name=runner_name,
+                lease_token=job_lease_token,
                 error_message=f"Config fetch failed: {e}",
             )
         except Exception as e:
@@ -977,6 +988,7 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
                 job_id,
                 "failed",
                 runner_name=runner_name,
+                lease_token=job_lease_token,
                 error_message=str(e),
             )
 

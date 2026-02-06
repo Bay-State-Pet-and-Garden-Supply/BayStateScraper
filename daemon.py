@@ -31,6 +31,7 @@ import platform
 import signal
 import sys
 import time
+import asyncio
 from datetime import datetime
 from pathlib import Path
 
@@ -40,6 +41,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from core.api_client import ScraperAPIClient, JobConfig
+from scraper_backend.core.realtime_manager import RealtimeManager
 from utils.logger import NoHttpFilter, setup_logging
 
 
@@ -94,13 +96,9 @@ def needs_credentials(scraper_name: str) -> bool:
     return scraper_name.lower() in LOGIN_SCRAPERS
 
 
-def main():
-    """Main daemon loop."""
+async def main_async():
+    """Main async daemon loop."""
     global _shutdown_requested
-
-    # Register signal handlers for graceful shutdown
-    signal.signal(signal.SIGTERM, signal_handler)
-    signal.signal(signal.SIGINT, signal_handler)
 
     # Initialize API client
     client = ScraperAPIClient()
@@ -135,36 +133,47 @@ def main():
     except Exception as e:
         logger.warning(f"Failed to enable API logging: {e}")
 
+    rm = None
+    try:
+        supabase_config = client.get_supabase_config()
+        if supabase_config:
+            rm = RealtimeManager(supabase_config["supabase_url"], supabase_config["supabase_realtime_key"], client.runner_name)
+            connected = await rm.connect()
+            if connected:
+                await rm.enable_presence()
+                await rm.enable_broadcast()
+                logger.info("[Daemon] Persistent Realtime presence enabled")
+    except Exception as e:
+        logger.warning(f"[Daemon] Failed to initialize Realtime presence: {e}")
+
     jobs_completed = 0
     last_heartbeat = 0
 
-    # Main polling loop
     while not _shutdown_requested:
         try:
-            # Check if we should restart for memory hygiene
             if jobs_completed >= MAX_JOBS_BEFORE_RESTART:
                 logger.info(f"Completed {jobs_completed} jobs. Exiting for container restart (memory hygiene).")
                 break
 
-            # Poll for work
             job = client.poll_for_work()
 
             if job:
                 logger.info(f"[Job {job.job_id}] Claimed - {len(job.skus)} SKUs, {len(job.scrapers)} scrapers")
 
                 try:
-                    # Update status to running
-                    client.update_status(job.job_id, "running")
+                    client.update_status(job.job_id, "running", lease_token=job.lease_token)
+                    client.heartbeat(current_job_id=job.job_id, lease_token=job.lease_token, status="busy")
+                    if rm and rm.is_connected:
+                        await rm.broadcast_job_progress(job.job_id, "started", 0, "Processing started")
 
-                    # Execute the job
                     start_time = time.time()
                     results = run_job(job, client)
                     elapsed = time.time() - start_time
 
-                    # Submit results
                     client.submit_results(
                         job.job_id,
                         "completed",
+                        lease_token=job.lease_token,
                         results=results,
                     )
 
@@ -176,33 +185,43 @@ def main():
                     client.submit_results(
                         job.job_id,
                         "failed",
+                        lease_token=job.lease_token,
                         error_message=str(e),
                     )
 
             else:
-                # No work available - send heartbeat if interval elapsed
                 now = time.time()
                 if now - last_heartbeat >= HEARTBEAT_INTERVAL:
-                    client.heartbeat()
+                    client.heartbeat(status="idle")
                     last_heartbeat = now
                     logger.debug("Heartbeat sent")
 
-                # Sleep before next poll
-                time.sleep(POLL_INTERVAL)
-
-        except KeyboardInterrupt:
-            logger.info("Keyboard interrupt received")
-            break
+                await asyncio.sleep(POLL_INTERVAL)
 
         except Exception as e:
             logger.error(f"Daemon loop error: {e}")
-            # Sleep before retry to avoid tight error loop
-            time.sleep(POLL_INTERVAL)
+            await asyncio.sleep(POLL_INTERVAL)
 
-    # Graceful shutdown
+    if rm:
+        await rm.disconnect()
+
     logger.info("=" * 60)
     logger.info(f"Daemon shutting down. Jobs completed: {jobs_completed}")
     logger.info("=" * 60)
+
+
+def main():
+    signal.signal(signal.SIGTERM, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)
+
+    try:
+        asyncio.run(main_async())
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == "__main__":
+    main()
 
 
 if __name__ == "__main__":

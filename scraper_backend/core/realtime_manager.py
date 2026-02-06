@@ -14,7 +14,7 @@ import logging
 import time
 from typing import Any, Callable
 
-from realtime import AsyncRealtimeClient, ClientOptions, create_client
+from realtime import AsyncRealtimeClient
 
 logger = logging.getLogger(__name__)
 
@@ -94,18 +94,9 @@ class RealtimeManager:
             True if connection successful, False otherwise
         """
         try:
-            opts = ClientOptions(
-                realtime={
-                    "heartbeat_interval": 30,
-                    "timeout": 10,
-                }
-            )
-
-            self.client = await create_client(
+            self.client = AsyncRealtimeClient(
                 self.supabase_url,
                 self.service_key,
-                opts,
-                is_async=True,
             )
 
             self._connected = True
@@ -113,9 +104,7 @@ class RealtimeManager:
             return True
 
         except Exception as e:
-            logger.error(
-                f"[{self.runner_name}] Failed to connect to Supabase Realtime: {e}"
-            )
+            logger.error(f"[{self.runner_name}] Failed to connect to Supabase Realtime: {e}")
             self._connected = False
             return False
 
@@ -169,9 +158,7 @@ class RealtimeManager:
             callback: Async or sync callable that accepts job data dict
         """
         if not self.client:
-            logger.error(
-                f"[{self.runner_name}] Cannot subscribe: client not initialized"
-            )
+            logger.error(f"[{self.runner_name}] Cannot subscribe: client not initialized")
             return
 
         self._job_callback = callback
@@ -187,10 +174,7 @@ class RealtimeManager:
         )
 
         await channel.subscribe()
-        logger.info(
-            f"[{self.runner_name}] Subscribed to scrape_jobs INSERT events "
-            "(status=eq.pending)"
-        )
+        logger.info(f"[{self.runner_name}] Subscribed to scrape_jobs INSERT events (status=eq.pending)")
 
     async def _handle_job_insert(self, payload: dict) -> None:
         """
@@ -202,15 +186,11 @@ class RealtimeManager:
         try:
             job_data = payload.get("new")
             if not job_data:
-                logger.warning(
-                    f"[{self.runner_name}] Received INSERT with no 'new' data"
-                )
+                logger.warning(f"[{self.runner_name}] Received INSERT with no 'new' data")
                 return
 
             await self._pending_jobs.put(job_data)
-            logger.info(
-                f"[{self.runner_name}] Queued pending job: {job_data.get('job_id')}"
-            )
+            logger.info(f"[{self.runner_name}] Queued pending job: {job_data.get('job_id')}")
 
             # Invoke callback if registered
             if self._job_callback:
@@ -235,15 +215,11 @@ class RealtimeManager:
             True if presence was enabled successfully
         """
         if not self.client:
-            logger.error(
-                f"[{self.runner_name}] Cannot enable presence: client not initialized"
-            )
+            logger.error(f"[{self.runner_name}] Cannot enable presence: client not initialized")
             return False
 
         try:
-            self._presence_channel = self.client.channel(
-                CHANNEL_RUNNER_PRESENCE, {"private": True}
-            )
+            self._presence_channel = self.client.channel(CHANNEL_RUNNER_PRESENCE, {"private": True})
 
             # Set up presence tracking
             self._presence_channel.on_presence(
@@ -300,9 +276,7 @@ class RealtimeManager:
                         )
                         logger.debug(f"[{self.runner_name}] Presence heartbeat sent")
                     except Exception as e:
-                        logger.warning(
-                            f"[{self.runner_name}] Failed to send presence heartbeat: {e}"
-                        )
+                        logger.warning(f"[{self.runner_name}] Failed to send presence heartbeat: {e}")
 
         except asyncio.CancelledError:
             logger.info(f"[{self.runner_name}] Presence heartbeat loop cancelled")
@@ -329,16 +303,12 @@ class RealtimeManager:
             True if broadcast was enabled successfully
         """
         if not self.client:
-            logger.error(
-                f"[{self.runner_name}] Cannot enable broadcast: client not initialized"
-            )
+            logger.error(f"[{self.runner_name}] Cannot enable broadcast: client not initialized")
             return False
 
         try:
             # Job progress broadcast channel
-            self._broadcast_channel = self.client.channel(
-                CHANNEL_JOB_BROADCAST, {"private": True}
-            )
+            self._broadcast_channel = self.client.channel(CHANNEL_JOB_BROADCAST, {"private": True})
 
             await self._broadcast_channel.subscribe()
             logger.info(f"[{self.runner_name}] Broadcast channel enabled")
@@ -385,13 +355,9 @@ class RealtimeManager:
                     "timestamp": time.time(),
                 },
             )
-            logger.debug(
-                f"[{self.runner_name}] Broadcast job progress: {job_id} {status}"
-            )
+            logger.debug(f"[{self.runner_name}] Broadcast job progress: {job_id} {status}")
         except Exception as e:
-            logger.warning(
-                f"[{self.runner_name}] Failed to broadcast job progress: {e}"
-            )
+            logger.warning(f"[{self.runner_name}] Failed to broadcast job progress: {e}")
 
     async def broadcast_job_log(
         self,
@@ -459,9 +425,7 @@ class RealtimeManager:
             )
             logger.debug(f"[{self.runner_name}] Broadcast runner status: {status}")
         except Exception as e:
-            logger.warning(
-                f"[{{self.runner_name}}] Failed to broadcast runner status: {e}"
-            )
+            logger.warning(f"[{{self.runner_name}}] Failed to broadcast runner status: {e}")
 
     async def get_pending_job(self) -> dict | None:
         """
@@ -497,15 +461,10 @@ class RealtimeManager:
 
         for attempt, delay in enumerate(self.RECONNECT_DELAYS, start=1):
             if self._shutdown_event.is_set():
-                logger.info(
-                    f"[{self.runner_name}] Shutdown requested, skipping reconnect"
-                )
+                logger.info(f"[{self.runner_name}] Shutdown requested, skipping reconnect")
                 return
 
-            logger.info(
-                f"[{self.runner_name}] Reconnect attempt {attempt}/{len(self.RECONNECT_DELAYS)} "
-                f"in {delay}s"
-            )
+            logger.info(f"[{self.runner_name}] Reconnect attempt {attempt}/{len(self.RECONNECT_DELAYS)} in {delay}s")
 
             await asyncio.sleep(delay)
 
@@ -513,9 +472,7 @@ class RealtimeManager:
                 logger.info(f"[{self.runner_name}] Reconnection successful!")
                 return
 
-        logger.error(
-            f"[{self.runner_name}] Max reconnect attempts ({self.MAX_RECONNECT_ATTEMPTS}) exhausted"
-        )
+        logger.error(f"[{self.runner_name}] Max reconnect attempts ({self.MAX_RECONNECT_ATTEMPTS}) exhausted")
         self._connected = False
 
     def start_reconnection_loop(self) -> None:
