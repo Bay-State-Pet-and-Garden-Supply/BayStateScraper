@@ -14,7 +14,7 @@ import logging
 import time
 from typing import Any, Callable
 
-from realtime import AsyncRealtimeClient
+from realtime import AsyncRealtimeClient, RealtimeSubscribeStates
 
 logger = logging.getLogger(__name__)
 
@@ -163,7 +163,7 @@ class RealtimeManager:
 
         self._job_callback = callback
 
-        channel = self.client.channel(f"runner:{self.runner_name}", {"private": True})
+        channel = self.client.channel(f"runner:{self.runner_name}")
 
         channel.on_postgres_changes(
             event="INSERT",
@@ -173,8 +173,15 @@ class RealtimeManager:
             callback=self._handle_job_insert,
         )
 
-        await channel.subscribe()
-        logger.info(f"[{self.runner_name}] Subscribed to scrape_jobs INSERT events (status=eq.pending)")
+        def _on_subscribe(status: RealtimeSubscribeStates, err: Exception | None):
+            if status == RealtimeSubscribeStates.SUBSCRIBED:
+                logger.info(f"[{self.runner_name}] Subscribed to scrape_jobs INSERT events")
+            elif status == RealtimeSubscribeStates.CHANNEL_ERROR:
+                logger.error(f"[{self.runner_name}] Error subscribing to jobs: {err}")
+            elif status == RealtimeSubscribeStates.TIMED_OUT:
+                logger.error(f"[{self.runner_name}] Subscription timed out")
+
+        await channel.subscribe(_on_subscribe)
 
     async def _handle_job_insert(self, payload: dict) -> None:
         """
@@ -219,24 +226,20 @@ class RealtimeManager:
             return False
 
         try:
-            self._presence_channel = self.client.channel(CHANNEL_RUNNER_PRESENCE, {"private": True})
+            self._presence_channel = self.client.channel(CHANNEL_RUNNER_PRESENCE, {"config": {"presence": {"key": self.runner_id}}})
 
-            # Set up presence tracking
-            self._presence_channel.on_presence(
-                event="sync",
-                callback=self._handle_presence_sync,
-            )
-            self._presence_channel.on_presence(
-                event="join",
-                callback=self._handle_presence_join,
-            )
-            self._presence_channel.on_presence(
-                event="leave",
-                callback=self._handle_presence_leave,
-            )
+            # Set up presence tracking using v2.x API
+            self._presence_channel.on_presence_sync(lambda: self._handle_presence_sync(self._presence_channel.presence_state()))
+            self._presence_channel.on_presence_join(lambda new_presences: self._handle_presence_join(new_presences))
+            self._presence_channel.on_presence_leave(lambda left_presences: self._handle_presence_leave(left_presences))
 
-            await self._presence_channel.subscribe()
-            logger.info(f"[{self.runner_name}] Presence channel subscribed")
+            def _on_subscribe(status: RealtimeSubscribeStates, err: Exception | None):
+                if status == RealtimeSubscribeStates.SUBSCRIBED:
+                    logger.info(f"[{self.runner_name}] Presence channel subscribed")
+                elif status == RealtimeSubscribeStates.CHANNEL_ERROR:
+                    logger.error(f"[{self.runner_name}] Error subscribing to presence: {err}")
+
+            await self._presence_channel.subscribe(_on_subscribe)
 
             # Track self as online
             await self._presence_channel.track(
@@ -308,10 +311,15 @@ class RealtimeManager:
 
         try:
             # Job progress broadcast channel
-            self._broadcast_channel = self.client.channel(CHANNEL_JOB_BROADCAST, {"private": True})
+            self._broadcast_channel = self.client.channel(CHANNEL_JOB_BROADCAST, {"config": {"broadcast": {"ack": False, "self": False}}})
 
-            await self._broadcast_channel.subscribe()
-            logger.info(f"[{self.runner_name}] Broadcast channel enabled")
+            def _on_subscribe(status: RealtimeSubscribeStates, err: Exception | None):
+                if status == RealtimeSubscribeStates.SUBSCRIBED:
+                    logger.info(f"[{self.runner_name}] Broadcast channel enabled")
+                elif status == RealtimeSubscribeStates.CHANNEL_ERROR:
+                    logger.error(f"[{self.runner_name}] Error subscribing to broadcast: {err}")
+
+            await self._broadcast_channel.subscribe(_on_subscribe)
 
             return True
 
@@ -341,10 +349,9 @@ class RealtimeManager:
             return
 
         try:
-            await self._broadcast_channel.send(
-                type="broadcast",
-                event="job_progress",
-                payload={
+            await self._broadcast_channel.send_broadcast(
+                "job_progress",
+                {
                     "job_id": job_id,
                     "runner_id": self.runner_id,
                     "runner_name": self.runner_name,
@@ -379,10 +386,9 @@ class RealtimeManager:
             return
 
         try:
-            await self._broadcast_channel.send(
-                type="broadcast",
-                event="runner_log",
-                payload={
+            await self._broadcast_channel.send_broadcast(
+                "runner_log",
+                {
                     "job_id": job_id,
                     "runner_id": self.runner_id,
                     "runner_name": self.runner_name,
@@ -412,10 +418,9 @@ class RealtimeManager:
             return
 
         try:
-            await self._broadcast_channel.send(
-                type="broadcast",
-                event="runner_status",
-                payload={
+            await self._broadcast_channel.send_broadcast(
+                "runner_status",
+                {
                     "runner_id": self.runner_id,
                     "runner_name": self.runner_name,
                     "status": status,
@@ -425,7 +430,7 @@ class RealtimeManager:
             )
             logger.debug(f"[{self.runner_name}] Broadcast runner status: {status}")
         except Exception as e:
-            logger.warning(f"[{{self.runner_name}}] Failed to broadcast runner status: {e}")
+            logger.warning(f"[{self.runner_name}] Failed to broadcast runner status: {e}")
 
     async def get_pending_job(self) -> dict | None:
         """

@@ -472,6 +472,42 @@ class ScraperAPIClient:
             logger.error(f"Error submitting chunk results: {e}")
             return False
 
+    def send_logs(self, job_id: str, logs: list[dict]) -> bool:
+        """
+        Send logs to the logs API endpoint.
+
+        Args:
+            job_id: The job ID to associate logs with
+            logs: List of log entries with keys: level, message, timestamp
+
+        Returns:
+            True if logs sent successfully, False otherwise
+        """
+        if not self.api_url:
+            logger.error("API client not configured - missing URL")
+            return False
+
+        payload_dict: dict[str, Any] = {
+            "job_id": job_id,
+            "logs": logs,
+        }
+        payload = json.dumps(payload_dict)
+
+        try:
+            self._make_request("POST", "/api/scraper/v1/logs", payload=payload)
+            logger.info(f"Sent {len(logs)} logs for job {job_id}")
+            return True
+
+        except AuthenticationError as e:
+            logger.error(f"Authentication failed sending logs: {e}")
+            return False
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Failed to send logs: {e.response.status_code} - {e.response.text}")
+            return False
+        except Exception as e:
+            logger.error(f"Error sending logs: {e}")
+            return False
+
     def get_supabase_config(self) -> dict[str, Any] | None:
         try:
             data = self._make_request("POST", "/api/scraper/v1/supabase-config")

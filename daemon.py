@@ -35,10 +35,18 @@ import asyncio
 from datetime import datetime
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # Ensure project root is in path
 PROJECT_ROOT = Path(__file__).parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+
+# Load environment variables from .env file
+env_file = PROJECT_ROOT / ".env"
+if env_file.exists():
+    load_dotenv(env_file)
+
 
 from core.api_client import ScraperAPIClient, JobConfig
 from scraper_backend.core.realtime_manager import RealtimeManager
@@ -137,7 +145,17 @@ async def main_async():
     try:
         supabase_config = client.get_supabase_config()
         if supabase_config:
-            rm = RealtimeManager(supabase_config["supabase_url"], supabase_config["supabase_realtime_key"], client.runner_name)
+            # Convert HTTP URL to WebSocket URL format
+            supabase_url = supabase_config["supabase_url"]
+            if supabase_url.startswith("https://"):
+                ws_url = supabase_url.replace("https://", "wss://") + "/realtime/v1"
+            elif supabase_url.startswith("http://"):
+                ws_url = supabase_url.replace("http://", "ws://") + "/realtime/v1"
+            else:
+                ws_url = supabase_url
+
+            logger.info(f"[Daemon] Connecting to Realtime at {ws_url}")
+            rm = RealtimeManager(ws_url, supabase_config["supabase_realtime_key"], client.runner_name)
             connected = await rm.connect()
             if connected:
                 await rm.enable_presence()

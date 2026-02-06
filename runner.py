@@ -20,6 +20,7 @@ import logging
 import os
 import sys
 from datetime import datetime
+from typing import Any
 
 # Ensure project root is in path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -36,19 +37,43 @@ from utils.logger import NoHttpFilter, setup_logging
 logger = logging.getLogger(__name__)
 
 
+# =============================================================================
+# Log Buffering for API Submission
+# =============================================================================
+
+
+def create_log_entry(level: str, message: str) -> dict[str, Any]:
+    """
+    Create a log entry in the format expected by the API.
+
+    Args:
+        level: Log level (debug, info, warning, error, critical)
+        message: Log message text
+
+    Returns:
+        Dictionary with keys: level, message, timestamp
+    """
+    return {
+        "level": level,
+        "message": message,
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+    }
+
+
 class ConfigurationError(Exception):
     """Raised when configuration parsing fails."""
 
     pass
 
 
-def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
+def run_job(job_config: JobConfig, runner_name: str | None = None, log_buffer: list[dict] | None = None) -> dict:
     """
     Execute a scrape job using configuration from the API.
 
     Args:
         job_config: Job configuration received from the coordinator
         runner_name: Optional identifier for this runner
+        log_buffer: Optional list to accumulate logs for API submission
 
     Returns:
         Dictionary with results to send back to the callback
@@ -63,6 +88,15 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
         "scrapers_run": [],
         "data": {},
     }
+
+    # Initialize log buffer if not provided
+    if log_buffer is None:
+        log_buffer = []
+
+    # Add job start log
+    log_buffer.append(create_log_entry("info", f"Job {job_id} started"))
+    log_buffer.append(create_log_entry("info", f"Processing {len(job_config.skus)} SKUs with {len(job_config.scrapers)} scrapers"))
+    log_buffer.append(create_log_entry("info", f"Test mode: {job_config.test_mode}, Max workers: {job_config.max_workers}"))
 
     logger.info(f"[Runner] Starting job {job_id}")
     logger.info(f"[Runner] SKUs: {len(job_config.skus)}, Scrapers: {len(job_config.scrapers)}")
@@ -85,16 +119,20 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
             }
             config = parser.load_from_dict(config_dict)
             configs.append(config)
+            log_buffer.append(create_log_entry("info", f"Loaded scraper config: {config.name}"))
             logger.info(f"[Runner] Loaded scraper config: {config.name}")
         except Exception as e:
             config_errors.append((scraper_cfg.name, str(e)))
+            log_buffer.append(create_log_entry("error", f"Failed to parse config for {scraper_cfg.name}: {e}"))
             logger.error(f"[Runner] Failed to parse config for {scraper_cfg.name}: {e}")
 
     if config_errors:
         error_details = "; ".join([f"{name}: {err}" for name, err in config_errors])
+        log_buffer.append(create_log_entry("error", f"Configuration parsing failed for {len(config_errors)} scraper(s): {error_details}"))
         raise ConfigurationError(f"[Runner] Configuration parsing failed for {len(config_errors)} scraper(s): {error_details}")
 
     if not configs:
+        log_buffer.append(create_log_entry("error", "No valid scraper configurations"))
         raise ConfigurationError("[Runner] No valid scraper configurations")
 
     # Determine SKUs to process
@@ -105,14 +143,17 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
             if hasattr(config, "test_skus") and config.test_skus:
                 skus.extend(config.test_skus)
         skus = list(set(skus))  # Deduplicate
+        log_buffer.append(create_log_entry("info", f"Test mode: using {len(skus)} test SKUs from configs"))
         logger.info(f"[Runner] Test mode: using {len(skus)} test SKUs from configs")
 
     if not skus:
+        log_buffer.append(create_log_entry("warning", "No SKUs to process"))
         logger.warning("[Runner] No SKUs to process")
         return results
 
     # Run scraping for each config
     for config in configs:
+        log_buffer.append(create_log_entry("info", f"Starting scraper: {config.name}"))
         logger.info(f"[Runner] Running scraper: {config.name}")
         results["scrapers_run"].append(config.name)
 
@@ -158,16 +199,21 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
                             # Also add to collector for JSON output
                             collector.add_result(sku, config.name, extracted_data)
 
+                            log_buffer.append(create_log_entry("info", f"{config.name}/{sku}: Found data"))
                             logger.info(f"[Runner] {config.name}/{sku}: Found data")
                         else:
+                            log_buffer.append(create_log_entry("info", f"{config.name}/{sku}: No data found"))
                             logger.info(f"[Runner] {config.name}/{sku}: No data found")
                     else:
+                        log_buffer.append(create_log_entry("warning", f"{config.name}/{sku}: Workflow failed"))
                         logger.warning(f"[Runner] {config.name}/{sku}: Workflow failed")
 
                 except Exception as e:
+                    log_buffer.append(create_log_entry("error", f"{config.name}/{sku}: {type(e).__name__} - {e}"))
                     logger.error(f"[Runner] {config.name}/{sku}: Error - {e}")
 
         except Exception as e:
+            log_buffer.append(create_log_entry("error", f"Failed to initialize {config.name}: {e}"))
             logger.error(f"[Runner] Failed to initialize {config.name}: {e}")
         finally:
             if executor and hasattr(executor, "browser") and executor.browser:
@@ -176,6 +222,7 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
                 except Exception:
                     pass
 
+    log_buffer.append(create_log_entry("info", f"Job complete. Processed {results['skus_processed']} SKUs"))
     logger.info(f"[Runner] Job complete. Processed {results['skus_processed']} SKUs")
     return results
 
@@ -217,11 +264,16 @@ def main():
 
 def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> None:
     """Legacy mode: process all SKUs in a single job."""
+    log_buffer: list[dict] = []
+    log_buffer.append(create_log_entry("info", f"Full mode started for job {job_id}, runner: {runner_name}"))
+
     logger.info(f"[Full Mode] Fetching job config for {job_id}...")
+    log_buffer.append(create_log_entry("info", f"Fetching job config for {job_id}"))
     client.update_status(job_id, "running", runner_name=runner_name)
 
     job_config = client.get_job_config(job_id)
     if not job_config:
+        log_buffer.append(create_log_entry("error", "Failed to fetch job config"))
         logger.error("Failed to fetch job config")
         client.submit_results(
             job_id,
@@ -229,22 +281,26 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
             runner_name=runner_name,
             error_message="Failed to fetch job configuration",
         )
+        client.post_logs(job_id, log_buffer)
         sys.exit(1)
 
     try:
-        results = run_job(job_config, runner_name=runner_name)
+        results = run_job(job_config, runner_name=runner_name, log_buffer=log_buffer)
+        log_buffer.append(create_log_entry("info", f"Job completed successfully, {results.get('skus_processed', 0)} SKUs processed"))
         client.submit_results(
             job_id,
             "completed",
             runner_name=runner_name,
             results=results,
         )
+        client.post_logs(job_id, log_buffer)
 
         import json
 
         print(json.dumps(results, indent=2))
 
     except Exception as e:
+        log_buffer.append(create_log_entry("error", f"Job failed: {type(e).__name__} - {e}"))
         logger.exception("Job failed with error")
         client.submit_results(
             job_id,
@@ -252,6 +308,7 @@ def run_full_mode(client: ScraperAPIClient, job_id: str, runner_name: str) -> No
             runner_name=runner_name,
             error_message=str(e),
         )
+        client.post_logs(job_id, log_buffer)
         sys.exit(1)
 
 
