@@ -7,6 +7,7 @@ import httpx
 
 from core.api_client import (
     AuthenticationError,
+    ClaimedChunk,
     ConnectionError,
     ScraperAPIClient,
 )
@@ -113,6 +114,47 @@ class TestScraperAPIClient:
 
             payload = json.loads(call_args[1]["content"])
             assert payload["runner_name"] == "test-runner"
+
+    def test_claim_chunk_returns_typed_claimed_chunk(self):
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "chunk": {
+                "chunk_id": "chunk-1",
+                "job_id": "job-1",
+                "chunk_index": 0,
+                "skus": ["SKU001"],
+                "scrapers": ["bradley"],
+                "test_mode": False,
+                "max_workers": 3,
+                "lease_token": "lease-1",
+                "lease_expires_at": "2026-02-11T10:00:00Z",
+            }
+        }
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.post.return_value = mock_response
+
+            claimed = self.client.claim_chunk("runner-1")
+
+            assert isinstance(claimed, ClaimedChunk)
+            assert claimed is not None
+            assert claimed.chunk_id == "chunk-1"
+            assert claimed.job_id == "job-1"
+            assert claimed.skus == ["SKU001"]
+
+    def test_claim_chunk_returns_none_when_no_chunk(self):
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"chunk": None}
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.post.return_value = mock_response
+
+            claimed = self.client.claim_chunk("runner-1")
+            assert claimed is None
 
 
 class TestRetryLogic:

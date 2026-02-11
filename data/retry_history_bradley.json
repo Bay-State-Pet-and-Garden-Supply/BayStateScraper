@@ -1,0 +1,5570 @@
+{
+  "failure_history": [
+    {
+      "timestamp": 1770804635.3364108,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048022226",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804638.425493,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048022226",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804642.4546869,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048022226",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804647.5059662,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048022226",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804652.588883,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433863887",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804655.6593149,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433863887",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804659.80333,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433863887",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804664.989721,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433863887",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804669.617805,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763316",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804672.678278,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763316",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804676.829802,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763316",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804681.903976,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763316",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804686.834816,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762210",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804689.904264,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762210",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804694.05649,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762210",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804699.034374,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762210",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804703.794125,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433761718",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804706.853173,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433761718",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804710.981876,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433761718",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804716.072754,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433761718",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804720.7842948,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433333939",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804723.874022,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433333939",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804727.977474,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433333939",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804733.139494,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433333939",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804737.2832372,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433012902",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804740.3333251,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433012902",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804744.385841,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433012902",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804749.520871,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433012902",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804754.454914,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4005086168312",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804757.5675058,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4005086168312",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804761.753474,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4005086168312",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804766.8005419,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4005086168312",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804770.8891242,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "036881467052",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804773.994802,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "036881467052",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804778.0437188,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "036881467052",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804783.243223,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "036881467052",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804787.188402,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "036881465027",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804790.226486,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "036881465027",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804794.4180422,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "036881465027",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804799.416967,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "036881465027",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804803.527789,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243156467",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804806.6209111,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243156467",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804810.6461482,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243156467",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804815.762293,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243156467",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804819.78589,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243154111",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804822.80604,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243154111",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804826.855828,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243154111",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804832.018204,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243154111",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804836.001704,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243151189",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804839.104373,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243151189",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804843.168044,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243151189",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804848.41428,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243151189",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804852.11656,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243140695",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804855.191264,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243140695",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804859.303002,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243140695",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804864.549161,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243140695",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804869.384268,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "HATSN200RTOR",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804872.466764,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "HATSN200RTOR",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804876.645391,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "HATSN200RTOR",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804881.7553961,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "HATSN200RTOR",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804885.951732,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "HATPAOSFCMPK",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804889.0122309,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "HATPAOSFCMPK",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804893.188284,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "HATPAOSFCMPK",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804898.176935,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "HATPAOSFCMPK",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804902.9922361,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "019962890925",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804906.041656,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "019962890925",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804910.091507,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "019962890925",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804915.336826,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "019962890925",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804919.7590442,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "070230168832",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804922.7772548,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "070230168832",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804926.860302,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "070230168832",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804931.873133,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "070230168832",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804935.768148,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "724089114167",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804938.795122,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "724089114167",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804942.881223,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "724089114167",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804948.07423,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "724089114167",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804952.447136,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "850012047704",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804955.522326,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "850012047704",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804959.6674418,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "850012047704",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804964.70786,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "850012047704",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804968.786625,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048024008",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804971.885549,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048024008",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804976.016035,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048024008",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804981.124869,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048024008",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804986.106772,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048023315",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804989.224588,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048023315",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804993.246977,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048023315",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770804998.246295,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "811048023315",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805002.897418,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "810028246805",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805005.953127,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "810028246805",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805010.123348,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "810028246805",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805015.3115048,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "810028246805",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805019.261776,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "810192811229",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805022.345525,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "810192811229",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805026.533229,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "810192811229",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805031.805433,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "810192811229",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805047.950551,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "850004357187",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805050.978982,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "850004357187",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805055.06637,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "850004357187",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805060.252359,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "850004357187",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805064.749902,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "724089113443",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805067.785323,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "724089113443",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805071.9306219,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "724089113443",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805077.1802702,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "724089113443",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805081.2637591,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559746795",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805084.346337,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559746795",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805088.533637,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559746795",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805093.790821,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559746795",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805097.657561,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559798312",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805100.683311,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559798312",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805104.74802,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559798312",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805109.869003,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559798312",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805114.262701,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559804099",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805117.338156,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559804099",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805121.493411,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559804099",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805126.6467001,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559804099",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805131.339574,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559820358",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805134.405419,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559820358",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805138.412203,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559820358",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805143.420846,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "821559820358",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805147.285723,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243155798",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805150.328773,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243155798",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805154.4664042,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243155798",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805159.5988731,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "840243155798",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805163.751082,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178005557",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805166.78462,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178005557",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805170.898311,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178005557",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805175.8848279,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178005557",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805180.44298,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178008565",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805183.516667,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178008565",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805187.588064,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178008565",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805192.647753,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178008565",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805197.2241988,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178008725",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805200.2953322,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178008725",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805204.320781,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178008725",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805209.531777,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178008725",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805214.137171,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178035066",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805217.22019,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178035066",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805221.2384498,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178035066",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805226.282515,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178035066",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805230.393444,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178039965",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805233.508647,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178039965",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805237.592026,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178039965",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805242.709097,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178039965",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805246.5530722,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178040572",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805249.579424,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178040572",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805253.700246,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178040572",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805258.791328,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178040572",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805263.495882,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178042828",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805266.602498,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178042828",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805270.775858,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178042828",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805275.9021068,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178042828",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805279.762987,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178044815",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805282.86561,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178044815",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805287.005594,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178044815",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805292.2503412,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051178044815",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805296.112372,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001293",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805299.18633,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001293",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805303.358678,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001293",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805308.479615,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001293",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805312.7539,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178902",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805315.806335,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178902",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805319.9280179,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178902",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805324.96902,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178902",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805328.9202712,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178933",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805331.98183,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178933",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805336.025633,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178933",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805341.0029812,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178933",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805345.113873,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178964",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805348.185063,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178964",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805352.1863139,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178964",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805357.322468,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178964",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805361.598943,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178995",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805364.6391091,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178995",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805368.670227,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178995",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805373.8466141,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588178995",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805377.691039,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179022",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805380.7619789,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179022",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805384.899659,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179022",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805390.118679,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179022",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805394.02175,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179053",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805397.058378,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179053",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805401.069721,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179053",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805406.133009,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179053",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805410.140779,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179084",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805413.187961,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179084",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805417.347479,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179084",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805422.604982,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179084",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805427.361061,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179114",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805430.444244,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179114",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805434.5675242,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179114",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805439.6075451,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179114",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805444.2198458,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179145",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805447.3027892,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179145",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805451.330113,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179145",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805456.431124,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179145",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805461.610115,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179183",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805464.727168,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179183",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805468.771938,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179183",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805473.937449,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179183",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805478.8471549,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179213",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805481.9062028,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179213",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805486.031431,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179213",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805491.251301,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179213",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805495.5437288,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179251",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805498.650918,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179251",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805502.8273122,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179251",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805508.0748281,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179251",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805512.7830331,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179282",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805515.857857,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179282",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805519.9099462,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179282",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805525.037567,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179282",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805529.5734122,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179312",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805532.6635451,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179312",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805536.840533,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179312",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805542.066752,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179312",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805546.848473,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179343",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805549.938445,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179343",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805554.0486069,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179343",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805559.3051,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588179343",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805563.185368,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001415",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805566.259619,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001415",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805570.426243,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001415",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805575.5997598,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001415",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805579.410709,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051589005993",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805582.457079,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051589005993",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805586.608072,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051589005993",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805591.7733161,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051589005993",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805595.721642,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001286",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805598.770854,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001286",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805602.838061,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001286",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805607.8702562,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "051588001286",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805611.700146,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433770444",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805614.775659,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433770444",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805618.967807,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433770444",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805624.0411189,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "4059433770444",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805628.150017,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "073893282013",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805631.219149,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "073893282013",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805635.2944078,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "073893282013",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805640.484069,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "073893282013",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805644.422127,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100222",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805647.4677818,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100222",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805651.600781,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100222",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805656.594955,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100222",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805660.483022,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100475",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805663.533024,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100475",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805667.561578,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100475",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805672.5788648,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100475",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805677.130235,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100901",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805680.2292259,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100901",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805684.238011,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100901",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805689.4618418,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318100901",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805693.501086,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318120039",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805696.6054988,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318120039",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805700.6876569,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318120039",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805705.867899,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318120039",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805710.669495,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318200502",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805713.782318,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318200502",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805717.789261,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318200502",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805722.96106,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "072318200502",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805727.124009,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "073893281054",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805730.221366,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "073893281054",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805734.2470882,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "073893281054",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805739.300701,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "073893281054",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770805743.832416,
+      "failure_context": {
+        "site_name": "bradley",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "bradley",
+          "action": "click",
+          "step_index": 6,
+          "selector": null,
+          "url": null,
+          "sku": "073893922100",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    }
+  ],
+  "timestamp": 1770805743.833471
+}

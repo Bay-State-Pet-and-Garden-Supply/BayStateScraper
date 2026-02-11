@@ -108,13 +108,16 @@ def run_job(job_config: JobConfig, runner_name: str | None = None, log_buffer: l
     for scraper_cfg in job_config.scrapers:
         try:
             # Convert API config to internal format
-            # Note: Use proper None checks to preserve empty lists
+            # The API nests workflows/timeout inside options, but the Pydantic
+            # ScraperConfig expects them as top-level fields. Extract them.
+            options = scraper_cfg.options or {}
             config_dict = {
                 "name": scraper_cfg.name,
                 "base_url": scraper_cfg.base_url,
                 "search_url_template": scraper_cfg.search_url_template,
                 "selectors": scraper_cfg.selectors if scraper_cfg.selectors is not None else {},
-                "options": scraper_cfg.options if scraper_cfg.options is not None else {},
+                "workflows": options.get("workflows", []),
+                "timeout": options.get("timeout", 30),
                 "test_skus": scraper_cfg.test_skus if scraper_cfg.test_skus is not None else [],
             }
             config = parser.load_from_dict(config_dict)
@@ -322,16 +325,20 @@ def run_chunk_worker_mode(client: ScraperAPIClient, job_id: str, runner_name: st
     total_failed = 0
 
     while True:
-        chunk = client.claim_chunk(job_id, runner_name)
+        chunk = client.claim_chunk(runner_name=runner_name)
 
         if not chunk:
             logger.info(f"[Chunk Worker] No more chunks. Processed {chunks_processed} chunks, {total_skus_processed} SKUs")
             break
 
-        chunk_id = chunk["chunk_id"]
-        chunk_index = chunk["chunk_index"]
-        skus = chunk.get("skus", [])
-        scrapers_filter = chunk.get("scrapers", [])
+        chunk_id = chunk.chunk_id
+        chunk_index = chunk.chunk_index
+        skus = chunk.skus
+        scrapers_filter = chunk.scrapers
+
+        if chunk.job_id != job_id:
+            logger.info(f"[Chunk Worker] Skipping chunk from job {chunk.job_id}; expected {job_id}")
+            continue
 
         logger.info(f"[Chunk Worker] Processing chunk {chunk_index} with {len(skus)} SKUs")
 

@@ -13,7 +13,9 @@ Key behaviors:
 - Graceful shutdown on SIGTERM/SIGINT
 
 Usage:
-    python daemon.py
+    python daemon.py                    # Uses .env (production)
+    python daemon.py --env dev          # Uses .env.development (local dev)
+    ENVIRONMENT=dev python daemon.py    # Same as above
 
 Environment Variables:
     SCRAPER_API_URL: Base URL for BayStateApp API (required)
@@ -21,10 +23,12 @@ Environment Variables:
     RUNNER_NAME: Identifier for this runner (defaults to hostname)
     POLL_INTERVAL: Seconds between polls when idle (default: 30)
     MAX_JOBS_BEFORE_RESTART: Recycle after N jobs to prevent leaks (default: 100)
+    ENVIRONMENT: Set to 'dev' to use .env.development instead of .env
 """
 
 from __future__ import annotations
 
+import argparse
 import logging
 import os
 import platform
@@ -34,6 +38,7 @@ import time
 import asyncio
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 from dotenv import load_dotenv
 
@@ -42,15 +47,35 @@ PROJECT_ROOT = Path(__file__).parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-# Load environment variables from .env file
-env_file = PROJECT_ROOT / ".env"
+parser = argparse.ArgumentParser(description="Bay State Scraper Daemon")
+parser.add_argument(
+    "--env",
+    choices=["dev", "prod"],
+    default=os.environ.get("ENVIRONMENT", "prod"),
+    help="Environment to run in (dev=localhost, prod=production). Defaults to ENVIRONMENT env var or 'prod'",
+)
+parser.add_argument(
+    "--debug",
+    action="store_true",
+    help="Enable debug logging",
+)
+args, remaining_argv = parser.parse_known_args()
+
+if args.env == "dev":
+    env_file = PROJECT_ROOT / ".env.development"
+    if not env_file.exists():
+        print(f"Warning: {env_file} not found, falling back to .env")
+        env_file = PROJECT_ROOT / ".env"
+else:
+    env_file = PROJECT_ROOT / ".env"
+
 if env_file.exists():
-    load_dotenv(env_file)
+    load_dotenv(env_file, override=True)
 
 
-from core.api_client import ScraperAPIClient, JobConfig
+from core.api_client import ClaimedChunk, ScraperAPIClient, JobConfig
 from scraper_backend.core.realtime_manager import RealtimeManager
-from utils.logger import NoHttpFilter, setup_logging
+from utils.logger import setup_logging
 
 
 # Configuration
@@ -74,7 +99,19 @@ def signal_handler(signum, frame):
     _shutdown_requested = True
 
 
-def run_job(job_config: JobConfig, client: ScraperAPIClient) -> dict:
+def _create_log_entry(level: str, message: str) -> dict[str, str]:
+    return {
+        "level": level,
+        "message": message,
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+    }
+
+
+def run_job(
+    job_config: JobConfig,
+    client: ScraperAPIClient,
+    log_buffer: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     """
     Execute a scrape job using the existing runner logic.
 
@@ -94,7 +131,26 @@ def run_job(job_config: JobConfig, client: ScraperAPIClient) -> dict:
                 scraper.options["_credentials"] = creds
                 logger.debug(f"Injected credentials for {scraper.name}")
 
-    return execute_job(job_config, runner_name=client.runner_name)
+    return execute_job(job_config, runner_name=client.runner_name, log_buffer=log_buffer)
+
+
+def run_claimed_chunk(
+    chunk: ClaimedChunk,
+    client: ScraperAPIClient,
+    log_buffer: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    job_config = client.get_job_config(chunk.job_id)
+    if not job_config:
+        raise RuntimeError(f"Failed to fetch job config for chunk job {chunk.job_id}")
+
+    job_config.skus = chunk.skus
+    job_config.test_mode = chunk.test_mode
+    job_config.max_workers = chunk.max_workers
+
+    if chunk.scrapers:
+        job_config.scrapers = [s for s in job_config.scrapers if s.name in chunk.scrapers]
+
+    return run_job(job_config, client, log_buffer)
 
 
 def needs_credentials(scraper_name: str) -> bool:
@@ -124,6 +180,7 @@ async def main_async():
     logger.info("=" * 60)
     logger.info(f"Bay State Scraper Daemon Starting (v{version})")
     logger.info("=" * 60)
+    logger.info(f"Environment: {args.env.upper()}")
     logger.info(f"Runner Name: {client.runner_name}")
     logger.info(f"API URL: {client.api_url}")
     logger.info(f"Platform: {platform.system()} {platform.release()}")
@@ -131,15 +188,7 @@ async def main_async():
     logger.info(f"Max Jobs Before Restart: {MAX_JOBS_BEFORE_RESTART}")
     logger.info("=" * 60)
 
-    try:
-        from utils.api_handler import ScraperAPIHandler
-
-        api_handler = ScraperAPIHandler(client, job_id="daemon")
-        api_handler.addFilter(NoHttpFilter())
-        logging.getLogger().addHandler(api_handler)
-        logger.debug("API logging enabled")
-    except Exception as e:
-        logger.warning(f"Failed to enable API logging: {e}")
+    logger.info("Daemon API handler disabled; per-job log batches enabled")
 
     rm = None
     try:
@@ -164,53 +213,79 @@ async def main_async():
     except Exception as e:
         logger.warning(f"[Daemon] Failed to initialize Realtime presence: {e}")
 
-    jobs_completed = 0
+    chunks_completed = 0
     last_heartbeat = 0
+
+    logger.info("[Daemon] Entering main polling loop")
 
     while not _shutdown_requested:
         try:
-            if jobs_completed >= MAX_JOBS_BEFORE_RESTART:
-                logger.info(f"Completed {jobs_completed} jobs. Exiting for container restart (memory hygiene).")
+            if chunks_completed >= MAX_JOBS_BEFORE_RESTART:
+                logger.info(f"Completed {chunks_completed} chunks. Exiting for container restart (memory hygiene).")
                 break
 
-            job = client.poll_for_work()
+            logger.info("[Daemon] Claiming next work unit...")
+            chunk = await asyncio.to_thread(client.claim_chunk, runner_name=client.runner_name)
+            logger.info(f"[Daemon] Claim result: {chunk}")
 
-            if job:
-                logger.info(f"[Job {job.job_id}] Claimed - {len(job.skus)} SKUs, {len(job.scrapers)} scrapers")
+            if chunk:
+                logger.info(f"[Chunk {chunk.chunk_id}] Claimed - job={chunk.job_id}, skus={len(chunk.skus)}")
 
                 try:
-                    client.update_status(job.job_id, "running", lease_token=job.lease_token)
-                    client.heartbeat(current_job_id=job.job_id, lease_token=job.lease_token, status="busy")
+                    await asyncio.to_thread(client.heartbeat, current_job_id=chunk.job_id, lease_token=chunk.lease_token, status="busy")
                     if rm and rm.is_connected:
-                        await rm.broadcast_job_progress(job.job_id, "started", 0, "Processing started")
+                        await rm.broadcast_job_progress(chunk.job_id, "started", 0, "Chunk processing started")
 
+                    chunk_logs: list[dict[str, Any]] = []
+                    chunk_logs.append(_create_log_entry("info", f"Daemon claimed chunk {chunk.chunk_id} for job {chunk.job_id}"))
                     start_time = time.time()
-                    results = run_job(job, client)
+                    results = await asyncio.to_thread(run_claimed_chunk, chunk, client, chunk_logs)
                     elapsed = time.time() - start_time
+                    chunk_logs.append(_create_log_entry("info", f"Daemon completed chunk in {elapsed:.1f}s"))
 
-                    client.submit_results(
-                        job.job_id,
+                    chunk_results = {
+                        "skus_processed": results.get("skus_processed", 0),
+                        "skus_successful": len(results.get("data", {})),
+                        "skus_failed": results.get("skus_processed", 0) - len(results.get("data", {})),
+                        "data": results.get("data", {}),
+                    }
+
+                    await asyncio.to_thread(
+                        client.submit_chunk_results,
+                        chunk.chunk_id,
                         "completed",
-                        lease_token=job.lease_token,
-                        results=results,
+                        results=chunk_results,
                     )
 
-                    jobs_completed += 1
-                    logger.info(f"[Job {job.job_id}] Completed in {elapsed:.1f}s - {results.get('skus_processed', 0)} SKUs processed")
+                    if chunk_logs:
+                        try:
+                            await asyncio.to_thread(client.post_logs, chunk.job_id, chunk_logs)
+                        except Exception as log_error:
+                            logger.warning(f"[Chunk {chunk.chunk_id}] Failed to send logs: {log_error}")
+
+                    chunks_completed += 1
+                    logger.info(f"[Chunk {chunk.chunk_id}] Completed in {elapsed:.1f}s - {results.get('skus_processed', 0)} SKUs processed")
 
                 except Exception as e:
-                    logger.exception(f"[Job {job.job_id}] Failed with error")
-                    client.submit_results(
-                        job.job_id,
+                    failure_logs = [
+                        _create_log_entry("error", f"Daemon failed chunk {chunk.chunk_id}: {type(e).__name__} - {e}"),
+                    ]
+                    logger.exception(f"[Chunk {chunk.chunk_id}] Failed with error")
+                    await asyncio.to_thread(
+                        client.submit_chunk_results,
+                        chunk.chunk_id,
                         "failed",
-                        lease_token=job.lease_token,
                         error_message=str(e),
                     )
+                    try:
+                        await asyncio.to_thread(client.post_logs, chunk.job_id, failure_logs)
+                    except Exception as log_error:
+                        logger.warning(f"[Chunk {chunk.chunk_id}] Failed to send error logs: {log_error}")
 
             else:
                 now = time.time()
                 if now - last_heartbeat >= HEARTBEAT_INTERVAL:
-                    client.heartbeat(status="idle")
+                    await asyncio.to_thread(client.heartbeat, status="idle")
                     last_heartbeat = now
                     logger.debug("Heartbeat sent")
 
@@ -224,7 +299,7 @@ async def main_async():
         await rm.disconnect()
 
     logger.info("=" * 60)
-    logger.info(f"Daemon shutting down. Jobs completed: {jobs_completed}")
+    logger.info(f"Daemon shutting down. Chunks completed: {chunks_completed}")
     logger.info("=" * 60)
 
 

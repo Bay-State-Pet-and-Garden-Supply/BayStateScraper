@@ -250,13 +250,16 @@ def run_job(job_config: JobConfig, runner_name: str | None = None) -> dict:
     configs = []
     for scraper_cfg in job_config.scrapers:
         try:
-            # Convert API config to internal format
+            # The API nests workflows/timeout inside options, but the Pydantic
+            # ScraperConfig expects them as top-level fields. Extract them.
+            options = scraper_cfg.options or {}
             config_dict = {
                 "name": scraper_cfg.name,
                 "base_url": scraper_cfg.base_url,
                 "search_url_template": scraper_cfg.search_url_template,
                 "selectors": scraper_cfg.selectors or {},
-                "options": scraper_cfg.options or {},
+                "workflows": options.get("workflows", []),
+                "timeout": options.get("timeout", 30),
                 "test_skus": scraper_cfg.test_skus or [],
             }
             config = parser.load_from_dict(config_dict)

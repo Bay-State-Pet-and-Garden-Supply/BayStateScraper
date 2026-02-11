@@ -24,6 +24,36 @@ You'll be prompted for:
 
 That's it! The runner starts automatically and runs in the background.
 
+## Development vs Production
+
+The runner supports two environments:
+
+| Environment | API URL | Use Case |
+|-------------|---------|----------|
+| **Development** | `http://localhost:3000` | Active development, testing new scrapers |
+| **Production** | `https://bay-state-app.vercel.app` | Live data collection |
+
+### Quick Start
+
+```bash
+# Development mode (connects to local app)
+./run-dev.sh
+
+# Production mode (connects to Vercel)
+./run-prod.sh
+
+# Or use Python directly
+python daemon.py --env dev    # Development
+python daemon.py --env prod   # Production (default)
+```
+
+### Environment Files
+
+- `.env` - Production configuration (used by Docker)
+- `.env.development` - Local development configuration
+
+The runner automatically loads the correct file based on the `--env` flag.
+
 ## Commands
 
 ```bash

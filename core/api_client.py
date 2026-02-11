@@ -7,6 +7,7 @@ Runners authenticate with a single API key issued from the admin panel.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
@@ -44,6 +45,19 @@ class JobConfig:
     job_id: str
     skus: list[str]
     scrapers: list[ScraperConfig]
+    test_mode: bool = False
+    max_workers: int = 3
+    lease_token: str | None = None
+    lease_expires_at: str | None = None
+
+
+@dataclass
+class ClaimedChunk:
+    chunk_id: str
+    job_id: str
+    chunk_index: int
+    skus: list[str]
+    scrapers: list[str]
     test_mode: bool = False
     max_workers: int = 3
     lease_token: str | None = None
@@ -349,11 +363,11 @@ class ScraperAPIClient:
         """Send a status update (e.g., 'running') without results."""
         return self.submit_results(job_id, status, runner_name=runner_name, lease_token=lease_token)
 
-    def claim_chunk(self, job_id: str, runner_name: str | None = None) -> dict[str, Any] | None:
+    def claim_chunk(self, job_id: str | None = None, runner_name: str | None = None) -> ClaimedChunk | None:
         """
         Claim the next available chunk for processing.
 
-        Returns chunk data with keys: chunk_id, chunk_index, skus, scrapers
+        Returns chunk data with keys: chunk_id, job_id, chunk_index, skus, scrapers.
         Returns None if no chunks are available.
         """
         if not self.api_url:
@@ -362,7 +376,6 @@ class ScraperAPIClient:
 
         payload = json.dumps(
             {
-                "job_id": job_id,
                 "runner_name": runner_name or self.runner_name,
             }
         )
@@ -372,11 +385,21 @@ class ScraperAPIClient:
 
             chunk = data.get("chunk")
             if not chunk:
-                logger.info(f"No pending chunks for job {job_id}")
+                logger.info("No pending chunks available")
                 return None
 
             logger.info(f"Claimed chunk {chunk.get('chunk_index')} with {len(chunk.get('skus', []))} SKUs")
-            return chunk
+            return ClaimedChunk(
+                chunk_id=chunk.get("chunk_id", ""),
+                job_id=chunk.get("job_id", ""),
+                chunk_index=chunk.get("chunk_index", 0),
+                skus=chunk.get("skus", []),
+                scrapers=chunk.get("scrapers", []),
+                test_mode=chunk.get("test_mode", False),
+                max_workers=chunk.get("max_workers", 3),
+                lease_token=chunk.get("lease_token"),
+                lease_expires_at=chunk.get("lease_expires_at"),
+            )
 
         except AuthenticationError as e:
             logger.error(f"Authentication failed: {e}")
