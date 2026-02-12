@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import logging
 import re
@@ -15,14 +16,14 @@ logger = logging.getLogger(__name__)
 class ParseWeightAction(BaseAction):
     """Action to parse and normalize weight strings."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         field = params.get("field")
         target_unit = params.get("target_unit", "lb")  # lb, kg, oz, g
 
         if not field:
             raise WorkflowExecutionError("Parse_weight requires 'field' parameter")
 
-        raw_weight = self.executor.results.get(field)
+        raw_weight = self.ctx.results.get(field)
         if not raw_weight:
             logger.warning(f"No weight found in field {field}")
             return
@@ -45,7 +46,7 @@ class ParseWeightAction(BaseAction):
                 normalized_unit = "g"
             else:
                 logger.warning(f"Unknown weight unit: {unit}")
-                self.executor.results[field] = raw_weight
+                self.ctx.results[field] = raw_weight
                 return
 
             # Convert to target unit
@@ -72,7 +73,7 @@ class ParseWeightAction(BaseAction):
                 elif target_unit == "g":
                     converted_value = grams
 
-            self.executor.results[field] = f"{converted_value:.2f} {target_unit}"
-            logger.debug(f"Parsed weight: {raw_weight} -> {self.executor.results[field]}")
+            self.ctx.results[field] = f"{converted_value:.2f} {target_unit}"
+            logger.debug(f"Parsed weight: {raw_weight} -> {self.ctx.results[field]}")
         else:
             logger.warning(f"Could not parse weight string: {raw_weight}")

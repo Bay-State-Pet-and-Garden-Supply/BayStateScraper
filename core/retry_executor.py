@@ -142,7 +142,7 @@ class RetryExecutor:
         self._recovery_handlers[failure_type] = handler
         logger.info(f"Registered recovery handler for {failure_type.value}")
 
-    def execute_with_retry(
+    async def execute_with_retry(
         self,
         operation: Callable[[], T],
         site_name: str,
@@ -205,7 +205,13 @@ class RetryExecutor:
             start_time = time.time()
             try:
                 # Execute the operation
-                result = operation()
+                import inspect
+
+                op_result = operation()
+                if inspect.isawaitable(op_result):
+                    result = await op_result
+                else:
+                    result = op_result
                 duration = time.time() - start_time
 
                 # Success! Record and return

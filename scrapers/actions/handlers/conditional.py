@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import logging
 from typing import Any
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 class ConditionalAction(BaseAction):
     """Action to execute steps conditionally."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         condition_type = params.get("condition_type", "field_exists")
         then_steps_data = params.get("then", [])
         else_steps_data = params.get("else", [])
@@ -25,7 +26,7 @@ class ConditionalAction(BaseAction):
         if condition_type == "field_exists":
             field = params.get("field")
             condition_met = (
-                field in self.executor.results and self.executor.results[field] is not None
+                field in self.ctx.results and self.ctx.results[field] is not None
             )
 
         elif condition_type == "value_match":
@@ -33,7 +34,7 @@ class ConditionalAction(BaseAction):
             if field is None:
                 raise WorkflowExecutionError("Conditional value_match requires 'field' parameter")
             value = params.get("value")
-            actual = self.executor.results.get(field)
+            actual = self.ctx.results.get(field)
             condition_met = str(actual) == str(value)
 
         elif condition_type == "element_exists":
@@ -44,7 +45,7 @@ class ConditionalAction(BaseAction):
                 )
             # Use executor's find_element_safe (Playwright-compatible)
             try:
-                element = self.executor.find_element_safe(selector)
+                element = self.ctx.find_element_safe(selector)
                 condition_met = element is not None
             except Exception:
                 condition_met = False
@@ -64,4 +65,4 @@ class ConditionalAction(BaseAction):
                     workflow_steps.append(step_data)
 
             logger.info(f"Executing {len(workflow_steps)} conditional steps")
-            self.executor.execute_steps(workflow_steps)
+            self.ctx.execute_steps(workflow_steps)

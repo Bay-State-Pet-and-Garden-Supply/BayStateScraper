@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import logging
 from typing import Any, cast
@@ -14,21 +15,21 @@ logger = logging.getLogger(__name__)
 class LoginAction(BaseAction):
     """Action to execute login workflow with session persistence."""
 
-    def execute(self, params: dict[str, Any]) -> None:
-        scraper_name = self.executor.config.name
+    async def execute(self, params: dict[str, Any]) -> None:
+        scraper_name = self.ctx.config.name
 
         # Test mode: Log login selector definitions for testing page
         # Getting test_mode from context (ensure it defaults to False if not present)
-        test_mode = getattr(self.executor, "context", {}).get("test_mode", False)
+        test_mode = getattr(self.ctx, "context", {}).get("test_mode", False)
 
         if test_mode:
             logger.info(f"LoginAction executing in test_mode for {scraper_name}")
 
         # Check if already authenticated in this session
         if test_mode:
-            logger.info(f"Current session auth state: {self.executor.is_session_authenticated()}")
+            logger.info(f"Current session auth state: {self.ctx.is_session_authenticated()}")
 
-        if self.executor.is_session_authenticated():
+        if self.ctx.is_session_authenticated():
             if test_mode:
                 logger.info(f"Session already authenticated for {scraper_name}, but verifying selectors in test_mode")
                 # If we are already authenticated, we might not be on the login page.
@@ -60,10 +61,10 @@ class LoginAction(BaseAction):
                 logger.info(f"Skipping login for {scraper_name} - session already authenticated")
                 return
 
-        if self.executor.config.login and not params.get("url"):
-            params.update(self.executor.config.login.model_dump())
+        if self.ctx.config.login and not params.get("url"):
+            params.update(self.ctx.config.login.model_dump())
 
-        creds = getattr(self.executor.config, "options", {}) or {}
+        creds = getattr(self.ctx.config, "options", {}) or {}
         if "_credentials" in creds:
             params["username"] = creds["_credentials"].get("username")
             params["password"] = creds["_credentials"].get("password")
@@ -88,7 +89,7 @@ class LoginAction(BaseAction):
             # Navigate
             from scrapers.models.config import WorkflowStep
 
-            self.executor._execute_step(WorkflowStep(action="navigate", params={"url": login_url}))
+            self.ctx._execute_step(WorkflowStep(action="navigate", params={"url": login_url}))
 
             # In test mode, validate login selectors exist on the page
             if test_mode:
@@ -99,7 +100,7 @@ class LoginAction(BaseAction):
             if success_indicator:
                 try:
                     # Check quickly if we are already logged in
-                    self.executor._execute_step(
+                    self.ctx._execute_step(
                         WorkflowStep(
                             action="wait_for",
                             params={"selector": success_indicator, "timeout": 5},
@@ -109,15 +110,15 @@ class LoginAction(BaseAction):
                     if test_mode:
                         # If we are already logged in, we can't verify form fields (they are hidden).
                         # Emit 'FOUND' for success indicator, 'SKIPPED' for others.
-                        if self.executor.event_emitter:
-                            self.executor.event_emitter.login_selector_status(
+                        if self.ctx.event_emitter:
+                            self.ctx.event_emitter.login_selector_status(
                                 scraper=scraper_name,
                                 selector_name="success_indicator",
                                 status="FOUND",
                             )
                             for field in ["username_field", "password_field", "submit_button"]:
                                 if params.get(field):
-                                    self.executor.event_emitter.login_selector_status(
+                                    self.ctx.event_emitter.login_selector_status(
                                         scraper=scraper_name,
                                         selector_name=field,
                                         status="SKIPPED",
@@ -131,29 +132,29 @@ class LoginAction(BaseAction):
             username_field = params.get("username_field")
             if username_field:
                 # Wait for username field to appear (with timeout)
-                self.executor._execute_step(
+                self.ctx._execute_step(
                     WorkflowStep(
                         action="wait_for",
                         params={"selector": username_field, "timeout": 15},
                     )
                 )
                 # Input username
-                self.executor._execute_step(WorkflowStep(action="input_text", params={"selector": username_field, "text": username}))
+                self.ctx._execute_step(WorkflowStep(action="input_text", params={"selector": username_field, "text": username}))
 
             # Input password
             password_field = params.get("password_field")
             if password_field:
-                self.executor._execute_step(WorkflowStep(action="input_text", params={"selector": password_field, "text": password}))
+                self.ctx._execute_step(WorkflowStep(action="input_text", params={"selector": password_field, "text": password}))
 
             # Click submit
             submit_button = params.get("submit_button")
             if submit_button:
-                self.executor._execute_step(WorkflowStep(action="click", params={"selector": submit_button}))
+                self.ctx._execute_step(WorkflowStep(action="click", params={"selector": submit_button}))
 
             # Wait for success
             timeout = params.get("timeout", 30)
             if success_indicator:
-                self.executor._execute_step(
+                self.ctx._execute_step(
                     WorkflowStep(
                         action="wait_for",
                         params={"selector": success_indicator, "timeout": timeout},
@@ -166,12 +167,12 @@ class LoginAction(BaseAction):
                 logger.info("[LOGIN_SELECTOR] success_indicator: 'FOUND'")
 
             # Mark session as authenticated
-            self.executor.mark_session_authenticated()
+            self.ctx.mark_session_authenticated()
         except Exception as e:
             logger.error(f"Login failed for {scraper_name}: {e}")
             raise WorkflowExecutionError(f"Login failed for {scraper_name}: {e}") from e
 
-    def _validate_login_selectors(self, params: dict[str, Any]) -> None:
+    async def _validate_login_selectors(self, params: dict[str, Any]) -> None:
         """
         Validate presence of login selectors on the page and log results for UI.
         Used in test_mode.
@@ -179,7 +180,7 @@ class LoginAction(BaseAction):
         import time
 
         # Small wait to ensure page is interactive/loaded beyond basic navigation
-        time.sleep(2)
+        await asyncio.sleep(2)
 
         selectors = {
             "username_field": params.get("username_field"),
@@ -192,16 +193,16 @@ class LoginAction(BaseAction):
                 continue
 
             # Check if element exists
-            element = self.executor.find_element_safe(selector)
+            element = self.ctx.find_element_safe(selector)
             status = "FOUND" if element else "MISSING"
 
             # Log in format expected by TestingPage: [LOGIN_SELECTOR] name: 'STATUS'
             logger.info(f"[LOGIN_SELECTOR] {name}: '{status}'")
 
             # Emit event for UI
-            if self.executor.event_emitter:
-                self.executor.event_emitter.login_selector_status(
-                    scraper=self.executor.config.name,
+            if self.ctx.event_emitter:
+                self.ctx.event_emitter.login_selector_status(
+                    scraper=self.ctx.config.name,
                     selector_name=name,
                     status=status,
                 )

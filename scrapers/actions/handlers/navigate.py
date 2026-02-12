@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import asyncio
 import logging
-import time
 from typing import Any
 
 from scrapers.actions.base import BaseAction
@@ -15,22 +15,22 @@ logger = logging.getLogger(__name__)
 class NavigateAction(BaseAction):
     """Action to navigate to a URL."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         url = params.get("url")
         if not url:
             raise WorkflowExecutionError("Navigate action requires 'url' parameter")
 
         logger.info(f"Navigating to: {url}")
-        self.executor.browser.get(url)
+        self.ctx.browser.get(url)
 
         # Check HTTP status if monitoring is enabled
-        if self.executor.config.http_status and self.executor.config.http_status.enabled:
-            status_code = self.executor.browser.check_http_status()
-            current_url = self.executor.browser.current_url
+        if self.ctx.config.http_status and self.ctx.config.http_status.enabled:
+            status_code = self.ctx.browser.check_http_status()
+            current_url = self.ctx.browser.current_url
 
             # Store status in results
-            self.executor.results["http_status"] = status_code
-            self.executor.results["current_url"] = current_url
+            self.ctx.results["http_status"] = status_code
+            self.ctx.results["current_url"] = current_url
 
             # Check for error status codes
             error_codes = params.get("error_codes", [400, 401, 403, 404, 500, 502, 503, 504])
@@ -47,7 +47,7 @@ class NavigateAction(BaseAction):
         # Optional wait after navigation
         wait_time = params.get("wait_after", 0)
         if wait_time > 0:
-            time.sleep(wait_time)
+            await asyncio.sleep(wait_time)
 
         # Mark that first navigation is done
-        self.executor.first_navigation_done = True
+        self.ctx.first_navigation_done = True

@@ -76,6 +76,20 @@ class ConnectionError(Exception):
     pass
 
 
+class ConfigFetchError(Exception):
+    def __init__(
+        self,
+        message: str,
+        config_slug: str | None = None,
+        schema_version: str | None = None,
+        original_error: Exception | None = None,
+    ):
+        self.config_slug = config_slug
+        self.schema_version = schema_version
+        self.original_error = original_error
+        super().__init__(message)
+
+
 def _is_retryable_error(status_code: int | None, exception: Exception) -> bool:
     """
     Determine if an error is retryable based on HTTP status code and exception type.
@@ -374,11 +388,13 @@ class ScraperAPIClient:
             logger.error("API client not configured - missing URL")
             return None
 
-        payload = json.dumps(
-            {
-                "runner_name": runner_name or self.runner_name,
-            }
-        )
+        payload_dict: dict[str, Any] = {
+            "runner_name": runner_name or self.runner_name,
+        }
+        if job_id:
+            payload_dict["job_id"] = job_id
+
+        payload = json.dumps(payload_dict)
 
         try:
             data = self._make_request("POST", "/api/scraper/v1/claim-chunk", payload=payload)
@@ -596,6 +612,25 @@ class ScraperAPIClient:
             logger.exception(f"Failed to send logs for job {job_id}")
             raise
 
+    def send_logs(self, job_id: str, logs: list[dict[str, Any]]) -> bool:
+        return self.post_logs(job_id, logs)
+
+    def get_published_config(self, slug: str) -> dict[str, Any]:
+        if not self.api_url:
+            raise ConfigFetchError(
+                "API client not configured - missing URL",
+                config_slug=slug,
+            )
+
+        try:
+            return self._make_request("GET", f"/api/internal/scraper-configs/{slug}")
+        except Exception as e:
+            raise ConfigFetchError(
+                f"Failed to fetch config for slug '{slug}': {e}",
+                config_slug=slug,
+                original_error=e,
+            ) from e
+
     def get_credentials(self, scraper_name: str) -> dict[str, str] | None:
         """
         Fetch credentials for a specific scraper from the coordinator.
@@ -641,7 +676,13 @@ class ScraperAPIClient:
 
     def get_supabase_config(self) -> dict[str, Any] | None:
         try:
-            data = self._make_request("GET", "/api/scraper/v1/supabase-config")
+            try:
+                data = self._make_request("GET", "/api/scraper/v1/supabase-config")
+            except httpx.HTTPStatusError as get_error:
+                if get_error.response.status_code in {404, 405}:
+                    data = self._make_request("POST", "/api/scraper/v1/supabase-config")
+                else:
+                    raise
 
             return {
                 "supabase_url": data.get("supabase_url"),

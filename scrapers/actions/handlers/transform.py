@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import logging
 import re
@@ -19,7 +20,7 @@ class TransformValueAction(BaseAction):
     (using 'source_field' + 'target_field').
     """
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         # Support both in-place transformation and source->target extraction
         source_field = params.get("source_field") or params.get("field")
         target_field = params.get("target_field") or params.get("field")
@@ -35,23 +36,23 @@ class TransformValueAction(BaseAction):
                 "Transform_value requires 'field' or 'source_field' parameter"
             )
 
-        value = self.executor.results.get(source_field)
+        value = self.ctx.results.get(source_field)
         if value is None:
             logger.warning(f"Field {source_field} not found in results, skipping transformation")
             return
 
         # Handle list of values or single value
         if isinstance(value, list):
-            self.executor.results[target_field] = [
+            self.ctx.results[target_field] = [
                 self._apply_transformations(v, transformations) for v in value
             ]
         else:
-            self.executor.results[target_field] = self._apply_transformations(
+            self.ctx.results[target_field] = self._apply_transformations(
                 str(value), transformations
             )
 
         logger.debug(
-            f"Transformed {source_field} -> {target_field}: {self.executor.results[target_field]}"
+            f"Transformed {source_field} -> {target_field}: {self.ctx.results[target_field]}"
         )
 
     def _apply_transformations(self, value: str, transformations: list) -> str:

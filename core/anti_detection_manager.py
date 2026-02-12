@@ -14,22 +14,6 @@ import time
 from typing import TYPE_CHECKING, Any
 
 
-# Selenium imports removed - migrated to Playwright
-# The By class is no longer used - Playwright uses CSS selectors directly via page.locator()
-# Keeping this stub class for backwards compatibility with any remaining Selenium-style code
-class By:
-    """Stub class for Selenium By selectors - Playwright uses page.locator() with CSS selectors."""
-
-    CSS_SELECTOR = "css selector"
-    ID = "id"
-    NAME = "name"
-    XPATH = "xpath"
-    CLASS_NAME = "class name"
-    TAG_NAME = "tag name"
-    LINK_TEXT = "link text"
-    PARTIAL_LINK_TEXT = "partial link text"
-
-
 from core.adaptive_retry_strategy import AdaptiveRetryStrategy, FailureContext
 from core.captcha_solver import CaptchaSolver, CaptchaSolverConfig
 from core.failure_analytics import FailureAnalytics
@@ -246,7 +230,7 @@ class AntiDetectionManager:
             # Apply rate limiting
             if self.rate_limiter and not skip_rate_limit_check:
                 start_time = time.time()
-                self.rate_limiter.apply_delay(self.browser.driver)
+                self.rate_limiter.apply_delay(self.browser.page)
                 delay_duration = time.time() - start_time
                 if delay_duration > SIGNIFICANT_DELAY_THRESHOLD:  # Only log significant delays
                     logger.debug(f"Rate limiter applied {delay_duration:.2f}s delay")
@@ -257,15 +241,15 @@ class AntiDetectionManager:
 
             # Check for blocking before proceeding
             if self.blocking_handler and self._should_check_blocking(action):
-                if self.blocking_handler.detect_blocking(self.browser.driver):
+                if self.blocking_handler.detect_blocking(self.browser.page):
                     logger.warning("Blocking page detected, attempting recovery")
-                    return self.blocking_handler.handle_blocking(self.browser.driver)
+                    return self.blocking_handler.handle_blocking(self.browser.page)
 
             # Check for CAPTCHA before proceeding
             if self.captcha_detector and self._should_check_captcha(action):
-                if self.captcha_detector.detect_captcha(self.browser.driver):
+                if self.captcha_detector.detect_captcha(self.browser.page):
                     logger.warning("CAPTCHA detected, attempting resolution")
-                    return self.captcha_detector.handle_captcha(self.browser.driver)
+                    return self.captcha_detector.handle_captcha(self.browser.page)
 
             # Check session rotation
             if self.session_manager:
@@ -342,7 +326,7 @@ class AntiDetectionManager:
 
             if "captcha" in error_str and self.captcha_detector:
                 logger.info("CAPTCHA-related error detected, attempting recovery")
-                success = self.captcha_detector.handle_captcha(self.browser.driver)
+                success = self.captcha_detector.handle_captcha(self.browser.page)
                 if success:
                     # Record successful recovery for analytics
                     self.failure_analytics.record_failure(
@@ -371,7 +355,7 @@ class AntiDetectionManager:
 
             elif any(term in error_str for term in ["blocked", "banned", "access denied"]) and self.blocking_handler:
                 logger.info("Blocking-related error detected, attempting recovery")
-                success = self.blocking_handler.handle_blocking(self.browser.driver)
+                success = self.blocking_handler.handle_blocking(self.browser.page)
                 if success:
                     # Record successful recovery for analytics
                     self.failure_analytics.record_failure(
@@ -502,13 +486,12 @@ class CaptchaDetector:
         self.config = config
         self.captcha_solver = captcha_solver
 
-    def detect_captcha(self, driver) -> bool:
+    def detect_captcha(self, page) -> bool:
         """Detect if a CAPTCHA is present on the page."""
         try:
             for selector in self.config.captcha_selectors:
                 try:
-                    elements = driver.find_elements(By.CSS_SELECTOR, selector)
-                    if elements:
+                    if page.locator(selector).count() > 0:
                         logger.info(f"CAPTCHA detected using selector: {selector}")
                         return True
                 except Exception:
@@ -518,30 +501,26 @@ class CaptchaDetector:
             logger.error(f"CAPTCHA detection failed: {e}")
             return False
 
-    def handle_captcha(self, driver) -> bool:
+    def handle_captcha(self, page) -> bool:
         """Attempt to handle CAPTCHA using solver or fallback strategy."""
-        max_retries = 2  # Retry up to 2 times
+        max_retries = 2
 
         for attempt in range(max_retries + 1):
             try:
-                # Try to solve CAPTCHA using external service if available
                 if self.captcha_solver:
-                    current_url = driver.current_url
+                    current_url = page.url
                     logger.info(f"Attempting CAPTCHA resolution using external service (attempt {attempt + 1}/{max_retries + 1})")
-                    if self.captcha_solver.solve_captcha(driver, current_url):
+                    if self.captcha_solver.solve_captcha(page, current_url):
                         logger.info("CAPTCHA solved successfully using external service")
                         return True
                     else:
                         logger.warning(f"External CAPTCHA solving failed (attempt {attempt + 1}), trying fallback")
 
-                # Fallback: just wait and retry
                 logger.info(f"Attempting CAPTCHA resolution (waiting strategy, attempt {attempt + 1}/{max_retries + 1})")
                 wait_time = random.uniform(5, 10) * (attempt + 1)
-                # Increase wait time with each attempt
                 time.sleep(wait_time)
 
-                # Check if CAPTCHA is still present after waiting
-                if not self.detect_captcha(driver):
+                if not self.detect_captcha(page):
                     logger.info("CAPTCHA appears to be resolved after waiting")
                     return True
 
@@ -556,7 +535,7 @@ class CaptchaDetector:
                 logger.error(f"CAPTCHA handling failed (attempt {attempt + 1}): {e}")
                 if attempt == max_retries:
                     return False
-                time.sleep(random.uniform(2, 5))  # Brief pause before retry
+                time.sleep(random.uniform(2, 5))
 
         return False
 
@@ -570,22 +549,19 @@ class RateLimiter:
         self.last_request_time: float = 0.0
         self.consecutive_failures = 0
 
-    def detect_rate_limiting(self, driver) -> bool:
+    def detect_rate_limiting(self, page) -> bool:
         """Detect if current page indicates rate limiting."""
         try:
-            # Check selectors
             for selector in self.config.rate_limiting_selectors:
                 try:
-                    elements = driver.find_elements(By.CSS_SELECTOR, selector)
-                    if elements:
+                    if page.locator(selector).count() > 0:
                         logger.info(f"Rate limiting detected using selector: {selector}")
                         return True
                 except Exception:
                     continue
 
-            # Check page content for text patterns
-            page_text = driver.page_source.lower()
-            page_title = driver.title.lower()
+            page_text = page.content().lower()
+            page_title = page.title().lower()
 
             for pattern in self.config.rate_limiting_text_patterns:
                 if re.search(pattern, page_text, re.IGNORECASE) or re.search(pattern, page_title, re.IGNORECASE):
@@ -597,11 +573,10 @@ class RateLimiter:
             logger.error(f"Rate limiting detection failed: {e}")
             return False
 
-    def apply_delay(self, driver=None) -> None:
+    def apply_delay(self, page=None) -> None:
         """Apply appropriate delay before next request using adaptive strategies."""
         is_ci = os.getenv("CI") == "true"
-        # Check for rate limiting indicators on the page before applying delay
-        if driver and self.detect_rate_limiting(driver):
+        if page and self.detect_rate_limiting(page):
             logger.warning("Rate limiting detected on page, applying extended delay")
             # Get adaptive config for rate limiting
             if self.adaptive_config is not None:
@@ -748,20 +723,18 @@ class BlockingHandler:
     def __init__(self, config: AntiDetectionConfig):
         self.config = config
 
-    def detect_blocking(self, driver) -> bool:
+    def detect_blocking(self, page) -> bool:
         """Detect if current page is a blocking page."""
         try:
             for selector in self.config.blocking_selectors:
                 try:
-                    elements = driver.find_elements(By.CSS_SELECTOR, selector)
-                    if elements:
+                    if page.locator(selector).count() > 0:
                         logger.info(f"Blocking page detected using selector: {selector}")
                         return True
                 except Exception:
                     continue
 
-            # Check page title/content for blocking indicators
-            title = driver.title.lower()
+            title = page.title().lower()
             if any(term in title for term in ["blocked", "banned", "access denied", "forbidden"]):
                 logger.info("Blocking page detected in page title")
                 return True
@@ -772,12 +745,11 @@ class BlockingHandler:
             logger.error(f"Blocking detection failed: {e}")
             return False
 
-    def handle_blocking(self, driver) -> bool:
+    def handle_blocking(self, page) -> bool:
         """Attempt to handle blocking page."""
         try:
-            # For now, just wait and retry - in production, implement proxy rotation, etc.
             logger.info("Attempting blocking page recovery (waiting strategy)")
-            time.sleep(random.uniform(30, 60))  # Longer wait for blocking
+            time.sleep(random.uniform(30, 60))
             return True
         except Exception as e:
             logger.error(f"Blocking handling failed: {e}")

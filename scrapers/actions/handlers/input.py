@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class InputTextAction(BaseAction):
     """Action to input text into a form field."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         selector = params.get("selector")
         text = params.get("text")
         clear_first = params.get("clear_first", True)
@@ -22,25 +22,16 @@ class InputTextAction(BaseAction):
         if not selector or text is None:
             raise WorkflowExecutionError("Input_text requires 'selector' and 'text' parameters")
 
-        element = self.executor.find_element_safe(selector)
+        element = await self.ctx.find_element_safe(selector)
 
         if not element:
             raise WorkflowExecutionError(f"Input element not found: {selector}")
 
         try:
-            # Check for Playwright
-            if hasattr(self.executor.browser, "page"):
-                # Playwright
-                if clear_first:
-                    element.fill(str(text))
-                else:
-                    # If we don't clear, we might want to type sequentially
-                    element.type(str(text))
+            if clear_first:
+                await element.fill(str(text))
             else:
-                # Selenium
-                if clear_first:
-                    element.clear()
-                element.send_keys(str(text))
+                await element.type(str(text))
 
             logger.debug(f"Input text into {selector}: {text}")
         except Exception as e:

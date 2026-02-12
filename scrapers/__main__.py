@@ -6,6 +6,7 @@ Usage:
     python -m src.scrapers --test                        # Test mode using YAML test_skus
     python -m src.scrapers --test --scrapers amazon      # Test specific scraper(s)
 """
+
 from __future__ import annotations
 
 
@@ -69,7 +70,7 @@ def run_test_mode(scrapers: list[str] | None = None, debug_mode: bool = False):
 
     Each scraper is run only with its own test_skus, not all SKUs from all configs.
     """
-    from scrapers.main import run_scraping
+    from scrapers.runtime import run_scraping
 
     print("\n[TEST] TEST MODE - Using test_skus from YAML configurations\n")
     print("=" * 60)
@@ -157,13 +158,9 @@ Examples:
         help="Run in test mode using test_skus from YAML configs",
     )
 
-    parser.add_argument(
-        "--scrapers", "-s", nargs="+", type=str, help="Specific scrapers to run (default: all)"
-    )
+    parser.add_argument("--scrapers", "-s", nargs="+", type=str, help="Specific scrapers to run (default: all)")
 
-    parser.add_argument(
-        "--max-workers", "-w", type=int, help="Maximum number of concurrent worker threads"
-    )
+    parser.add_argument("--max-workers", "-w", type=int, help="Maximum number of concurrent worker threads")
 
     parser.add_argument(
         "--scraper-workers",
@@ -207,7 +204,7 @@ Examples:
     if args.test:
         run_test_mode(scrapers=args.scrapers, debug_mode=debug_mode)
     else:
-        from scrapers.main import run_scraping
+        from scrapers.runtime import run_scraping
 
         if not os.path.exists(args.file):
             print(f"[ERROR] File not found: {args.file}")

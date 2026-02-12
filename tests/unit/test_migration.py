@@ -201,7 +201,7 @@ class TestScraperConfigValidation:
 
     def test_validate_invalid_timeout(self) -> None:
         """Test validation fails for out-of-bounds timeout."""
-        from scraper_backend.scrapers.models.config import ScraperConfig, SelectorConfig
+        from scrapers.models.config import ScraperConfig, SelectorConfig
 
         with pytest.raises(Exception):  # pydantic ValidationError
             ScraperConfig(
@@ -214,7 +214,7 @@ class TestScraperConfigValidation:
 
     def test_validate_selector_without_name(self) -> None:
         """Test validation fails for selector without name."""
-        from scraper_backend.scrapers.models.config import ScraperConfig, SelectorConfig
+        from scrapers.models.config import ScraperConfig, SelectorConfig
 
         with pytest.raises(Exception):  # pydantic ValidationError
             ScraperConfig(
@@ -228,7 +228,7 @@ class TestScraperConfigValidation:
 
     def test_validate_valid_config(self) -> None:
         """Test validation passes for valid config."""
-        from scraper_backend.scrapers.models.config import ScraperConfig, SelectorConfig
+        from scrapers.models.config import ScraperConfig, SelectorConfig
 
         config = ScraperConfig(
             schema_version="1.0",
@@ -247,7 +247,7 @@ class TestScraperConfigValidation:
 
     def test_validate_unknown_schema_version(self) -> None:
         """Test validation fails for unknown schema version."""
-        from scraper_backend.scrapers.models.config import ScraperConfig, SelectorConfig
+        from scrapers.models.config import ScraperConfig, SelectorConfig
 
         with pytest.raises(Exception):  # pydantic ValidationError
             ScraperConfig(

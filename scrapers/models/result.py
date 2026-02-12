@@ -1,15 +1,10 @@
-"""
-SKU Result Model and Pass/Fail Logic
-
-This module provides the central source of truth for SKU status determination.
-Both backend processing and health calculation should use these helpers.
-"""
+"""Scrape result model for typed extraction results."""
 from __future__ import annotations
-
 
 from dataclasses import dataclass, field
 from typing import Literal
 
+from pydantic import BaseModel, ConfigDict
 
 # Valid SKU types
 SkuType = Literal["test", "fake"]
@@ -171,3 +166,22 @@ def summarize_results(results: list[SkuResult]) -> dict:
             "error": sum(1 for r in results if r.outcome == "error"),
         },
     }
+
+
+class ScrapeResult(BaseModel):
+    """Typed model for scraped product data.
+    
+    Matches the API callback payload shape while allowing
+    scraper-specific extra fields.
+    """
+    
+    price: str | float | None = None
+    title: str | None = None
+    description: str | None = None
+    images: list[str] = []
+    availability: str | None = None
+    url: str | None = None
+    scraped_at: str | None = None
+    
+    # Allow extra fields for scraper-specific data
+    model_config = ConfigDict(extra="allow")

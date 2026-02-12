@@ -28,7 +28,7 @@ from utils.logger import setup_logging
 setup_logging(debug_mode=False, json_output=True)
 logger = logging.getLogger(__name__)
 
-from scrapers.main import run_scraping
+from scrapers.runtime import run_scraping
 
 
 def main():

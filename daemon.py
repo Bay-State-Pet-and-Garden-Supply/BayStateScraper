@@ -74,7 +74,7 @@ if env_file.exists():
 
 
 from core.api_client import ClaimedChunk, ScraperAPIClient, JobConfig
-from scraper_backend.core.realtime_manager import RealtimeManager
+from core.realtime_manager import RealtimeManager
 from utils.logger import setup_logging
 
 
@@ -118,7 +118,7 @@ def run_job(
     This imports and calls the run_job function from runner.py,
     but fetches credentials from the coordinator instead of local storage.
     """
-    from runner import run_job as execute_job
+    from runner import run_job
 
     # Fetch credentials for any scrapers that require login
     for scraper in job_config.scrapers:
@@ -131,7 +131,7 @@ def run_job(
                 scraper.options["_credentials"] = creds
                 logger.debug(f"Injected credentials for {scraper.name}")
 
-    return execute_job(job_config, runner_name=client.runner_name, log_buffer=log_buffer)
+    return run_job(job_config, runner_name=client.runner_name, log_buffer=log_buffer)
 
 
 def run_claimed_chunk(

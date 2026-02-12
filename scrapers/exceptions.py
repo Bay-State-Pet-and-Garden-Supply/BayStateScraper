@@ -4,6 +4,7 @@ Scraper Exception Hierarchy
 Provides structured exceptions for different failure scenarios with context
 for debugging and automatic recovery decisions.
 """
+
 from __future__ import annotations
 
 
@@ -238,14 +239,6 @@ def classify_exception(
     Returns:
         Appropriate ScraperError subclass instance
     """
-    # Selenium imports removed - using generic exception classification
-    # from selenium.common.exceptions import (
-    #     NoSuchElementException,
-    #     StaleElementReferenceException,
-    #     TimeoutException,
-    #     WebDriverException,
-    # )
-
     exc_str = str(exc).lower()
     exc_type = type(exc).__name__
     ctx = context or ErrorContext()

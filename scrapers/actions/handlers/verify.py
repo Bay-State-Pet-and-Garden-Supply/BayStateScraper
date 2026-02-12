@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import logging
 import re
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 class VerifyValueAction(BaseAction):
     """Action to verify that a value matches an expected pattern or value."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         field = params.get("field")
         expected = params.get("expected")
         match_mode = params.get("match_mode", "exact")  # exact, contains, regex
@@ -23,7 +24,7 @@ class VerifyValueAction(BaseAction):
         if not field:
             raise WorkflowExecutionError("Verify_value requires 'field' parameter")
 
-        actual_value = self.executor.results.get(field)
+        actual_value = self.ctx.results.get(field)
         if actual_value is None:
             logger.warning(f"Field {field} is missing, verification failed")
             # We might want to fail the workflow or just log a warning depending on config
@@ -63,12 +64,12 @@ class VerifyValueAction(BaseAction):
 class FilterBrandAction(BaseAction):
     """Action to filter brand name from product name."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         name_field = params.get("name_field", "product_name")
         brand_field = params.get("brand_field", "brand")
 
-        name = self.executor.results.get(name_field)
-        brand = self.executor.results.get(brand_field)
+        name = self.ctx.results.get(name_field)
+        brand = self.ctx.results.get(brand_field)
 
         if not name or not brand:
             return
@@ -87,5 +88,5 @@ class FilterBrandAction(BaseAction):
         if len(new_name) < 3:  # Don't make it too short
             new_name = name
 
-        self.executor.results[name_field] = new_name
+        self.ctx.results[name_field] = new_name
         logger.debug(f"Filtered brand '{brand}' from name: '{name}' -> '{new_name}'")

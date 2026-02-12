@@ -1,10 +1,9 @@
 from __future__ import annotations
+import asyncio
 
 import logging
 from typing import Any
 
-# Selenium imports removed - using executor's find_elements_safe
-# from selenium.webdriver.common.by import By
 from scrapers.actions.base import BaseAction
 from scrapers.actions.registry import ActionRegistry
 from scrapers.exceptions import WorkflowExecutionError
@@ -16,7 +15,7 @@ logger = logging.getLogger(__name__)
 class ParseTableAction(BaseAction):
     """Action to parse an HTML table into a dictionary or list."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         selector = params.get("selector")
         target_field = params.get("target_field")
         key_column = params.get("key_column", 0)
@@ -26,13 +25,13 @@ class ParseTableAction(BaseAction):
             raise WorkflowExecutionError("Parse_table requires 'selector' and 'target_field'")
 
         try:
-            table = self.executor.find_element_safe(selector)
+            table = self.ctx.find_element_safe(selector)
             if not table:
                 logger.warning(f"Table not found: {selector}")
-                self.executor.results[target_field] = {}
+                self.ctx.results[target_field] = {}
                 return
 
-            rows = self.executor.find_elements_safe(f"{selector} tr")
+            rows = self.ctx.find_elements_safe(f"{selector} tr")
 
             result_data = {}
 
@@ -52,9 +51,9 @@ class ParseTableAction(BaseAction):
                     # Fallback for other element types
                     pass
 
-            self.executor.results[target_field] = result_data
+            self.ctx.results[target_field] = result_data
             logger.debug(f"Parsed table into {target_field}: {len(result_data)} entries")
 
         except Exception as e:
             logger.warning(f"Failed to parse table: {e}")
-            self.executor.results[target_field] = {}
+            self.ctx.results[target_field] = {}

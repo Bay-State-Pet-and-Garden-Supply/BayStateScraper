@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import logging
 from typing import Any
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 class ExecuteScriptAction(BaseAction):
     """Action to execute JavaScript."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         script = params.get("script")
         selector = params.get("selector")
 
@@ -24,7 +25,7 @@ class ExecuteScriptAction(BaseAction):
         args: list[Any] = []
         if selector:
             # Use Playwright-compatible element finding
-            elements = self.executor.find_elements_safe(selector)
+            elements = self.ctx.find_elements_safe(selector)
 
             target_element = None
             if elements:
@@ -47,19 +48,16 @@ class ExecuteScriptAction(BaseAction):
                 logger.warning(f"No element found for selector: {selector}, passing no arguments")
 
         try:
-            # Use Playwright's evaluate for script execution
-            if hasattr(self.executor.browser, "page"):
-                if args:
-                    # Evaluate with element argument
-                    self.executor.browser.page.evaluate(script, args[0])
-                else:
-                    self.executor.browser.page.evaluate(script)
+            if args:
+                self.ctx.browser.page.evaluate(script, args[0])
+            else:
+                self.ctx.browser.page.evaluate(script)
             logger.info("Successfully executed JavaScript")
 
             import time
 
             wait_time = params.get("wait_after", 0)
             if wait_time > 0:
-                time.sleep(wait_time)
+                await asyncio.sleep(wait_time)
         except Exception as e:
             raise WorkflowExecutionError(f"Failed to execute JavaScript: {e}")

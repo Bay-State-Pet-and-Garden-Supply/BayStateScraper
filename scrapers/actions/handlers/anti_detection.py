@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import logging
 import time
@@ -14,23 +15,23 @@ logger = logging.getLogger(__name__)
 class DetectCaptchaAction(BaseAction):
     """Action to detect CAPTCHA presence on current page."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         if (
-            not self.executor.anti_detection_manager
-            or not self.executor.anti_detection_manager.captcha_detector
+            not self.ctx.anti_detection_manager
+            or not self.ctx.anti_detection_manager.captcha_detector
         ):
             logger.warning("CAPTCHA detection not enabled")
             return
 
-        detected = self.executor.anti_detection_manager.captcha_detector.detect_captcha(
-            self.executor.browser.driver
+        detected = self.ctx.anti_detection_manager.captcha_detector.detect_captcha(
+            self.ctx.browser.driver
         )
-        self.executor.results["captcha_detected"] = detected
+        self.ctx.results["captcha_detected"] = detected
 
         if detected:
             logger.info("CAPTCHA detected on current page")
             # Store detection result
-            self.executor.results["captcha_details"] = {
+            self.ctx.results["captcha_details"] = {
                 "detected": True,
                 "timestamp": time.time(),
             }
@@ -42,18 +43,18 @@ class DetectCaptchaAction(BaseAction):
 class HandleBlockingAction(BaseAction):
     """Action to handle blocking pages."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         if (
-            not self.executor.anti_detection_manager
-            or not self.executor.anti_detection_manager.blocking_handler
+            not self.ctx.anti_detection_manager
+            or not self.ctx.anti_detection_manager.blocking_handler
         ):
             logger.warning("Blocking handling not enabled")
             return
 
-        handled = self.executor.anti_detection_manager.blocking_handler.handle_blocking(
-            self.executor.browser.driver
+        handled = self.ctx.anti_detection_manager.blocking_handler.handle_blocking(
+            self.ctx.browser.driver
         )
-        self.executor.results["blocking_handled"] = handled
+        self.ctx.results["blocking_handled"] = handled
 
         if handled:
             logger.info("Blocking page handled successfully")
@@ -65,10 +66,10 @@ class HandleBlockingAction(BaseAction):
 class RateLimitAction(BaseAction):
     """Action to apply rate limiting delay."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         if (
-            not self.executor.anti_detection_manager
-            or not self.executor.anti_detection_manager.rate_limiter
+            not self.ctx.anti_detection_manager
+            or not self.ctx.anti_detection_manager.rate_limiter
         ):
             logger.warning("Rate limiting not enabled")
             return
@@ -76,11 +77,11 @@ class RateLimitAction(BaseAction):
         delay = params.get("delay", None)
         if delay:
             # Custom delay
-            time.sleep(delay)
+            await asyncio.sleep(delay)
             logger.debug(f"Applied custom rate limit delay: {delay}s")
         else:
             # Use rate limiter's intelligent delay
-            self.executor.anti_detection_manager.rate_limiter.apply_delay()
+            self.ctx.anti_detection_manager.rate_limiter.apply_delay()
             logger.debug("Applied intelligent rate limiting")
 
 
@@ -88,10 +89,10 @@ class RateLimitAction(BaseAction):
 class SimulateHumanAction(BaseAction):
     """Action to simulate human-like behavior."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         if (
-            not self.executor.anti_detection_manager
-            or not self.executor.anti_detection_manager.human_simulator
+            not self.ctx.anti_detection_manager
+            or not self.ctx.anti_detection_manager.human_simulator
         ):
             logger.warning("Human behavior simulation not enabled")
             return
@@ -100,20 +101,20 @@ class SimulateHumanAction(BaseAction):
         duration = params.get("duration", 2.0)
 
         if behavior_type == "reading":
-            time.sleep(duration)
+            await asyncio.sleep(duration)
             logger.debug(f"Simulated reading behavior for {duration}s")
         elif behavior_type == "typing":
             # Simulate typing delay
-            time.sleep(duration * 0.1)  # Shorter for typing
+            await asyncio.sleep(duration * 0.1)  # Shorter for typing
             logger.debug(f"Simulated typing behavior for {duration * 0.1}s")
         elif behavior_type == "navigation":
-            time.sleep(duration)
+            await asyncio.sleep(duration)
             logger.debug(f"Simulated navigation pause for {duration}s")
         else:
             # Random human-like pause
             import random
 
-            time.sleep(random.uniform(1, duration))
+            await asyncio.sleep(random.uniform(1, duration))
             logger.debug(f"Simulated random human behavior for {random.uniform(1, duration):.2f}s")
 
 
@@ -121,18 +122,18 @@ class SimulateHumanAction(BaseAction):
 class RotateSessionAction(BaseAction):
     """Action to force session rotation."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         if (
-            not self.executor.anti_detection_manager
-            or not self.executor.anti_detection_manager.session_manager
+            not self.ctx.anti_detection_manager
+            or not self.ctx.anti_detection_manager.session_manager
         ):
             logger.warning("Session rotation not enabled")
             return
 
-        rotated = self.executor.anti_detection_manager.session_manager.rotate_session(
-            self.executor.anti_detection_manager
+        rotated = self.ctx.anti_detection_manager.session_manager.rotate_session(
+            self.ctx.anti_detection_manager
         )
-        self.executor.results["session_rotated"] = rotated
+        self.ctx.results["session_rotated"] = rotated
 
         if rotated:
             logger.info("Session rotated successfully")

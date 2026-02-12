@@ -14,7 +14,6 @@ import logging
 import time
 from typing import Any, Callable
 
-from realtime import AsyncRealtimeClient, RealtimeSubscribeStates
 
 logger = logging.getLogger(__name__)
 
@@ -66,15 +65,15 @@ class RealtimeManager:
         self.runner_name = runner_name
         self.runner_id = runner_id or runner_name
 
-        self.client: AsyncRealtimeClient | None = None
+        self.client: Any | None = None
         self._connected = False
-        self._reconnect_task: asyncio.Task | None = None
+        self._reconnect_task: asyncio.Task[Any] | None = None
         self._shutdown_event = asyncio.Event()
-        self._pending_jobs: asyncio.Queue = asyncio.Queue()
-        self._job_callback: Callable[[dict], None] | None = None
+        self._pending_jobs: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
+        self._job_callback: Callable[[dict[str, Any]], None] | None = None
 
         # Presence tracking
-        self._presence_task: asyncio.Task | None = None
+        self._presence_task: asyncio.Task[Any] | None = None
         self._presence_interval = 30  # seconds between presence updates
 
         # Broadcast channels
@@ -94,7 +93,9 @@ class RealtimeManager:
             True if connection successful, False otherwise
         """
         try:
-            self.client = AsyncRealtimeClient(
+            from realtime._async.client import AsyncRealtimeClient as _AsyncRealtimeClient
+
+            self.client = _AsyncRealtimeClient(
                 self.supabase_url,
                 self.service_key,
             )
@@ -146,7 +147,7 @@ class RealtimeManager:
         self._connected = False
         logger.info(f"[{self.runner_name}] Disconnected from Supabase Realtime")
 
-    async def subscribe_to_jobs(self, callback: Callable[[dict], None]) -> None:
+    async def subscribe_to_jobs(self, callback: Callable[[dict[str, Any]], None]) -> None:
         """
         Subscribe to INSERT events on the scrape_jobs table.
 
@@ -173,17 +174,17 @@ class RealtimeManager:
             callback=self._handle_job_insert,
         )
 
-        def _on_subscribe(status: RealtimeSubscribeStates, err: Exception | None):
-            if status == RealtimeSubscribeStates.SUBSCRIBED:
+        def _on_subscribe(status: Any, err: Exception | None):
+            if str(status) == "SUBSCRIBED":
                 logger.info(f"[{self.runner_name}] Subscribed to scrape_jobs INSERT events")
-            elif status == RealtimeSubscribeStates.CHANNEL_ERROR:
+            elif str(status) == "CHANNEL_ERROR":
                 logger.error(f"[{self.runner_name}] Error subscribing to jobs: {err}")
-            elif status == RealtimeSubscribeStates.TIMED_OUT:
+            elif str(status) == "TIMED_OUT":
                 logger.error(f"[{self.runner_name}] Subscription timed out")
 
         await channel.subscribe(_on_subscribe)
 
-    async def _handle_job_insert(self, payload: dict) -> None:
+    async def _handle_job_insert(self, payload: dict[str, Any]) -> None:
         """
         Handle INSERT event from scrape_jobs table.
 
@@ -227,16 +228,17 @@ class RealtimeManager:
 
         try:
             self._presence_channel = self.client.channel(CHANNEL_RUNNER_PRESENCE, {"config": {"presence": {"key": self.runner_id}}})
+            presence_channel = self._presence_channel
 
             # Set up presence tracking using v2.x API
-            self._presence_channel.on_presence_sync(lambda: self._handle_presence_sync(self._presence_channel.presence_state()))
+            self._presence_channel.on_presence_sync(lambda: self._handle_presence_sync(getattr(presence_channel, "presence_state", lambda: {})()))
             self._presence_channel.on_presence_join(lambda new_presences: self._handle_presence_join(new_presences))
             self._presence_channel.on_presence_leave(lambda left_presences: self._handle_presence_leave(left_presences))
 
-            def _on_subscribe(status: RealtimeSubscribeStates, err: Exception | None):
-                if status == RealtimeSubscribeStates.SUBSCRIBED:
+            def _on_subscribe(status: Any, err: Exception | None):
+                if str(status) == "SUBSCRIBED":
                     logger.info(f"[{self.runner_name}] Presence channel subscribed")
-                elif status == RealtimeSubscribeStates.CHANNEL_ERROR:
+                elif str(status) == "CHANNEL_ERROR":
                     logger.error(f"[{self.runner_name}] Error subscribing to presence: {err}")
 
             await self._presence_channel.subscribe(_on_subscribe)
@@ -286,15 +288,15 @@ class RealtimeManager:
         except Exception as e:
             logger.error(f"[{self.runner_name}] Presence heartbeat error: {e}")
 
-    def _handle_presence_sync(self, payload: dict) -> None:
+    def _handle_presence_sync(self, payload: dict[str, Any]) -> None:
         """Handle presence sync event."""
         logger.debug(f"[{self.runner_name}] Presence sync: {payload}")
 
-    def _handle_presence_join(self, payload: dict) -> None:
+    def _handle_presence_join(self, payload: dict[str, Any]) -> None:
         """Handle presence join event."""
         logger.debug(f"[{self.runner_name}] Presence join: {payload}")
 
-    def _handle_presence_leave(self, payload: dict) -> None:
+    def _handle_presence_leave(self, payload: dict[str, Any]) -> None:
         """Handle presence leave event."""
         logger.debug(f"[{self.runner_name}] Presence leave: {payload}")
 
@@ -313,10 +315,10 @@ class RealtimeManager:
             # Job progress broadcast channel
             self._broadcast_channel = self.client.channel(CHANNEL_JOB_BROADCAST, {"config": {"broadcast": {"ack": False, "self": False}}})
 
-            def _on_subscribe(status: RealtimeSubscribeStates, err: Exception | None):
-                if status == RealtimeSubscribeStates.SUBSCRIBED:
+            def _on_subscribe(status: Any, err: Exception | None):
+                if str(status) == "SUBSCRIBED":
                     logger.info(f"[{self.runner_name}] Broadcast channel enabled")
-                elif status == RealtimeSubscribeStates.CHANNEL_ERROR:
+                elif str(status) == "CHANNEL_ERROR":
                     logger.error(f"[{self.runner_name}] Error subscribing to broadcast: {err}")
 
             await self._broadcast_channel.subscribe(_on_subscribe)
@@ -333,7 +335,7 @@ class RealtimeManager:
         status: str,
         progress: int,
         message: str | None = None,
-        details: dict | None = None,
+        details: dict[str, Any] | None = None,
     ) -> None:
         """
         Broadcast job progress to the admin dashboard.
@@ -371,7 +373,7 @@ class RealtimeManager:
         job_id: str,
         level: str,
         message: str,
-        details: dict | None = None,
+        details: dict[str, Any] | None = None,
     ) -> None:
         """
         Broadcast a log message to the admin dashboard.
@@ -405,7 +407,7 @@ class RealtimeManager:
     async def broadcast_runner_status(
         self,
         status: str,
-        details: dict | None = None,
+        details: dict[str, Any] | None = None,
     ) -> None:
         """
         Broadcast runner status update (e.g., starting, stopping, error).
@@ -432,7 +434,7 @@ class RealtimeManager:
         except Exception as e:
             logger.warning(f"[{self.runner_name}] Failed to broadcast runner status: {e}")
 
-    async def get_pending_job(self) -> dict | None:
+    async def get_pending_job(self) -> dict[str, Any] | None:
         """
         Get the next pending job from the queue.
 
@@ -489,7 +491,7 @@ class RealtimeManager:
         self._reconnect_task = asyncio.create_task(self._auto_reconnect())
         logger.info(f"[{self.runner_name}] Started reconnection loop")
 
-    async def wait_for_job(self, timeout: float | None = None) -> dict | None:
+    async def wait_for_job(self, timeout: float | None = None) -> dict[str, Any] | None:
         """
         Wait for a pending job to arrive in the queue.
 

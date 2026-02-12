@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import asyncio
 import logging
-import time
 from typing import Any
 
 from scrapers.actions.base import BaseAction
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class WaitAction(BaseAction):
     """Action to wait for a specified amount of time."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         seconds = params.get("seconds", params.get("timeout", 1))
         logger.debug(f"Waiting for {seconds} seconds")
-        time.sleep(seconds)
+        await asyncio.sleep(seconds)

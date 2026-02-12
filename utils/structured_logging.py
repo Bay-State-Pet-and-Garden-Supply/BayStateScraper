@@ -179,7 +179,6 @@ def setup_structured_logging(debug: bool = False) -> None:
 
 
 if __name__ == "__main__":
-    # Demo usage
-    setup_structging(debug=False)
+    setup_structured_logging(debug=False)
     logger = logging.getLogger(__name__)
     logger.info("Test message", extra={"job_id": "test-job", "trace_id": generate_trace_id()})

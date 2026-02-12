@@ -251,7 +251,7 @@ def run_scraper_job(
     """Run the scraper in a background task."""
     try:
         from api.debug_context import debug_context
-        from scrapers.main import run_scraping
+        from scrapers.runtime import run_scraping
 
         # Create an event emitter for this job
         emitter = create_emitter(job_id)

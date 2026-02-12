@@ -14,10 +14,6 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, cast
 
-# Selenium imports removed - migrated to Playwright
-# from selenium.common.exceptions import ...
-# from selenium.webdriver.common.by import By
-
 logger = logging.getLogger(__name__)
 
 
@@ -59,12 +55,8 @@ class FailureClassifier:
         site_specific_no_results_text_patterns: list[str] | None = None,
     ) -> None:
         """Initialize the failure classifier with default detection patterns."""
-        self.site_specific_no_results_selectors = (
-            site_specific_no_results_selectors if site_specific_no_results_selectors else []
-        )
-        self.site_specific_no_results_text_patterns = (
-            site_specific_no_results_text_patterns if site_specific_no_results_text_patterns else []
-        )
+        self.site_specific_no_results_selectors = site_specific_no_results_selectors if site_specific_no_results_selectors else []
+        self.site_specific_no_results_text_patterns = site_specific_no_results_text_patterns if site_specific_no_results_text_patterns else []
         self.failure_patterns = {
             FailureType.NO_RESULTS: {
                 "selectors": [
@@ -205,14 +197,10 @@ class FailureClassifier:
         # PERFORMANCE: Pre-compile regex patterns for faster matching
         self._compiled_patterns: dict[FailureType, list[re.Pattern[str]]] = {}
         for failure_type, patterns in self.failure_patterns.items():
-            self._compiled_patterns[failure_type] = [
-                re.compile(p, re.IGNORECASE) for p in patterns["text_patterns"]
-            ]
+            self._compiled_patterns[failure_type] = [re.compile(p, re.IGNORECASE) for p in patterns["text_patterns"]]
 
         # Pre-compile site-specific patterns
-        self._compiled_site_patterns = [
-            re.compile(p, re.IGNORECASE) for p in self.site_specific_no_results_text_patterns
-        ]
+        self._compiled_site_patterns = [re.compile(p, re.IGNORECASE) for p in self.site_specific_no_results_text_patterns]
 
     def classify_exception(self, exception: Exception, context: dict[str, Any]) -> FailureContext:
         """
@@ -248,9 +236,7 @@ class FailureClassifier:
                 recovery_strategy="retry_with_backoff",
             )
 
-        elif "element" in exception_str and (
-            "not found" in exception_str or "unable to find" in exception_str
-        ):
+        elif "element" in exception_str and ("not found" in exception_str or "unable to find" in exception_str):
             return FailureContext(
                 failure_type=FailureType.ELEMENT_MISSING,
                 confidence=0.8,
@@ -263,10 +249,7 @@ class FailureClassifier:
             )
 
         # Check for network-related exceptions (generic)
-        if any(
-            term in exception_str
-            for term in ["connection", "network", "timeout", "econn", "target closed"]
-        ):
+        if any(term in exception_str for term in ["connection", "network", "timeout", "econn", "target closed"]):
             return FailureContext(
                 failure_type=FailureType.NETWORK_ERROR,
                 confidence=0.8,
@@ -283,9 +266,7 @@ class FailureClassifier:
             if failure_type in [FailureType.ELEMENT_MISSING, FailureType.NETWORK_ERROR]:
                 continue  # Already handled above
 
-            confidence = self._calculate_text_match_confidence(
-                exception_str, cast(list[str], patterns["text_patterns"])
-            )
+            confidence = self._calculate_text_match_confidence(exception_str, cast(list[str], patterns["text_patterns"]))
             MIN_TEXT_CONFIDENCE = 0.5
             if confidence > MIN_TEXT_CONFIDENCE:
                 return FailureContext(
@@ -358,9 +339,7 @@ class FailureClassifier:
         # Placeholder for Playwright selector checking
         return 0.0
 
-    def _calculate_text_match_confidence(
-        self, text: str, patterns: list[str], compiled_patterns: list[re.Pattern[str]] | None = None
-    ) -> float:
+    def _calculate_text_match_confidence(self, text: str, patterns: list[str], compiled_patterns: list[re.Pattern[str]] | None = None) -> float:
         """Calculate confidence score based on text pattern matching using pre-compiled patterns."""
         if not patterns and not compiled_patterns:
             return 0.0

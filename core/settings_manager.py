@@ -22,7 +22,7 @@ class SettingsManager:
 
     DEFAULTS = {
         "max_workers": 2,
-        "selenium_timeout": 30,
+        "browser_timeout": 30,
         "theme": "dark",
         "auto_scroll_logs": True,
     }
@@ -37,7 +37,7 @@ class SettingsManager:
             "scraper_api_key": "SCRAPER_API_KEY",
             "runner_name": "RUNNER_NAME",
             "max_workers": "MAX_WORKERS",
-            "selenium_timeout": "SELENIUM_TIMEOUT",
+            "browser_timeout": "BROWSER_TIMEOUT",
         }
 
         for setting_key, env_key in env_mappings.items():
@@ -76,10 +76,10 @@ class SettingsManager:
         return bool(self.get("debug_mode"))
 
     @property
-    def selenium_settings(self) -> dict:
+    def browser_settings(self) -> dict:
         return {
             "headless": True,
-            "timeout": self.get("selenium_timeout"),
+            "timeout": self.get("browser_timeout"),
         }
 
 

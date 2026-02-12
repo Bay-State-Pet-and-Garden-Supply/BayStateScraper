@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import json
 import logging
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 class ExtractFromJsonAction(BaseAction):
     """Action to extract data from a JSON string (e.g., in a script tag)."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         source_field = params.get("source_field")
         json_path = params.get("json_path")
         target_field = params.get("target_field")
@@ -25,10 +26,10 @@ class ExtractFromJsonAction(BaseAction):
                 "Extract_from_json requires 'source_field', 'json_path', and 'target_field'"
             )
 
-        json_content = self.executor.results.get(source_field)
+        json_content = self.ctx.results.get(source_field)
         if not json_content:
             logger.warning(f"Source field {source_field} is empty")
-            self.executor.results[target_field] = None
+            self.ctx.results[target_field] = None
             return
 
         try:
@@ -48,12 +49,12 @@ class ExtractFromJsonAction(BaseAction):
                     current = None
                     break
 
-            self.executor.results[target_field] = current
+            self.ctx.results[target_field] = current
             logger.debug(f"Extracted JSON path {json_path} to {target_field}: {current}")
 
         except json.JSONDecodeError:
             logger.error(f"Failed to parse JSON from {source_field}")
-            self.executor.results[target_field] = None
+            self.ctx.results[target_field] = None
         except Exception as e:
             logger.error(f"Error extracting from JSON: {e}")
-            self.executor.results[target_field] = None
+            self.ctx.results[target_field] = None

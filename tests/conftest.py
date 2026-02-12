@@ -15,7 +15,5 @@ def pytest_configure(config):
     if str(tools_path) not in sys.path:
         sys.path.insert(0, str(tools_path))
 
-    # Add scraper_backend to path for schema imports
-    scraper_backend_path = project_root / "scraper_backend"
-    if str(scraper_backend_path) not in sys.path:
-        sys.path.insert(0, str(scraper_backend_path))
+    if str(project_root) not in sys.path:
+        sys.path.insert(0, str(project_root))

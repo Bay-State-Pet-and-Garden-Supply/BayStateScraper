@@ -6,6 +6,7 @@ step, reducing config complexity and eliminating step dispatch overhead.
 """
 
 from __future__ import annotations
+import asyncio
 
 import logging
 import re
@@ -67,7 +68,7 @@ class ExtractAndTransformAction(BaseAction):
         - regex_extract: { type: regex_extract, pattern: "...", group: 1 }
     """
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         fields = params.get("fields", [])
 
         if not fields:
@@ -81,7 +82,7 @@ class ExtractAndTransformAction(BaseAction):
             self._process_field(field_config)
 
         logger.info(
-            f"extract_and_transform completed. Extracted: {list(self.executor.results.keys())}"
+            f"extract_and_transform completed. Extracted: {list(self.ctx.results.keys())}"
         )
 
     def _process_field(self, field_config: dict[str, Any]) -> None:
@@ -110,11 +111,11 @@ class ExtractAndTransformAction(BaseAction):
                 logger.warning(
                     f"Required field '{name}' not found (selector: {selector})"
                 )
-                self.executor.results[name] = [] if multiple else None
+                self.ctx.results[name] = [] if multiple else None
                 return
 
             if value is None:
-                self.executor.results[name] = [] if multiple else None
+                self.ctx.results[name] = [] if multiple else None
                 return
 
             # Apply transformations
@@ -126,30 +127,30 @@ class ExtractAndTransformAction(BaseAction):
                 else:
                     value = self._apply_transformations(value, transforms)
 
-            self.executor.results[name] = value
+            self.ctx.results[name] = value
             logger.debug(
                 f"Extracted '{name}': {value[:100] if isinstance(value, str) else value}"
             )
 
         except Exception as e:
             logger.warning(f"Error extracting field '{name}': {e}")
-            self.executor.results[name] = [] if multiple else None
+            self.ctx.results[name] = [] if multiple else None
 
     def _extract_single(self, selector: str, attribute: str) -> str | None:
         """Extract a single value from the first matching element."""
-        element = self.executor.find_element_safe(selector)
+        element = self.ctx.find_element_safe(selector)
         if not element:
             return None
-        return self.executor._extract_value_from_element(element, attribute)
+        return self.ctx._extract_value_from_element(element, attribute)
 
     def _extract_multiple(self, selector: str, attribute: str) -> list[str]:
         """Extract values from all matching elements, deduplicated."""
-        elements = self.executor.find_elements_safe(selector)
+        elements = self.ctx.find_elements_safe(selector)
         values = []
         seen = set()
 
         for element in elements:
-            value = self.executor._extract_value_from_element(element, attribute)
+            value = self.ctx._extract_value_from_element(element, attribute)
             if value and value not in seen:
                 seen.add(value)
                 values.append(value)

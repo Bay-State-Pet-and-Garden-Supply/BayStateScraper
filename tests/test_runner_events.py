@@ -31,7 +31,7 @@ class TestRunnerEventIntegration:
 
         action = LoginAction(mock_executor)
 
-        assert hasattr(action.executor, "event_emitter")
+        assert hasattr(action.ctx, "event_emitter")
 
     def test_login_action_emits_selector_status(self):
         """Test LoginAction emits selector status events."""
@@ -107,7 +107,7 @@ class TestExtractActionEvents:
 
             action = ExtractAction(mock_executor)
 
-            assert hasattr(action.executor, "event_emitter")
+            assert hasattr(action.ctx, "event_emitter")
         except ImportError:
             pytest.skip("ExtractAction not found")
 
@@ -127,7 +127,7 @@ class TestNavigateActionEvents:
 
             action = NavigateAction(mock_executor)
 
-            assert hasattr(action.executor, "event_emitter")
+            assert hasattr(action.ctx, "event_emitter")
         except ImportError:
             pytest.skip("NavigateAction not found")
 
@@ -147,7 +147,7 @@ class TestClickActionEvents:
 
             action = ClickAction(mock_executor)
 
-            assert hasattr(action.executor, "event_emitter")
+            assert hasattr(action.ctx, "event_emitter")
         except ImportError:
             pytest.skip("ClickAction not found")
 
@@ -167,7 +167,7 @@ class TestWaitForActionEvents:
 
             action = WaitForAction(mock_executor)
 
-            assert hasattr(action.executor, "event_emitter")
+            assert hasattr(action.ctx, "event_emitter")
         except ImportError:
             pytest.skip("WaitForAction not found")
 

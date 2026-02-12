@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
-import time
 from typing import Any
 
 from scrapers.actions.base import BaseAction
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class ClickAction(BaseAction):
     """Action to click on an element with proper wait and retry logic."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         selector = params.get("selector")
         filter_text = params.get("filter_text")
         filter_text_exclude = params.get("filter_text_exclude")
@@ -25,19 +25,19 @@ class ClickAction(BaseAction):
         if not selector:
             raise WorkflowExecutionError("Click action requires 'selector' parameter")
 
-        max_retries = params.get("max_retries", 3 if self.executor.is_ci else 1)
+        max_retries = params.get("max_retries", 3 if self.ctx.is_ci else 1)
 
         logger.debug(f"Attempting to click element: {selector} (max_retries: {max_retries})")
 
         # Find elements and perform filtering and click
         try:
-            elements = self.executor.find_elements_safe(selector)
+            elements = await self.ctx.find_elements_safe(selector)
 
             if not elements:
                 # Retrying a few times if empty (implicit wait simulation)
                 for _ in range(2):
-                    time.sleep(1)
-                    elements = self.executor.find_elements_safe(selector)
+                    await asyncio.sleep(1)
+                    elements = await self.ctx.find_elements_safe(selector)
                     if elements:
                         break
 
@@ -51,7 +51,7 @@ class ClickAction(BaseAction):
                 new_filtered = []
                 for el in elements:
                     # Abstract text extraction
-                    txt = self.executor._extract_value_from_element(el, "text") or ""
+                    txt = await self.ctx._extract_value_from_element(el, "text") or ""
 
                     include_match = True
                     if filter_text:
@@ -76,37 +76,29 @@ class ClickAction(BaseAction):
             element_to_click = filtered_elements[index]
 
             try:
-                element_to_click.scroll_into_view_if_needed()
-                element_to_click.click()
+                await element_to_click.scroll_into_view_if_needed()
+                await element_to_click.click()
                 logger.info(f"Clicked element: {selector} (index {index})")
             except Exception as click_err:
                 logger.warning(f"Click failed: {click_err}. Attempting force click.")
                 try:
-                    element_to_click.click(force=True)
+                    await element_to_click.click(force=True)
                     logger.info(f"Force clicked element: {selector}")
                 except Exception as force_err:
-                    raise WorkflowExecutionError(f"Failed to click element '{selector}': {force_err}") from force_err
-                    time.sleep(0.5)  # Brief pause after scrolling
-                except Exception as scroll_e:
-                    logger.debug(f"Could not scroll element into view: {scroll_e}")
-
-                # Attempt click with JS fallback
-                try:
-                    element_to_click.click()
-                    logger.info(f"Successfully clicked element: {selector} at index {index}")
-                except Exception as click_error:
-                    logger.warning(f"Standard click failed for {selector}: {click_error}. Attempting JS click.")
+                    logger.warning(f"Force click failed: {force_err}. Attempting dispatch_event click.")
                     try:
-                        self.executor.browser.driver.execute_script("arguments[0].click();", element_to_click)
-                        logger.info(f"Successfully clicked element via JS: {selector} at index {index}")
-                    except Exception as js_error:
-                        raise WorkflowExecutionError(f"Failed to click element (standard and JS): {js_error}")
+                        await element_to_click.dispatch_event("click")
+                        logger.info(f"Successfully clicked element via dispatch_event: {selector} at index {index}")
+                    except Exception as dispatch_err:
+                        raise WorkflowExecutionError(
+                            f"Failed to click element '{selector}' (standard, force, and dispatch_event): {dispatch_err}"
+                        ) from dispatch_err
 
             # Optional wait after click
             wait_time = params.get("wait_after", 0)
             if wait_time > 0:
                 logger.debug(f"Waiting {wait_time}s after click")
-                time.sleep(wait_time)
+                await asyncio.sleep(wait_time)
 
         except Exception as e:
             raise WorkflowExecutionError(f"Failed to click element after waiting: {e}")

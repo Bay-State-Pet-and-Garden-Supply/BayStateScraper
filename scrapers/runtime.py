@@ -314,7 +314,7 @@ def run_scraping(
     )
 
     # Get browser settings (Playwright)
-    browser_timeout = settings.get("browser_timeout", settings.get("selenium_timeout", 30))
+    browser_timeout = settings.get("browser_timeout", 30)
 
     log(f"Browser settings: headless=True, timeout={browser_timeout}s", "INFO")
 

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import logging
 import re
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 class CombineFieldsAction(BaseAction):
     """Action to combine multiple extracted fields into a single field."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         target_field = params.get("target_field")
         format_string = params.get("format")
         fields = params.get("fields", [])
@@ -28,7 +29,7 @@ class CombineFieldsAction(BaseAction):
         # Collect values for all required fields
         field_values = {}
         for field in fields:
-            value = self.executor.results.get(field)
+            value = self.ctx.results.get(field)
             if value is None:
                 value = ""
             field_values[field] = str(value).strip()
@@ -49,12 +50,12 @@ class CombineFieldsAction(BaseAction):
                     chars = cleaner.get("chars")
                     combined_value = combined_value.strip(chars)
 
-            self.executor.results[target_field] = combined_value
+            self.ctx.results[target_field] = combined_value
             logger.debug(f"Combined fields into {target_field}: {combined_value}")
 
         except KeyError as e:
             logger.warning(f"Missing field for combination: {e}")
-            self.executor.results[target_field] = None
+            self.ctx.results[target_field] = None
         except Exception as e:
             logger.error(f"Error combining fields: {e}")
-            self.executor.results[target_field] = None
+            self.ctx.results[target_field] = None

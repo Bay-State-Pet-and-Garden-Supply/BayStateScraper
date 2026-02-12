@@ -4,14 +4,14 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from scrapers.executor.workflow_executor import WorkflowExecutor
+    from scrapers.context import ScraperContext
 
 
 class BaseAction(ABC):
     """Abstract base class for all workflow actions."""
 
-    def __init__(self, executor: "WorkflowExecutor") -> None:
-        self.executor = executor
+    def __init__(self, ctx: "ScraperContext") -> None:
+        self.ctx = ctx
 
     @abstractmethod
     def execute(self, params: dict[str, Any]) -> Any:

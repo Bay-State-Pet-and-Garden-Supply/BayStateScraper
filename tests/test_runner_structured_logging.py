@@ -23,7 +23,7 @@ from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
-from scraper_backend.utils.structured_logging import (
+from utils.structured_logging import (
     SensitiveDataFilter,
     JSONFormatter,
     generate_trace_id,

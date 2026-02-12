@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import logging
 import re
@@ -15,12 +16,12 @@ logger = logging.getLogger(__name__)
 class ProcessImagesAction(BaseAction):
     """Action to process, filter, and upgrade image URLs."""
 
-    def execute(self, params: dict[str, Any]) -> None:
+    async def execute(self, params: dict[str, Any]) -> None:
         field = params.get("field")
         if not field:
             raise WorkflowExecutionError("Process_images requires 'field' parameter")
 
-        images = self.executor.results.get(field)
+        images = self.ctx.results.get(field)
         if not images:
             logger.warning(f"No images found in field {field}")
             return
@@ -77,5 +78,5 @@ class ProcessImagesAction(BaseAction):
                     unique_images.append(img)
             filtered_images = unique_images
 
-        self.executor.results[field] = filtered_images
+        self.ctx.results[field] = filtered_images
         logger.debug(f"Processed images for {field}: {len(filtered_images)} remaining")

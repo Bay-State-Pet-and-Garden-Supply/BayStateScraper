@@ -28,7 +28,7 @@ load_dotenv()
 
 def test_supabase():
     from core.api_client import ScraperAPIClient
-    from scraper_backend.core.realtime_manager import RealtimeManager
+    from core.realtime_manager import RealtimeManager
     import asyncio
 
     async def run_test():
