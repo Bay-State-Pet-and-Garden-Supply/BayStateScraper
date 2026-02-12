@@ -100,6 +100,7 @@ class ScraperTestingClient:
         """
         Synchronous implementation of local scraper run.
         """
+        import asyncio
         import os
         import time
 
@@ -110,6 +111,10 @@ class ScraperTestingClient:
         products = []
         errors = []
         overall_success = True
+
+        # Create a new event loop for this thread
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
         try:
             # Load configuration
@@ -152,10 +157,13 @@ class ScraperTestingClient:
             executor = WorkflowExecutor(config, headless=self.headless)
 
             try:
+                # Initialize the executor (async initialization)
+                loop.run_until_complete(executor.initialize())
+
                 for sku in skus:
                     try:
-                        # Use execute_workflow API (returns dict)
-                        result = executor.execute_workflow(context={"sku": sku}, quit_browser=False)
+                        # Use execute_workflow API (returns dict) - must await since it's async
+                        result = loop.run_until_complete(executor.execute_workflow(context={"sku": sku}, quit_browser=False))
 
                         if result.get("success"):
                             if result.get("no_results_found"):
@@ -217,6 +225,10 @@ class ScraperTestingClient:
                 "execution_time": execution_time,
                 "errors": [str(e)],
             }
+
+        finally:
+            # Clean up the event loop
+            loop.close()
 
         return results
 

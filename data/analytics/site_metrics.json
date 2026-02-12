@@ -1,1 +1,15 @@
-{}
+{
+  "amazon": {
+    "total_requests": 77,
+    "total_failures": 44,
+    "success_rate": 0.4285714285714286,
+    "failure_rate": 0.5714285714285714,
+    "avg_duration": 1.1575705757388821,
+    "failure_types": {
+      "element_missing": 44
+    },
+    "recent_failures": 44,
+    "last_failure_time": 1770933444.109119,
+    "health_score": 0.429
+  }
+}

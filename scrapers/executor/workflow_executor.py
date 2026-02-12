@@ -244,39 +244,40 @@ class WorkflowExecutor:
 
     def _register_recovery_handlers(self) -> None:
         """Register recovery handlers for different failure types."""
+        import asyncio
 
         # CAPTCHA recovery handler
-        def handle_captcha(context: ErrorContext) -> bool:
+        async def handle_captcha(context: ErrorContext) -> bool:
             """Attempt to handle CAPTCHA detection."""
             logger.info("Attempting CAPTCHA recovery...")
             # For now, just wait and hope it resolves
             # In the future, integrate with CAPTCHA solving service
-            time.sleep(5)
+            await asyncio.sleep(5)
             # Try refreshing the page
             try:
                 self.browser.page.reload()
-                time.sleep(2)
+                await asyncio.sleep(2)
                 return True
             except Exception as e:
                 logger.warning(f"CAPTCHA recovery failed: {e}")
                 return False
 
         # Rate limit recovery handler
-        def handle_rate_limit(context: ErrorContext) -> bool:
+        async def handle_rate_limit(context: ErrorContext) -> bool:
             """Handle rate limiting by waiting."""
             logger.info("Handling rate limit - waiting 30 seconds...")
-            time.sleep(30)
+            await asyncio.sleep(30)
             return True
 
         # Access denied recovery handler
-        def handle_access_denied(context: ErrorContext) -> bool:
+        async def handle_access_denied(context: ErrorContext) -> bool:
             """Handle access denied by rotating session."""
             logger.info("Attempting session rotation for access denied...")
             if self.anti_detection_manager:
                 try:
                     # Clear cookies and rotate user agent
                     self.browser.context.clear_cookies()
-                    time.sleep(2)
+                    await asyncio.sleep(2)
                     return True
                 except Exception as e:
                     logger.warning(f"Session rotation failed: {e}")

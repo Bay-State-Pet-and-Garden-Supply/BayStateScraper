@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import logging
 import threading
+import asyncio
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -277,7 +278,15 @@ class RetryExecutor:
                 if last_failure_type in self._recovery_handlers:
                     logger.info(f"Attempting recovery for {last_failure_type.value}")
                     try:
-                        if self._recovery_handlers[last_failure_type](ctx):
+                        import inspect
+
+                        handler = self._recovery_handlers[last_failure_type]
+                        handler_result = handler(ctx)
+                        if inspect.isawaitable(handler_result):
+                            recovery_success = await handler_result
+                        else:
+                            recovery_success = handler_result
+                        if recovery_success:
                             logger.info("Recovery successful, retrying operation")
                             # Don't increment attempt after successful recovery
                             continue
@@ -316,7 +325,7 @@ class RetryExecutor:
                     )
 
                 logger.info(f"Waiting {delay:.2f}s before retry {attempt + 2}")
-                time.sleep(delay)
+                await asyncio.sleep(delay)
 
                 attempt += 1
 

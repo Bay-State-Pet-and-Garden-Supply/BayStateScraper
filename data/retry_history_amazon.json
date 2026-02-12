@@ -1,0 +1,2609 @@
+{
+  "failure_history": [
+    {
+      "timestamp": 1770931235.3027482,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "811048022202",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931238.3839693,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "811048022202",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931242.5607455,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "811048022202",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931247.6655548,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "811048022202",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931260.7123532,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433864082",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931263.7457006,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433864082",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931267.773978,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433864082",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931272.862157,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433864082",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931285.5258977,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433864075",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931288.5991802,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433864075",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931292.7465363,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433864075",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931297.958652,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433864075",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931311.3677785,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433863887",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931314.4024324,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433863887",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931318.5147667,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433863887",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931323.586492,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433863887",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931337.0316284,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433816098",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931340.144657,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433816098",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931344.1401184,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433816098",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931349.288941,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433816098",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931362.6156752,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433811970",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931365.7047453,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433811970",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931369.7918286,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433811970",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931374.8158624,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433811970",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931388.3121188,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763316",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931391.403464,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763316",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931395.6429975,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763316",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931400.6387105,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763316",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931413.9468193,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763309",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931417.0127227,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763309",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931421.082979,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763309",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931426.1846745,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433763309",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931439.3813546,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762227",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931442.4353304,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762227",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931446.447833,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762227",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931451.4108813,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762227",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931464.2165048,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762210",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931467.2821326,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762210",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931471.434497,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762210",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931476.5532708,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762210",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931489.515892,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762197",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931492.5732653,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762197",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931496.5934985,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762197",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931501.676226,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762197",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931517.2444146,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762142",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931520.2660255,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762142",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931524.4002614,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762142",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931529.5355458,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433762142",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931544.0474515,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433761718",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931547.0999663,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433761718",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931551.2493367,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433761718",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931556.370998,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433761718",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931569.4840467,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433692241",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931572.564331,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433692241",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931576.6342704,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433692241",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931581.6261268,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433692241",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931597.1283472,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433692142",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931600.218406,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433692142",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931604.2116523,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433692142",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931609.4157665,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433692142",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931623.4038343,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433333939",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931626.457273,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433333939",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931630.5830758,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433333939",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931635.7006109,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433333939",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931650.218248,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433328850",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931653.2477558,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433328850",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931657.4161577,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433328850",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931662.6443348,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433328850",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931675.382351,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433025520",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931678.4954185,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433025520",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931682.657406,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433025520",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931687.817878,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433025520",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931700.5552676,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433012902",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931703.659708,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433012902",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931707.8612854,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433012902",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931713.0139933,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4059433012902",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931725.614805,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4055744033667",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931728.7312808,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4055744033667",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931732.8579073,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4055744033667",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770931737.9276385,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "4055744033667",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933218.126862,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "035585499741",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933221.1627429,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "035585499741",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933225.279607,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "035585499741",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933230.504018,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "035585499741",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933239.5904005,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "079105116708",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933242.6290994,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "079105116708",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933246.6766276,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "079105116708",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933251.7478669,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "079105116708",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933260.8230844,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "029695285400",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933263.8955662,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "029695285400",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933268.0112958,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "029695285400",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933273.2141922,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "029695285400",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933282.2799752,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "038100174642",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933285.3128293,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "038100174642",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933289.4071188,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "038100174642",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933294.3775342,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "038100174642",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933303.4566379,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "017800149495",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933306.4953885,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "017800149495",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933310.6607225,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "017800149495",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933315.6639726,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "017800149495",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933324.7410522,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "852Icons4",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933327.8479724,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "852Icons4",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933331.8585954,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "852Icons4",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933336.9945524,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "852Icons4",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933346.0566912,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "xyzabc123notexist456",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933349.1529915,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "xyzabc123notexist456",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933353.2096887,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "xyzabc123notexist456",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933358.379431,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "xyzabc123notexist456",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933367.4796686,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "B00ZZZZZZZ",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933370.5514543,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "B00ZZZZZZZ",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933374.7085829,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "B00ZZZZZZZ",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933379.6800647,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "B00ZZZZZZZ",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933388.7399604,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "NOTAPRODUCT",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933391.810006,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "NOTAPRODUCT",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933395.8485072,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "NOTAPRODUCT",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933401.060153,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "NOTAPRODUCT",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933410.160105,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "A1",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933413.257613,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "A1",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933417.4468765,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "A1",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933422.618394,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "A1",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933431.7443783,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 0,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933434.84357,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 1,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933438.943491,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 2,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1770933444.1099503,
+      "failure_context": {
+        "site_name": "amazon",
+        "action": "click",
+        "retry_count": 3,
+        "context": {
+          "site_name": "amazon",
+          "action": "click",
+          "step_index": 8,
+          "selector": null,
+          "url": null,
+          "sku": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "element_missing"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    }
+  ],
+  "timestamp": 1770933444.1114895
+}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import datetime, timezone
 from typing import Any
@@ -117,56 +118,72 @@ def run_job(
                 event_emitter=emitter,
             )
 
-            for sku in skus:
+            # Run all async operations in a single event loop to properly manage
+            # Playwright browser subprocess lifecycle
+            async def run_all_scrapes():
+                scrape_results = []
                 try:
-                    result = executor.execute_workflow(
-                        context={"sku": sku, "test_mode": job_config.test_mode},
-                        quit_browser=False,
-                    )
+                    await executor.initialize()
+                    for sku in skus:
+                        try:
+                            result = await executor.execute_workflow(
+                                context={"sku": sku, "test_mode": job_config.test_mode},
+                                quit_browser=False,
+                            )
+                            scrape_results.append((sku, result))
+                        except Exception as e:
+                            log_buffer.append(create_log_entry("error", f"{config.name}/{sku}: {type(e).__name__} - {e}"))
+                            logger.error(f"[Runner] {config.name}/{sku}: Error - {e}")
+                            scrape_results.append((sku, None))
+                finally:
+                    # Ensure browser is properly quit inside the async context
+                    if executor.browser:
+                        try:
+                            await executor.browser.quit()
+                        except Exception as e:
+                            logger.debug(f"Browser quit error: {e}")
+                return scrape_results
 
-                    results["skus_processed"] += 1
+            scrape_results = asyncio.run(run_all_scrapes())
 
-                    if result.get("success"):
-                        extracted_data = result.get("results", {})
-                        has_data = any(extracted_data.get(field) for field in ["Name", "Brand", "Weight"])
+            # Process results after async loop completes
+            for sku, result in scrape_results:
+                if result is None:
+                    continue
 
-                        if has_data:
-                            if sku not in results["data"]:
-                                results["data"][sku] = {}
-                            results["data"][sku][config.name] = {
-                                "price": extracted_data.get("Price"),
-                                "title": extracted_data.get("Name"),
-                                "description": extracted_data.get("Description"),
-                                "images": extracted_data.get("Images", []),
-                                "availability": extracted_data.get("Availability"),
-                                "url": extracted_data.get("URL"),
-                                "scraped_at": datetime.now().isoformat(),
-                            }
+                results["skus_processed"] += 1
 
-                            collector.add_result(sku, config.name, extracted_data)
+                if result.get("success"):
+                    extracted_data = result.get("results", {})
+                    has_data = any(extracted_data.get(field) for field in ["Name", "Brand", "Weight"])
 
-                            log_buffer.append(create_log_entry("info", f"{config.name}/{sku}: Found data"))
-                            logger.info(f"[Runner] {config.name}/{sku}: Found data")
-                        else:
-                            log_buffer.append(create_log_entry("info", f"{config.name}/{sku}: No data found"))
-                            logger.info(f"[Runner] {config.name}/{sku}: No data found")
+                    if has_data:
+                        if sku not in results["data"]:
+                            results["data"][sku] = {}
+                        results["data"][sku][config.name] = {
+                            "price": extracted_data.get("Price"),
+                            "title": extracted_data.get("Name"),
+                            "description": extracted_data.get("Description"),
+                            "images": extracted_data.get("Images", []),
+                            "availability": extracted_data.get("Availability"),
+                            "url": extracted_data.get("URL"),
+                            "scraped_at": datetime.now().isoformat(),
+                        }
+
+                        collector.add_result(sku, config.name, extracted_data)
+
+                        log_buffer.append(create_log_entry("info", f"{config.name}/{sku}: Found data"))
+                        logger.info(f"[Runner] {config.name}/{sku}: Found data")
                     else:
-                        log_buffer.append(create_log_entry("warning", f"{config.name}/{sku}: Workflow failed"))
-                        logger.warning(f"[Runner] {config.name}/{sku}: Workflow failed")
-
-                except Exception as e:
-                    log_buffer.append(create_log_entry("error", f"{config.name}/{sku}: {type(e).__name__} - {e}"))
-                    logger.error(f"[Runner] {config.name}/{sku}: Error - {e}")
+                        log_buffer.append(create_log_entry("info", f"{config.name}/{sku}: No data found"))
+                        logger.info(f"[Runner] {config.name}/{sku}: No data found")
+                else:
+                    log_buffer.append(create_log_entry("warning", f"{config.name}/{sku}: Workflow failed"))
+                    logger.warning(f"[Runner] {config.name}/{sku}: Workflow failed")
 
         except Exception as e:
             log_buffer.append(create_log_entry("error", f"Failed to initialize {config.name}: {e}"))
             logger.error(f"[Runner] Failed to initialize {config.name}: {e}")
-        finally:
-            if executor and hasattr(executor, "browser") and executor.browser:
-                try:
-                    executor.browser.quit()
-                except Exception:
-                    pass
 
     log_buffer.append(create_log_entry("info", f"Job complete. Processed {results['skus_processed']} SKUs"))
     logger.info(f"[Runner] Job complete. Processed {results['skus_processed']} SKUs")
