@@ -58,7 +58,7 @@ workflows:
 
   - action: "click"
     params:
-      selector: "a[href*='products'], h3 a, .product-card a, article a"
+      selector: "article a, h3 a, [data-testid='product-card'] a"
       index: 0
 
   - action: "wait"
