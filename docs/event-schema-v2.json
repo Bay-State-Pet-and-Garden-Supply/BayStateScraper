@@ -1,0 +1,522 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://baystate.app/schemas/scraper-event-v2.json",
+  "title": "BayState Scraper Event Schema v2",
+  "description": "JSON Schema for structured scraper events with backward compatibility for v1 consumers",
+  "version": "2.0.0",
+  "type": "object",
+  "required": ["event_type", "timestamp"],
+  "additionalProperties": true,
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version. Defaults to '1.0' for backward compatibility when not specified.",
+      "enum": ["1.0", "2.0"],
+      "default": "1.0"
+    },
+    "event_type": {
+      "type": "string",
+      "description": "The type of event being emitted",
+      "enum": [
+        "job.started",
+        "job.completed",
+        "job.failed",
+        "job.cancelled",
+        "scraper.started",
+        "scraper.completed",
+        "scraper.failed",
+        "scraper.browser_init",
+        "scraper.browser_restart",
+        "sku.processing",
+        "sku.success",
+        "sku.failed",
+        "sku.no_results",
+        "sku.not_found",
+        "step.started",
+        "step.completed",
+        "step.failed",
+        "step.skipped",
+        "selector.resolved",
+        "selector.missing",
+        "extraction.completed",
+        "progress.update",
+        "progress.worker",
+        "system.info",
+        "system.warning",
+        "system.error",
+        "data.synced",
+        "data.sync_failed",
+        "login.selector_status"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Unique identifier for the run/scrape job (v2 field, maps to job_id for backward compatibility)"
+    },
+    "job_id": {
+      "type": ["string", "null"],
+      "description": "[DEPRECATED v1] Use run_id in v2. Kept for backward compatibility."
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Unique identifier for this specific event instance"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["debug", "info", "warning", "error", "critical"],
+      "default": "info",
+      "description": "Severity level of the event"
+    },
+    "runner_name": {
+      "type": "string",
+      "description": "Name/identifier of the runner emitting this event"
+    },
+    "scraper": {
+      "type": "string",
+      "description": "Name of the scraper configuration being used"
+    },
+    "worker_id": {
+      "type": "string",
+      "description": "Worker identifier within a multi-worker scraper job"
+    },
+    "sku": {
+      "type": "string",
+      "description": "Product SKU being processed (when applicable)"
+    },
+    "payload": {
+      "type": "object",
+      "description": "[v1 compatibility] Generic payload container for unstructured data",
+      "additionalProperties": true
+    },
+    "data": {
+      "type": "object",
+      "description": "Structured data payload specific to the event type",
+      "additionalProperties": true
+    },
+    "timing": {
+      "type": "object",
+      "description": "Timing metadata for events with duration",
+      "properties": {
+        "started_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the operation started"
+        },
+        "completed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the operation completed"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Duration in milliseconds"
+        },
+        "duration_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Duration in seconds (v1 compatibility)"
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "description": "Step execution metadata for step events",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Step index in the workflow"
+        },
+        "action": {
+          "type": "string",
+          "description": "Action type being executed (e.g., navigate, extract, click)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable step name"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["started", "completed", "failed", "skipped"],
+          "description": "Current status of the step"
+        },
+        "retry_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of retries attempted"
+        },
+        "max_retries": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum retry attempts configured"
+        }
+      }
+    },
+    "selector": {
+      "type": "object",
+      "description": "Selector resolution results",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the selector being resolved"
+        },
+        "value": {
+          "type": "string",
+          "description": "The selector string (CSS/XPath)"
+        },
+        "found": {
+          "type": "boolean",
+          "description": "Whether the selector matched any elements"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of elements matched"
+        },
+        "attribute": {
+          "type": "string",
+          "description": "Attribute being extracted (if applicable)"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if resolution failed"
+        }
+      }
+    },
+    "extraction": {
+      "type": "object",
+      "description": "Extraction results",
+      "properties": {
+        "field_name": {
+          "type": "string",
+          "description": "Name of the field being extracted"
+        },
+        "value": {
+          "type": ["string", "number", "boolean", "null"],
+          "description": "Extracted value"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence score between 0 and 1"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["SUCCESS", "EMPTY", "ERROR", "NOT_FOUND"],
+          "description": "Extraction status"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if extraction failed"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "description": "Error details for failed events",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Error type/class name"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "stack_trace": {
+          "type": "string",
+          "description": "Full stack trace (debug only)"
+        },
+        "retryable": {
+          "type": "boolean",
+          "description": "Whether the error is retryable"
+        }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "description": "Progress tracking information",
+      "properties": {
+        "current": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Current item count"
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total item count"
+        },
+        "percentage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Completion percentage"
+        },
+        "successful": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of successful items"
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of failed items"
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional contextual information",
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "event_type": { "const": "job.started" } }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "total_skus": { "type": "integer", "minimum": 0 },
+              "scrapers": { "type": "array", "items": { "type": "string" } },
+              "max_workers": { "type": "integer", "minimum": 1 },
+              "test_mode": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "event_type": { "const": "job.completed" } }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "successful": { "type": "integer", "minimum": 0 },
+              "failed": { "type": "integer", "minimum": 0 },
+              "duration_seconds": { "type": "number", "minimum": 0 },
+              "success_rate": { "type": "number", "minimum": 0, "maximum": 100 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "event_type": { "const": "job.failed" } }
+      },
+      "then": {
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": { "type": "string" }
+            },
+            "required": ["message"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "event_type": { "const": "scraper.started" } }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "scraper": { "type": "string" },
+              "worker_id": { "type": "string" },
+              "total_skus": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "event_type": { "const": "step.started" } }
+      },
+      "then": {
+        "required": ["step"],
+        "properties": {
+          "step": {
+            "type": "object",
+            "required": ["index", "action"],
+            "properties": {
+              "index": { "type": "integer", "minimum": 0 },
+              "action": { "type": "string" },
+              "name": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "event_type": { "const": "step.completed" } }
+      },
+      "then": {
+        "required": ["step", "timing"],
+        "properties": {
+          "step": {
+            "type": "object",
+            "required": ["index", "action", "status"],
+            "properties": {
+              "index": { "type": "integer", "minimum": 0 },
+              "action": { "type": "string" },
+              "name": { "type": "string" },
+              "status": { "type": "string", "enum": ["completed"] }
+            }
+          },
+          "timing": {
+            "type": "object",
+            "required": ["duration_ms"],
+            "properties": {
+              "started_at": { "type": "string", "format": "date-time" },
+              "completed_at": { "type": "string", "format": "date-time" },
+              "duration_ms": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "event_type": { "const": "selector.resolved" } }
+      },
+      "then": {
+        "required": ["selector"],
+        "properties": {
+          "selector": {
+            "type": "object",
+            "required": ["name", "found"],
+            "properties": {
+              "name": { "type": "string" },
+              "found": { "type": "boolean" },
+              "count": { "type": "integer", "minimum": 0 },
+              "error": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "event_type": { "const": "extraction.completed" } }
+      },
+      "then": {
+        "required": ["extraction"],
+        "properties": {
+          "extraction": {
+            "type": "object",
+            "required": ["field_name", "status"],
+            "properties": {
+              "field_name": { "type": "string" },
+              "value": {},
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "status": { "type": "string", "enum": ["SUCCESS", "EMPTY", "ERROR", "NOT_FOUND"] },
+              "error": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "version": "2.0",
+      "event_type": "job.started",
+      "timestamp": "2025-02-12T10:30:00.000Z",
+      "run_id": "run_20250212_103000",
+      "event_id": "evt_abc123",
+      "severity": "info",
+      "runner_name": "worker-01",
+      "data": {
+        "total_skus": 100,
+        "scrapers": ["bradley", "amazon"],
+        "max_workers": 4,
+        "test_mode": false
+      }
+    },
+    {
+      "version": "2.0",
+      "event_type": "step.completed",
+      "timestamp": "2025-02-12T10:30:01.250Z",
+      "run_id": "run_20250212_103000",
+      "scraper": "bradley",
+      "sku": "SKU12345",
+      "step": {
+        "index": 2,
+        "action": "extract",
+        "name": "Extract product price",
+        "status": "completed"
+      },
+      "timing": {
+        "started_at": "2025-02-12T10:30:00.000Z",
+        "completed_at": "2025-02-12T10:30:01.250Z",
+        "duration_ms": 1250
+      }
+    },
+    {
+      "version": "2.0",
+      "event_type": "selector.resolved",
+      "timestamp": "2025-02-12T10:30:01.500Z",
+      "run_id": "run_20250212_103000",
+      "scraper": "bradley",
+      "sku": "SKU12345",
+      "selector": {
+        "name": "product_price",
+        "value": "span.price",
+        "found": true,
+        "count": 1
+      }
+    },
+    {
+      "version": "2.0",
+      "event_type": "extraction.completed",
+      "timestamp": "2025-02-12T10:30:01.750Z",
+      "run_id": "run_20250212_103000",
+      "scraper": "bradley",
+      "sku": "SKU12345",
+      "extraction": {
+        "field_name": "price",
+        "value": "$19.99",
+        "confidence": 0.95,
+        "status": "SUCCESS"
+      }
+    },
+    {
+      "version": "1.0",
+      "event_type": "sku.success",
+      "timestamp": "2025-02-12T10:30:02.000Z",
+      "job_id": "job_20250212_103000",
+      "severity": "info",
+      "scraper": "bradley",
+      "sku": "SKU12345",
+      "data": {
+        "extracted_data": {
+          "name": "Product Name",
+          "price": "$19.99"
+        },
+        "duration_seconds": 2.5
+      }
+    }
+  ]
+}
