@@ -43,12 +43,9 @@ workflows:
   - action: "wait_for"
     params:
       selector:
-        - "//h1[contains(text(), 'Search results for')]"
-      timeout: 10
-
-  - action: "wait"
-    params:
-      duration: 8
+        - "text='View product'"
+        - "//a[contains(text(), 'View product')]"
+      timeout: 15
 
   - action: "check_no_results"
 
@@ -58,7 +55,7 @@ workflows:
 
   - action: "click"
     params:
-      selector: "article a[href], .group a[href]"
+      selector: "text='View product'"
       index: 0
 
   - action: "wait"
