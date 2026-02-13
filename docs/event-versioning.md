@@ -401,6 +401,119 @@ def normalize_event_type(event_type: str) -> str:
 }
 ```
 
+#### Scraper Completed
+
+```json
+{
+  "version": "2.0",
+  "event_type": "scraper.completed",
+  "timestamp": "2025-02-12T10:45:00.000Z",
+  "run_id": "run_20250212_103000",
+  "scraper": "bradley",
+  "worker_id": "worker-01",
+  "timing": {
+    "duration_ms": 900000
+  },
+  "progress": {
+    "current": 50,
+    "total": 50,
+    "successful": 48,
+    "failed": 2
+  },
+  "data": {
+    "processed": 50,
+    "successful": 48,
+    "failed": 2,
+    "duration_seconds": 900
+  }
+}
+```
+
+#### Scraper Failed
+
+```json
+{
+  "version": "2.0",
+  "event_type": "scraper.failed",
+  "timestamp": "2025-02-12T10:20:00.000Z",
+  "run_id": "run_20250212_103000",
+  "scraper": "amazon",
+  "worker_id": "worker-02",
+  "severity": "error",
+  "error": {
+    "type": "BrowserCrashedError",
+    "message": "Browser process terminated unexpectedly",
+    "retryable": true
+  }
+}
+```
+
+#### SKU Processing
+
+```json
+{
+  "version": "2.0",
+  "event_type": "sku.processing",
+  "timestamp": "2025-02-12T10:30:04.000Z",
+  "run_id": "run_20250212_103000",
+  "scraper": "bradley",
+  "worker_id": "worker-01",
+  "sku": "SKU12346"
+}
+```
+
+#### SKU No Results
+
+```json
+{
+  "version": "2.0",
+  "event_type": "sku.no_results",
+  "timestamp": "2025-02-12T10:30:08.000Z",
+  "run_id": "run_20250212_103000",
+  "scraper": "bradley",
+  "worker_id": "worker-01",
+  "sku": "SKU99999",
+  "severity": "warning",
+  "data": {
+    "reason": "Product not found on page",
+    "sku_type": "test",
+    "is_passing": false
+  }
+}
+```
+
+#### Step Failed
+
+```json
+{
+  "version": "2.0",
+  "event_type": "step.failed",
+  "timestamp": "2025-02-12T10:30:05.500Z",
+  "run_id": "run_20250212_103000",
+  "scraper": "bradley",
+  "sku": "SKU12345",
+  "severity": "error",
+  "step": {
+    "index": 3,
+    "action": "click",
+    "name": "Click add to cart button",
+    "status": "failed",
+    "retry_count": 3,
+    "max_retries": 3
+  },
+  "timing": {
+    "started_at": "2025-02-12T10:30:05.000Z",
+    "completed_at": "2025-02-12T10:30:05.500Z",
+    "duration_ms": 500
+  },
+  "error": {
+    "type": "ElementNotFoundError",
+    "message": "Selector '.add-to-cart' not found after 30s",
+    "retryable": false
+  }
+}
+```
+
 #### Job Completed
 
 ```json
