@@ -43,17 +43,13 @@ workflows:
   - action: "wait_for"
     params:
       selector:
-        [
-          "//h1[contains(text(), 'Search results for')]",
-          "//h3[contains(text(), 'Sorry, no results for')]",
-          "article",
-          ".product-listing",
-        ]
-      timeout: 5
+        - "//h1[contains(text(), 'Search results for')]"
+        - "//h3[contains(text(), 'Sorry, no results for')]"
+      timeout: 10
 
   - action: "wait"
     params:
-      duration: 2
+      duration: 3
 
   - action: "check_no_results"
 
@@ -63,12 +59,12 @@ workflows:
 
   - action: "click"
     params:
-      selector: "article a, .product-listing a, [data-testid='product-link']"
+      selector: "a[href*='/products/'], a:has-text('View product'), .product-listing__link"
       index: 0
 
   - action: "wait"
     params:
-      duration: 1
+      duration: 2
 
   - action: "wait_for"
     params:
@@ -76,7 +72,7 @@ workflows:
         - "main h1"
         - "//h2[contains(text(), 'Additional Details')]"
         - "//h2[contains(text(), 'Product Details')]"
-      timeout: 5
+      timeout: 10
 
   # Extract product details directly from the page
   - action: "extract"
@@ -96,12 +92,15 @@ workflows:
 validation:
   no_results_selectors:
     - "//h3[contains(text(), 'Sorry, no results for')]"
+    - "//p[contains(text(), '0 items')]"
     - ".no-results"
     - "[data-testid='no-results']"
   no_results_text_patterns:
     - "Sorry, no results for"
-    - "0 items"
+    - "(0 items)"
+    - "0 items found"
     - "no products found"
+    - "Your search returned no results"
 
 anti_detection:
   enable_captcha_detection: false
