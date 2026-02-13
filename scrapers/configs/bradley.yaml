@@ -48,7 +48,7 @@ workflows:
 
   - action: "wait"
     params:
-      duration: 5
+      duration: 8
 
   - action: "check_no_results"
 
@@ -58,7 +58,7 @@ workflows:
 
   - action: "click"
     params:
-      selector: "article a, h3 a, [data-testid='product-card'] a"
+      selector: "article a[href], .group a[href]"
       index: 0
 
   - action: "wait"
@@ -69,7 +69,6 @@ workflows:
     params:
       selector:
         - "h1"
-        - "[data-testid='product-title']"
       timeout: 10
 
   # Extract product details directly from the page
