@@ -236,6 +236,7 @@ class WorkflowExecutor:
             debug_mode=self.debug_mode,
             debug_callback=self.debug_callback,
             context=self,
+            event_emitter=self.event_emitter,
         )
 
     async def dispatch_step(self, step: WorkflowStep) -> Any:

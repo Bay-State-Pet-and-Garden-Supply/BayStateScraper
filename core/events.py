@@ -13,6 +13,7 @@ Key Design Principles:
 
 from __future__ import annotations
 
+import json
 import logging
 import threading
 import time
@@ -83,6 +84,18 @@ class EventType(str, Enum):
     # Login Status
     LOGIN_SELECTOR_STATUS = "login.selector_status"
 
+    # Step Events (v2)
+    STEP_STARTED = "step.started"
+    STEP_COMPLETED = "step.completed"
+    STEP_FAILED = "step.failed"
+    STEP_SKIPPED = "step.skipped"
+
+    # Selector Events (v2)
+    SELECTOR_RESOLVED = "selector.resolved"
+
+    # Extraction Events (v2)
+    EXTRACTION_COMPLETED = "extraction.completed"
+
 
 class EventSeverity(str, Enum):
     """Severity levels for events (analogous to log levels)."""
@@ -109,6 +122,7 @@ class ScraperEvent:
     - job_id: The job this event belongs to (for correlation)
     - event_id: Unique identifier for this event
     - severity: The severity level of the event
+    - version: Schema version ("1.0" or "2.0")
 
     Plus optional context-specific fields in the `data` dict.
     """
@@ -119,10 +133,11 @@ class ScraperEvent:
     event_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
     severity: EventSeverity = EventSeverity.INFO
     data: dict[str, Any] = field(default_factory=dict)
+    version: str = "1.0"
 
     def to_dict(self) -> dict[str, Any]:
         """Convert event to JSON-serializable dictionary."""
-        result = {
+        result: dict[str, Any] = {
             "event_type": self.event_type.value if isinstance(self.event_type, EventType) else self.event_type,
             "timestamp": self.timestamp,
             "job_id": self.job_id,
@@ -130,6 +145,9 @@ class ScraperEvent:
             "severity": self.severity.value if isinstance(self.severity, EventSeverity) else self.severity,
             "data": self.data,
         }
+        # Only include version in output for v2 events to maintain v1 compatibility
+        if self.version == "2.0":
+            result["version"] = self.version
         return result
 
     def to_json(self) -> str:
@@ -146,6 +164,7 @@ class ScraperEvent:
             event_id=d.get("event_id", str(uuid.uuid4())[:8]),
             severity=EventSeverity(d.get("severity", "info")),
             data=d.get("data", {}),
+            version=d.get("version", "1.0"),
         )
 
     def __str__(self) -> str:
@@ -646,6 +665,240 @@ class EventEmitter:
             selector_name=selector_name,
             status=status,
         )
+
+    # Step events (v2)
+    def step_started(
+        self,
+        scraper: str,
+        step_index: int,
+        action: str,
+        name: str | None = None,
+        sku: str | None = None,
+    ) -> ScraperEvent:
+        """Emit step.started event (v2)."""
+        event = ScraperEvent(
+            event_type=EventType.STEP_STARTED,
+            job_id=self._job_id,
+            severity=EventSeverity.INFO,
+            data={
+                "scraper": scraper,
+                "sku": sku,
+                "step": {
+                    "index": step_index,
+                    "action": action,
+                    "name": name or action,
+                },
+            },
+            version="2.0",
+        )
+        self._bus.emit(event)
+        return event
+
+    def step_completed(
+        self,
+        scraper: str,
+        step_index: int,
+        action: str,
+        started_at: str,
+        name: str | None = None,
+        sku: str | None = None,
+        selectors: dict[str, Any] | None = None,
+        extraction: dict[str, Any] | None = None,
+        retry_count: int = 0,
+        max_retries: int = 0,
+    ) -> ScraperEvent:
+        """Emit step.completed event with timing metadata (v2)."""
+        completed_at = datetime.now().isoformat()
+        started_dt = datetime.fromisoformat(started_at)
+        completed_dt = datetime.fromisoformat(completed_at)
+        duration_ms = int((completed_dt - started_dt).total_seconds() * 1000)
+
+        data: dict[str, Any] = {
+            "scraper": scraper,
+            "sku": sku,
+            "step": {
+                "index": step_index,
+                "action": action,
+                "name": name or action,
+                "status": "completed",
+                "retry_count": retry_count,
+                "max_retries": max_retries,
+            },
+            "timing": {
+                "started_at": started_at,
+                "completed_at": completed_at,
+                "duration_ms": duration_ms,
+                "duration_seconds": round(duration_ms / 1000, 2),
+            },
+        }
+
+        if selectors:
+            data["selectors"] = selectors
+        if extraction:
+            data["extraction"] = extraction
+
+        event = ScraperEvent(
+            event_type=EventType.STEP_COMPLETED,
+            job_id=self._job_id,
+            severity=EventSeverity.INFO,
+            data=data,
+            version="2.0",
+        )
+        self._bus.emit(event)
+        return event
+
+    def step_failed(
+        self,
+        scraper: str,
+        step_index: int,
+        action: str,
+        started_at: str,
+        error: str,
+        name: str | None = None,
+        sku: str | None = None,
+        retry_count: int = 0,
+        max_retries: int = 0,
+        retryable: bool = True,
+    ) -> ScraperEvent:
+        """Emit step.failed event with timing and error details (v2)."""
+        completed_at = datetime.now().isoformat()
+        started_dt = datetime.fromisoformat(started_at)
+        completed_dt = datetime.fromisoformat(completed_at)
+        duration_ms = int((completed_dt - started_dt).total_seconds() * 1000)
+
+        event = ScraperEvent(
+            event_type=EventType.STEP_FAILED,
+            job_id=self._job_id,
+            severity=EventSeverity.ERROR,
+            data={
+                "scraper": scraper,
+                "sku": sku,
+                "step": {
+                    "index": step_index,
+                    "action": action,
+                    "name": name or action,
+                    "status": "failed",
+                    "retry_count": retry_count,
+                    "max_retries": max_retries,
+                },
+                "timing": {
+                    "started_at": started_at,
+                    "completed_at": completed_at,
+                    "duration_ms": duration_ms,
+                    "duration_seconds": round(duration_ms / 1000, 2),
+                },
+                "error": {
+                    "message": error,
+                    "retryable": retryable,
+                },
+            },
+            version="2.0",
+        )
+        self._bus.emit(event)
+        return event
+
+    def step_skipped(
+        self,
+        scraper: str,
+        step_index: int,
+        action: str,
+        reason: str,
+        name: str | None = None,
+        sku: str | None = None,
+    ) -> ScraperEvent:
+        """Emit step.skipped event (v2)."""
+        event = ScraperEvent(
+            event_type=EventType.STEP_SKIPPED,
+            job_id=self._job_id,
+            severity=EventSeverity.WARNING,
+            data={
+                "scraper": scraper,
+                "sku": sku,
+                "step": {
+                    "index": step_index,
+                    "action": action,
+                    "name": name or action,
+                    "status": "skipped",
+                },
+                "reason": reason,
+            },
+            version="2.0",
+        )
+        self._bus.emit(event)
+        return event
+
+    # Selector events (v2)
+    def selector_resolved(
+        self,
+        scraper: str,
+        selector_name: str,
+        selector_value: str,
+        found: bool,
+        count: int = 0,
+        attribute: str | None = None,
+        error: str | None = None,
+        sku: str | None = None,
+    ) -> ScraperEvent:
+        """Emit selector.resolved event (v2)."""
+        data: dict[str, Any] = {
+            "scraper": scraper,
+            "sku": sku,
+            "selector": {
+                "name": selector_name,
+                "value": selector_value,
+                "found": found,
+                "count": count,
+            },
+        }
+        if attribute:
+            data["selector"]["attribute"] = attribute
+        if error:
+            data["selector"]["error"] = error
+
+        event = ScraperEvent(
+            event_type=EventType.SELECTOR_RESOLVED,
+            job_id=self._job_id,
+            severity=EventSeverity.INFO if found else EventSeverity.WARNING,
+            data=data,
+            version="2.0",
+        )
+        self._bus.emit(event)
+        return event
+
+    # Extraction events (v2)
+    def extraction_completed(
+        self,
+        scraper: str,
+        field_name: str,
+        value: Any,
+        status: str = "SUCCESS",
+        confidence: float = 1.0,
+        error: str | None = None,
+        sku: str | None = None,
+    ) -> ScraperEvent:
+        """Emit extraction.completed event (v2)."""
+        data: dict[str, Any] = {
+            "scraper": scraper,
+            "sku": sku,
+            "extraction": {
+                "field_name": field_name,
+                "value": value,
+                "status": status,
+                "confidence": confidence,
+            },
+        }
+        if error:
+            data["extraction"]["error"] = error
+
+        event = ScraperEvent(
+            event_type=EventType.EXTRACTION_COMPLETED,
+            job_id=self._job_id,
+            severity=EventSeverity.INFO if status == "SUCCESS" else EventSeverity.WARNING,
+            data=data,
+            version="2.0",
+        )
+        self._bus.emit(event)
+        return event
 
     # System events (for backwards compatibility with log messages)
     def info(self, message: str, **data: Any) -> ScraperEvent:

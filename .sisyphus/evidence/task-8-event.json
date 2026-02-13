@@ -1,0 +1,49 @@
+{
+  "task": "Task 8: Runner Event Implementation",
+  "timestamp": "2026-02-12",
+  "status": "completed",
+  "evidence": {
+    "files_modified": [
+      "BayStateScraper/core/events.py",
+      "BayStateScraper/scrapers/executor/step_executor.py",
+      "BayStateScraper/scrapers/executor/workflow_executor.py",
+      "BayStateScraper/tests/test_events_v2.py"
+    ],
+    "test_results": {
+      "v2_event_tests": {
+        "total": 30,
+        "passed": 30,
+        "failed": 0
+      },
+      "full_suite": {
+        "total": 209,
+        "passed": 209,
+        "skipped": 12,
+        "failed": 0
+      }
+    },
+    "v2_event_types_added": [
+      "step.started",
+      "step.completed",
+      "step.failed",
+      "step.skipped",
+      "selector.resolved",
+      "extraction.completed"
+    ],
+    "v2_features": {
+      "version_field": "Added 'version' field to ScraperEvent, defaults to '1.0', '2.0' for v2 events",
+      "timing_metadata": "step.completed and step.failed include timing with started_at, completed_at, duration_ms, duration_seconds",
+      "selector_results": "step.completed includes selectors dict with name, value, found, count, attribute, error",
+      "extraction_results": "step.completed includes extraction dict with field_name, value, status, confidence",
+      "backward_compatibility": "v1 events don't include version field in output to maintain compatibility"
+    },
+    "acceptance_criteria": {
+      "import_workflow_executor": "PASS - WorkflowExecutor imports without errors",
+      "run_tests": "PASS - All 30 v2 event tests pass, 209 total tests pass",
+      "event_output_version": "PASS - V2 events include version field set to '2.0'",
+      "event_output_timing": "PASS - step.completed includes timing metadata with duration_ms",
+      "event_output_selectors": "PASS - step.completed includes selector resolution results",
+      "event_output_extraction": "PASS - step.completed includes extraction field results"
+    }
+  }
+}

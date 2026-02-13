@@ -5,8 +5,10 @@ Step executor for workflow step execution with retry logic.
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from typing import Any
 
+from core.events import EventEmitter
 from core.retry_executor import RetryExecutor
 from scrapers.actions import ActionRegistry
 from scrapers.exceptions import ConfigurationError, ErrorContext
@@ -29,6 +31,7 @@ class StepExecutor:
         debug_mode: bool = False,
         debug_callback: Any | None = None,
         context: Any | None = None,
+        event_emitter: EventEmitter | None = None,
     ) -> None:
         """
         Initialize the step executor.
@@ -43,6 +46,7 @@ class StepExecutor:
             debug_mode: Whether to enable debug mode
             debug_callback: Optional callback for debug artifacts
             context: The WorkflowExecutor instance to pass to actions (for ScraperContext protocol)
+            event_emitter: Optional EventEmitter for v2 event emission
         """
         self.config_name = config_name
         self.browser = browser
@@ -53,6 +57,9 @@ class StepExecutor:
         self.debug_mode = debug_mode
         self.debug_callback = debug_callback
         self.context = context
+        self.event_emitter = event_emitter
+        self._step_selector_results: dict[str, Any] = {}
+        self._step_extraction_results: dict[str, Any] = {}
 
     async def execute_step(
         self,
@@ -136,12 +143,29 @@ class StepExecutor:
             WorkflowExecutionError,
         )
 
+        sku = context.get("sku") if context else None
+        started_at = datetime.now().isoformat()
+
+        # Emit step.started event (v2)
+        if self.event_emitter:
+            self.event_emitter.step_started(
+                scraper=self.config_name,
+                step_index=step_index,
+                action=step.action,
+                name=step.params.get("name"),
+                sku=sku,
+            )
+
+        # Reset per-step tracking
+        self._step_selector_results = {}
+        self._step_extraction_results = {}
+
         # Build error context
         error_context = ErrorContext(
             site_name=self.config_name,
             action=step.action,
             step_index=step_index,
-            sku=context.get("sku") if context else None,
+            sku=sku,
             max_retries=self.max_retries,
         )
 
@@ -157,35 +181,86 @@ class StepExecutor:
         }
         should_retry = self.enable_retry and step.action in retryable_actions
 
-        if should_retry:
-            # Use retry executor
-            result = await self.retry_executor.execute_with_retry(
-                operation=lambda: self.execute_step(step, context or {}, {}),
-                site_name=self.config_name,
-                action_name=step.action,
-                context=error_context,
-                max_retries=self.max_retries,
-                on_retry=self._on_retry_callback,
-                stop_event=self.stop_event,
-            )
-
-            if not result.success:
-                # Check if cancelled
-                if result.cancelled:
-                    raise NonRetryableError("Operation cancelled", context=error_context)
-
-                # Re-raise the error
-                if result.error:
-                    raise result.error
-                raise WorkflowExecutionError(
-                    f"Step '{step.action}' failed after {result.attempts} attempts",
+        try:
+            if should_retry:
+                # Use retry executor
+                result = await self.retry_executor.execute_with_retry(
+                    operation=lambda: self.execute_step(step, context or {}, {}),
+                    site_name=self.config_name,
+                    action_name=step.action,
                     context=error_context,
+                    max_retries=self.max_retries,
+                    on_retry=self._on_retry_callback,
+                    stop_event=self.stop_event,
                 )
 
-            return result.result
-        else:
-            # Execute without retry
-            return await self.execute_step(step, context or {}, {})
+                if not result.success:
+                    # Check if cancelled
+                    if result.cancelled:
+                        raise NonRetryableError("Operation cancelled", context=error_context)
+
+                    # Re-raise the error
+                    if result.error:
+                        raise result.error
+                    raise WorkflowExecutionError(
+                        f"Step '{step.action}' failed after {result.attempts} attempts",
+                        context=error_context,
+                    )
+
+                # Emit step.completed event (v2) with timing and metadata
+                if self.event_emitter:
+                    self.event_emitter.step_completed(
+                        scraper=self.config_name,
+                        step_index=step_index,
+                        action=step.action,
+                        started_at=started_at,
+                        name=step.params.get("name"),
+                        sku=sku,
+                        selectors=self._step_selector_results if self._step_selector_results else None,
+                        extraction=self._step_extraction_results if self._step_extraction_results else None,
+                        retry_count=result.attempts - 1,
+                        max_retries=self.max_retries,
+                    )
+
+                return result.result
+            else:
+                # Execute without retry
+                result = await self.execute_step(step, context or {}, {})
+
+                # Emit step.completed event (v2) with timing and metadata
+                if self.event_emitter:
+                    self.event_emitter.step_completed(
+                        scraper=self.config_name,
+                        step_index=step_index,
+                        action=step.action,
+                        started_at=started_at,
+                        name=step.params.get("name"),
+                        sku=sku,
+                        selectors=self._step_selector_results if self._step_selector_results else None,
+                        extraction=self._step_extraction_results if self._step_extraction_results else None,
+                        retry_count=0,
+                        max_retries=self.max_retries,
+                    )
+
+                return result
+
+        except Exception as e:
+            # Emit step.failed event (v2) with timing and error details
+            if self.event_emitter:
+                retryable = not isinstance(e, (NonRetryableError, CircuitBreakerOpenError))
+                self.event_emitter.step_failed(
+                    scraper=self.config_name,
+                    step_index=step_index,
+                    action=step.action,
+                    started_at=started_at,
+                    error=str(e),
+                    name=step.params.get("name"),
+                    sku=sku,
+                    retry_count=0,
+                    max_retries=self.max_retries,
+                    retryable=retryable,
+                )
+            raise
 
     def _substitute_params(
         self,
@@ -286,3 +361,71 @@ class StepExecutor:
 
         except Exception as e:
             logger.debug(f"Failed to capture debug artifact: {e}")
+
+    def track_selector_result(
+        self,
+        name: str,
+        selector: str,
+        found: bool,
+        count: int = 0,
+        attribute: str | None = None,
+        error: str | None = None,
+    ) -> None:
+        """Track selector resolution result for v2 events."""
+        self._step_selector_results[name] = {
+            "value": selector,
+            "found": found,
+            "count": count,
+        }
+        if attribute:
+            self._step_selector_results[name]["attribute"] = attribute
+        if error:
+            self._step_selector_results[name]["error"] = error
+
+        # Also emit immediate selector.resolved event (v2)
+        if self.event_emitter:
+            sku = None
+            if self.context and hasattr(self.context, "results"):
+                sku = self.context.results.get("sku")
+            self.event_emitter.selector_resolved(
+                scraper=self.config_name,
+                selector_name=name,
+                selector_value=selector,
+                found=found,
+                count=count,
+                attribute=attribute,
+                error=error,
+                sku=sku,
+            )
+
+    def track_extraction_result(
+        self,
+        field_name: str,
+        value: Any,
+        status: str = "SUCCESS",
+        confidence: float = 1.0,
+        error: str | None = None,
+    ) -> None:
+        """Track extraction result for v2 events."""
+        self._step_extraction_results[field_name] = {
+            "value": value,
+            "status": status,
+            "confidence": confidence,
+        }
+        if error:
+            self._step_extraction_results[field_name]["error"] = error
+
+        # Also emit immediate extraction.completed event (v2)
+        if self.event_emitter:
+            sku = None
+            if self.context and hasattr(self.context, "results"):
+                sku = self.context.results.get("sku")
+            self.event_emitter.extraction_completed(
+                scraper=self.config_name,
+                field_name=field_name,
+                value=value,
+                status=status,
+                confidence=confidence,
+                error=error,
+                sku=sku,
+            )
