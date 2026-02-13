@@ -8,6 +8,7 @@ test_skus: [
   "043205",    # K&H LECTRO-SOFT HEATED BED
   "083354",    # GALL SALVE
   "269376",    # KONG PUPPY WUBBA
+  "055353",    # SPORTMIX ESSENTIALS DOG FOOD 40 LB
 ]
 fake_skus: ["xyzabc123notexist456", "999999", "NOTEXIST"]
 edge_case_skus: ["1", "0000000000000"]  # Very short and zero-padded
@@ -17,19 +18,22 @@ image_quality: 60
 
 selectors:
   - name: "Name"
-    selector: "h1"
+    selector: "main h1"
     attribute: "text"
+    required: true
   - name: "Brand"
-    selector: "//h1/preceding-sibling::p[1]/a"
+    selector: "//main//h1/preceding-sibling::p[1]/a"
     attribute: "text"
-
+    required: false
   - name: "Weight"
-    selector: "//li[contains(text(), 'Weight:')]"
+    selector: "//main//li[contains(normalize-space(.), 'Weight:')]"
     attribute: "text"
+    required: false
   - name: "Image URLs"
-    selector: "button[class*='h-12'] img[src*='products'], button[class*='h-24'] img[src*='products']"
+    selector: "main img[src*='products/']"
     attribute: "src"
     multiple: true
+    required: false
 
 workflows:
   - action: "navigate"
@@ -42,6 +46,8 @@ workflows:
         [
           "//h1[contains(text(), 'Search results for')]",
           "//h3[contains(text(), 'Sorry, no results for')]",
+          "article",
+          ".product-listing",
         ]
       timeout: 5
 
@@ -57,7 +63,7 @@ workflows:
 
   - action: "click"
     params:
-      selector: "article a"
+      selector: "article a, .product-listing a, [data-testid='product-link']"
       index: 0
 
   - action: "wait"
@@ -66,7 +72,10 @@ workflows:
 
   - action: "wait_for"
     params:
-      selector: "//h2[contains(text(), 'Additional information')]"
+      selector:
+        - "main h1"
+        - "//h2[contains(text(), 'Additional Details')]"
+        - "//h2[contains(text(), 'Product Details')]"
       timeout: 5
 
   # Extract product details directly from the page
@@ -87,9 +96,12 @@ workflows:
 validation:
   no_results_selectors:
     - "//h3[contains(text(), 'Sorry, no results for')]"
+    - ".no-results"
+    - "[data-testid='no-results']"
   no_results_text_patterns:
     - "Sorry, no results for"
     - "0 items"
+    - "no products found"
 
 anti_detection:
   enable_captcha_detection: false
