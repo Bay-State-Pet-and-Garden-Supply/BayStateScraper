@@ -44,12 +44,11 @@ workflows:
     params:
       selector:
         - "//h1[contains(text(), 'Search results for')]"
-        - "//h3[contains(text(), 'Sorry, no results for')]"
       timeout: 10
 
   - action: "wait"
     params:
-      duration: 3
+      duration: 5
 
   - action: "check_no_results"
 
@@ -59,19 +58,18 @@ workflows:
 
   - action: "click"
     params:
-      selector: "a[href*='/products/'], a:has-text('View product'), .product-listing__link"
+      selector: "a[href*='products'], h3 a, .product-card a, article a"
       index: 0
 
   - action: "wait"
     params:
-      duration: 2
+      duration: 3
 
   - action: "wait_for"
     params:
       selector:
-        - "main h1"
-        - "//h2[contains(text(), 'Additional Details')]"
-        - "//h2[contains(text(), 'Product Details')]"
+        - "h1"
+        - "[data-testid='product-title']"
       timeout: 10
 
   # Extract product details directly from the page
