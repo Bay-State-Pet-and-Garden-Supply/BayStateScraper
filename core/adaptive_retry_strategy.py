@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 from collections import defaultdict
 from dataclasses import asdict, dataclass
@@ -149,10 +150,13 @@ class AdaptiveRetryStrategy:
         self._load_history()
 
         # Default retry configurations for different failure types
-        # NOTE: Retry counts increased from 1 to 2-3 for better reliability (2024-12 update)
+        # NOTE: Using environment variable to control retries globally
+        global_max_retries_str = os.environ.get("SCRAPER_MAX_RETRIES", "3")
+        global_max_retries = int(global_max_retries_str)
+
         self.default_configs = {
             FailureType.CAPTCHA_DETECTED: AdaptiveRetryConfig(
-                max_retries=2,
+                max_retries=min(2, global_max_retries),
                 base_delay=5.0,
                 max_delay=60.0,
                 backoff_multiplier=2.0,
@@ -160,14 +164,14 @@ class AdaptiveRetryStrategy:
                 captcha_retry_limit=2,
             ),
             FailureType.RATE_LIMITED: AdaptiveRetryConfig(
-                max_retries=3,
+                max_retries=min(3, global_max_retries),
                 base_delay=10.0,
                 max_delay=300.0,
                 backoff_multiplier=2.0,
                 strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
             ),
             FailureType.LOGIN_FAILED: AdaptiveRetryConfig(
-                max_retries=2,
+                max_retries=min(2, global_max_retries),
                 base_delay=2.0,
                 max_delay=30.0,
                 backoff_multiplier=1.5,
@@ -175,7 +179,7 @@ class AdaptiveRetryStrategy:
                 session_rotation_threshold=1,
             ),
             FailureType.ACCESS_DENIED: AdaptiveRetryConfig(
-                max_retries=2,
+                max_retries=min(2, global_max_retries),
                 base_delay=15.0,
                 max_delay=120.0,
                 backoff_multiplier=2.0,
@@ -183,14 +187,14 @@ class AdaptiveRetryStrategy:
                 session_rotation_threshold=1,
             ),
             FailureType.NETWORK_ERROR: AdaptiveRetryConfig(
-                max_retries=3,
+                max_retries=min(3, global_max_retries),
                 base_delay=1.0,
                 max_delay=30.0,
                 backoff_multiplier=1.5,
                 strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
             ),
             FailureType.ELEMENT_MISSING: AdaptiveRetryConfig(
-                max_retries=2,
+                max_retries=min(2, global_max_retries),
                 base_delay=0.5,
                 max_delay=5.0,
                 backoff_multiplier=1.2,
@@ -198,21 +202,21 @@ class AdaptiveRetryStrategy:
                 timeout_multiplier=1.5,
             ),
             FailureType.PAGE_NOT_FOUND: AdaptiveRetryConfig(
-                max_retries=1,
+                max_retries=min(1, global_max_retries),
                 base_delay=0.0,
                 max_delay=0.0,
                 backoff_multiplier=1.0,
                 strategy=RetryStrategy.IMMEDIATE_RETRY,
             ),
             FailureType.NO_RESULTS: AdaptiveRetryConfig(
-                max_retries=1,
+                max_retries=min(1, global_max_retries),
                 base_delay=0.0,
                 max_delay=0.0,
                 backoff_multiplier=1.0,
                 strategy=RetryStrategy.IMMEDIATE_RETRY,
             ),
             FailureType.TIMEOUT: AdaptiveRetryConfig(
-                max_retries=3,
+                max_retries=min(0, global_max_retries),
                 base_delay=2.0,
                 max_delay=15.0,
                 backoff_multiplier=1.5,
@@ -383,18 +387,25 @@ class AdaptiveRetryStrategy:
         """Adapt retry configuration based on failure pattern analysis."""
         adapted_config = AdaptiveRetryConfig(**asdict(config))
 
+        # Check for global retry disable
+        global_max_retries = int(os.environ.get("SCRAPER_MAX_RETRIES", "3"))
+        if global_max_retries == 0:
+            adapted_config.max_retries = 0
+            return adapted_config
+
         # Increase max retries for frequently failing sites
         if pattern.recent_occurrences > RECENT_OCCURRENCES_THRESHOLD:
             adapted_config.max_retries = min(config.max_retries + 2, MAX_RETRIES_CAP)
 
         # Adjust delays based on success rate
-        if pattern.success_rate < LOW_SUCCESS_RATE_THRESHOLD:  # Low success rate
-            adapted_config.base_delay *= DELAY_INCREASE_MULTIPLIER
-            adapted_config.max_delay *= MAX_DELAY_INCREASE_MULTIPLIER
-            adapted_config.backoff_multiplier *= BACKOFF_INCREASE_MULTIPLIER
-        elif pattern.success_rate > HIGH_SUCCESS_RATE_THRESHOLD:  # High success rate
-            adapted_config.base_delay *= DELAY_DECREASE_MULTIPLIER
-            adapted_config.max_delay *= MAX_DELAY_DECREASE_MULTIPLIER
+        if global_max_retries > 0:
+            if pattern.success_rate < LOW_SUCCESS_RATE_THRESHOLD:  # Low success rate
+                adapted_config.base_delay *= DELAY_INCREASE_MULTIPLIER
+                adapted_config.max_delay *= MAX_DELAY_INCREASE_MULTIPLIER
+                adapted_config.backoff_multiplier *= BACKOFF_INCREASE_MULTIPLIER
+            elif pattern.success_rate > HIGH_SUCCESS_RATE_THRESHOLD:  # High success rate
+                adapted_config.base_delay *= DELAY_DECREASE_MULTIPLIER
+                adapted_config.max_delay *= MAX_DELAY_DECREASE_MULTIPLIER
 
         # Increase timeout multiplier for element missing failures
         if pattern.failure_type == FailureType.ELEMENT_MISSING:
@@ -450,8 +461,9 @@ class AdaptiveRetryStrategy:
 
     def _get_fallback_config(self) -> AdaptiveRetryConfig:
         """Get fallback retry configuration for unknown failure types."""
+        global_max_retries = int(os.environ.get("SCRAPER_MAX_RETRIES", "3"))
         return AdaptiveRetryConfig(
-            max_retries=1,
+            max_retries=min(1, global_max_retries),
             base_delay=1.0,
             max_delay=30.0,
             backoff_multiplier=2.0,

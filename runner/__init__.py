@@ -58,6 +58,12 @@ def run_job(
 
     configs: list[Any] = []
     config_errors: list[tuple[str, str]] = []
+
+    # Get config directory path for fallback loading
+    from pathlib import Path
+
+    config_dir = Path(__file__).parent.parent / "scrapers" / "configs"
+
     for scraper_cfg in job_config.scrapers:
         try:
             options = scraper_cfg.options or {}
@@ -69,7 +75,25 @@ def run_job(
                 "workflows": options.get("workflows", []),
                 "timeout": options.get("timeout", 30),
                 "test_skus": scraper_cfg.test_skus if scraper_cfg.test_skus is not None else [],
+                "retries": getattr(scraper_cfg, "retries", 0),
+                "validation": getattr(scraper_cfg, "validation", None),
             }
+
+            # Fallback to local YAML for validation config if not provided by API
+            if config_dict.get("validation") is None:
+                yaml_path = config_dir / f"{scraper_cfg.name.lower().replace(' ', '_')}.yaml"
+                if yaml_path.exists():
+                    try:
+                        import yaml
+
+                        with open(yaml_path, encoding="utf-8") as f:
+                            yaml_config = yaml.safe_load(f)
+                            if yaml_config and "validation" in yaml_config:
+                                config_dict["validation"] = yaml_config["validation"]
+                                logger.info(f"[Runner] Loaded validation config from local YAML: {scraper_cfg.name}")
+                    except Exception as e:
+                        logger.warning(f"[Runner] Failed to load validation from YAML for {scraper_cfg.name}: {e}")
+
             config = parser.load_from_dict(config_dict)
             configs.append(config)
             log_buffer.append(create_log_entry("info", f"Loaded scraper config: {config.name}"))

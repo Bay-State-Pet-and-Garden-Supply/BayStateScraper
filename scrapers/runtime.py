@@ -19,6 +19,7 @@ import sys
 import time
 import warnings
 from datetime import datetime
+from pathlib import Path
 from queue import Empty, Queue
 from threading import Barrier, BrokenBarrierError, Lock
 from typing import TYPE_CHECKING, Any
@@ -266,10 +267,17 @@ def run_scraping(
                 configs.append(config)
                 log(f"Loaded config from Supabase: {config.name}", "INFO")
             else:
-                log(
-                    f"Config not found for {site_name} in Supabase",
-                    "WARNING",
-                )
+                # Fallback to local YAML config
+                config_path = Path(__file__).parent / "configs" / f"{normalized_name}.yaml"
+                if config_path.exists():
+                    config = parser.load_from_file(config_path)
+                    configs.append(config)
+                    log(f"Loaded config from local file: {config.name}", "INFO")
+                else:
+                    log(
+                        f"Config not found for {site_name} in Supabase or locally",
+                        "WARNING",
+                    )
 
         except Exception as e:
             log(f"Failed to load config for {site_name}: {e}", "WARNING")
@@ -479,16 +487,25 @@ def run_scraping(
             current_item="Starting...",
         )
 
+        import asyncio
+
         # Initialize executor for this scraper
         executor = None
+        loop = None
         try:
             init_start = time.time()
             log(f"{prefix} Initializing browser/executor...", "INFO", essential=True)
             log(f"{prefix} Initializing browser/executor...", "INFO")
+
+            # Since WorkflowExecutor.initialize is async, we need to run it in an event loop
+            # Create a new event loop for this thread
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
             executor = WorkflowExecutor(
                 config,
                 headless=True,
-                timeout=browser_timeout,
+                timeout=int(browser_timeout) if browser_timeout is not None else None,
                 worker_id=worker_id,
                 stop_event=stop_event,
                 debug_mode=debug_mode,
@@ -496,6 +513,10 @@ def run_scraping(
                 event_emitter=emitter,
                 debug_callback=debug_callback,
             )
+
+            # Run async initialization
+            loop.run_until_complete(executor.initialize())
+
             init_duration = time.time() - init_start
             log(f"{prefix} Browser initialized in {init_duration:.2f}s", "INFO")
 
@@ -507,6 +528,13 @@ def run_scraping(
             )
         except Exception as e:
             log(f"{prefix} Failed to initialize: {e}", "ERROR")
+            if executor and hasattr(executor, "browser") and executor.browser:
+                # Cleanup if partially initialized
+                try:
+                    # We can't await here, so we rely on GC or loop cleanup
+                    pass
+                except:
+                    pass
             # We continue to the barrier to not block other workers
 
         # Wait for all workers to be ready
@@ -570,19 +598,21 @@ def run_scraping(
             if skus_processed > 1 and (skus_processed - 1) % batch_size == 0:
                 log(f"{prefix} Restarting browser (batch limit {batch_size} reached)...", "INFO")
                 try:
-                    if executor.browser:
-                        executor.browser.quit()
+                    if executor.browser and loop:
+                        loop.run_until_complete(executor.browser.quit())
                     # Re-initialize executor (which creates new browser)
                     executor = WorkflowExecutor(
                         config,
                         headless=True,
-                        timeout=browser_timeout,
+                        timeout=int(browser_timeout) if browser_timeout is not None else None,
                         worker_id=worker_id,
                         stop_event=stop_event,
                         debug_mode=debug_mode,
                         job_id=job_id,
                         event_emitter=emitter,
                     )
+                    if loop:
+                        loop.run_until_complete(executor.initialize())
                 except Exception as e:
                     log(f"{prefix} Failed to restart browser: {e}", "ERROR")
                     pass
@@ -603,16 +633,26 @@ def run_scraping(
                 extracted_data = {}
                 has_data = False
                 no_results_found = False
+                sku_type = "test"  # Default
+                is_passing = False
+                outcome = "failed"
 
                 # Log current SKU for UI tracking
                 if test_mode:
                     log(f"[CURRENT_SKU] {sku}", "INFO", essential=True)
 
                 # Execute workflow with SKU context
-                result = executor.execute_workflow(
-                    context={"sku": sku, "test_mode": test_mode},
-                    quit_browser=False,  # Reuse browser for efficiency
-                )
+                # Run async workflow in the thread's event loop
+                if loop:
+                    result = loop.run_until_complete(
+                        executor.execute_workflow(
+                            context={"sku": sku, "test_mode": test_mode},
+                            quit_browser=False,  # Reuse browser for efficiency
+                        )
+                    )
+                else:
+                    log(f"{prefix} Event loop not initialized, skipping SKU {sku}", "ERROR")
+                    continue
 
                 if result.get("success"):
                     extracted_data = result.get("results", {})
@@ -689,7 +729,7 @@ def run_scraping(
                             is_passing=is_passing,
                         )
 
-                        if not test_mode:
+                        if not test_mode and supabase_sync:
                             supabase_sync.record_scrape_status(sku, config.name, "scraped")
                         else:
                             emitter.data_synced(sku=sku, scraper=config.name, data=extracted_data)
@@ -713,7 +753,7 @@ def run_scraping(
                         else:
                             log(f"{prefix} No results for test SKU (expected data): {sku}", "WARNING")
 
-                        if not test_mode:
+                        if not test_mode and supabase_sync:
                             status = "no_results" if is_passing else "not_found"
                             supabase_sync.record_scrape_status(sku, config.name, status)
 
@@ -726,7 +766,7 @@ def run_scraping(
                             is_passing=is_passing,
                         )
 
-                        if not test_mode:
+                        if not test_mode and supabase_sync:
                             supabase_sync.record_scrape_status(sku, config.name, "not_found")
                 else:
                     scraper_failed += 1
@@ -745,7 +785,7 @@ def run_scraping(
                     )
 
                     # Record error status (Issue #87) - skip in test mode
-                    if not test_mode:
+                    if not test_mode and supabase_sync:
                         supabase_sync.record_scrape_status(sku, config.name, "error")
 
                     # Emit selector_missing for all selectors on failure (always, for debug panel)
@@ -754,6 +794,7 @@ def run_scraping(
 
                 if test_mode:
                     # Use already-computed values from centralized logic above
+
                     # sku_type, outcome, is_passing are already set
 
                     # Map outcome to status for test details
@@ -801,8 +842,9 @@ def run_scraping(
                 )
 
                 # Record error with message (Issue #87) - skip in test mode
-                if not test_mode:
+                if not test_mode and supabase_sync:
                     supabase_sync.record_scrape_status(sku, config.name, "error", str(e))
+
                 if test_mode:
                     # log(f"[SKU_RESULT] {sku}: ERROR", "INFO", essential=True)
                     # Capture error detail
@@ -864,8 +906,11 @@ def run_scraping(
 
         # Cleanup browser for this scraper
         try:
-            if executor and executor.browser:
-                executor.browser.quit()
+            if executor and executor.browser and loop:
+                loop.run_until_complete(executor.browser.quit())
+            # Close loop
+            if loop:
+                loop.close()
         except Exception as e:
             log(f"Error closing browser: {e}", "WARNING")
 

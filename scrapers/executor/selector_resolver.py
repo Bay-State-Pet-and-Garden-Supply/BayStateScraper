@@ -10,6 +10,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from scrapers.utils.locators import convert_to_playwright_locator
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,7 +32,7 @@ class SelectorResolver:
         Find a single element using Playwright with retry and error handling.
 
         Args:
-            selector: CSS or XPath selector string
+            selector: CSS, XPath, or Playwright text selector string
             required: If True, raises error when element not found
             timeout: Optional timeout in milliseconds for waiting
 
@@ -38,20 +40,18 @@ class SelectorResolver:
             Playwright ElementHandle or None if not found and not required
         """
         try:
-            # Handle XPath explicitly for Playwright if needed
-            if selector.startswith("//") or selector.startswith(".//"):
-                if not selector.startswith("xpath="):
-                    selector = f"xpath={selector}"
-
             if hasattr(self.browser, "page"):
+                page = self.browser.page
+                locator = convert_to_playwright_locator(page, selector)
+
                 if timeout:
                     try:
-                        await self.browser.page.wait_for_selector(selector, timeout=timeout)
+                        await locator.wait_for(state="attached", timeout=timeout)
                     except Exception:
                         if required:
                             raise
                         return None
-                return await self.browser.page.query_selector(selector)
+                return await locator.element_handle()
             return None
         except Exception as e:
             logger.debug(f"find_element_safe failed for '{selector}': {e}")
@@ -71,22 +71,16 @@ class SelectorResolver:
             List of Playwright ElementHandle objects (may be empty)
         """
         try:
-            # Handle XPath explicitly for Playwright
-            if selector.startswith("//") or selector.startswith(".//"):
-                if not selector.startswith("xpath="):
-                    selector = f"xpath={selector}"
-            # Handle Playwright text selectors (e.g., "text='View product'")
-            elif selector.startswith("text="):
-                # Pass through as-is - Playwright supports text= selector engine
-                pass
-
             if hasattr(self.browser, "page"):
+                page = self.browser.page
+                locator = convert_to_playwright_locator(page, selector)
+
                 if timeout:
                     try:
-                        await self.browser.page.wait_for_selector(selector, timeout=timeout)
+                        await locator.wait_for(state="attached", timeout=timeout)
                     except Exception:
                         pass  # Continue even if wait fails
-                return await self.browser.page.query_selector_all(selector)
+                return await locator.all()
             return []
         except Exception as e:
             logger.debug(f"find_elements_safe failed for '{selector}': {e}")

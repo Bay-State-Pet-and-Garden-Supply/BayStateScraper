@@ -36,7 +36,7 @@ workflows:
       url: https://www.centralpet.com/Search?criteria={sku}
   - action: conditional_click
     params:
-      selector: //button[contains(text(), 'Accept')]
+      selector: "button:has-text('Accept')"
   - action: wait_for
     params:
       selector: "#tst_productDetail_erpDescription, span.no-results-found, .no-results"
@@ -94,14 +94,14 @@ anti_detection:
 
 validation:
   no_results_selectors:
-    - "//h2[contains(text(), 'No results found')]"
+    - "h2:has-text('No results found')"
     - span.no-results-found
     - .no-results
     - .empty-search
     - "[data-testid*='no-results']"
     - div.search-results-none
-    - p:contains('Sorry, no products were found')
-    - h2:contains('No Search Results')
+    - p:has-text('Sorry, no products were found')
+    - h2:has-text('No Search Results')
   no_results_text_patterns:
     - no results found
     - no products found

@@ -16,6 +16,13 @@ def run_chunk_worker_mode(client: ScraperAPIClient, job_id: str, runner_name: st
     total_skus_processed = 0
     total_successful = 0
 
+    # Fetch job config ONCE before the loop - don't refetch for every chunk
+    job_config = client.get_job_config(job_id)
+    if not job_config:
+        raise RuntimeError("Failed to fetch initial job config")
+
+    logger.info(f"[Chunk Worker] Loaded job config: {len(job_config.skus)} SKUs, {len(job_config.scrapers)} scrapers")
+
     while True:
         chunk = client.claim_chunk(job_id=job_id, runner_name=runner_name)
         if not chunk:
@@ -34,10 +41,8 @@ def run_chunk_worker_mode(client: ScraperAPIClient, job_id: str, runner_name: st
         logger.info(f"[Chunk Worker] Processing chunk {chunk_index} with {len(skus)} SKUs")
 
         try:
-            job_config = client.get_job_config(job_id)
-            if not job_config:
-                raise RuntimeError("Failed to fetch job config for chunk")
-
+            # Reuse the cached job_config instead of fetching again
+            # Just update the SKUs for this specific chunk
             job_config.skus = skus
             if scrapers_filter:
                 job_config.scrapers = [s for s in job_config.scrapers if s.name in scrapers_filter]

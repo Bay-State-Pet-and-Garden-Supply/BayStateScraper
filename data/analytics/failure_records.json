@@ -1010,5 +1010,97 @@
     "session_id": null,
     "user_agent": null,
     "ip_address": null
+  },
+  {
+    "site_name": "bradley",
+    "failure_type": "network_error",
+    "timestamp": 1770996796.5865223,
+    "duration": 15.26166296005249,
+    "action": "wait_for",
+    "retry_count": 0,
+    "context": {
+      "site_name": "bradley",
+      "action": "wait_for",
+      "step_index": 2,
+      "selector": null,
+      "url": null,
+      "sku": "010202",
+      "retry_count": 0,
+      "max_retries": 3
+    },
+    "success_after_retry": false,
+    "final_success": false,
+    "session_id": null,
+    "user_agent": null,
+    "ip_address": null
+  },
+  {
+    "site_name": "bradley",
+    "failure_type": "network_error",
+    "timestamp": 1770996813.9088736,
+    "duration": 15.27248740196228,
+    "action": "wait_for",
+    "retry_count": 1,
+    "context": {
+      "site_name": "bradley",
+      "action": "wait_for",
+      "step_index": 2,
+      "selector": null,
+      "url": null,
+      "sku": "010202",
+      "retry_count": 1,
+      "max_retries": 3
+    },
+    "success_after_retry": false,
+    "final_success": false,
+    "session_id": null,
+    "user_agent": null,
+    "ip_address": null
+  },
+  {
+    "site_name": "bradley",
+    "failure_type": "network_error",
+    "timestamp": 1770996832.8378878,
+    "duration": 15.235684871673584,
+    "action": "wait_for",
+    "retry_count": 2,
+    "context": {
+      "site_name": "bradley",
+      "action": "wait_for",
+      "step_index": 2,
+      "selector": null,
+      "url": null,
+      "sku": "010202",
+      "retry_count": 2,
+      "max_retries": 3
+    },
+    "success_after_retry": false,
+    "final_success": false,
+    "session_id": null,
+    "user_agent": null,
+    "ip_address": null
+  },
+  {
+    "site_name": "bradley",
+    "failure_type": "network_error",
+    "timestamp": 1770996854.6223154,
+    "duration": 15.26789379119873,
+    "action": "wait_for",
+    "retry_count": 3,
+    "context": {
+      "site_name": "bradley",
+      "action": "wait_for",
+      "step_index": 2,
+      "selector": null,
+      "url": null,
+      "sku": "010202",
+      "retry_count": 3,
+      "max_retries": 3
+    },
+    "success_after_retry": false,
+    "final_success": false,
+    "session_id": null,
+    "user_agent": null,
+    "ip_address": null
   }
 ]

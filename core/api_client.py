@@ -36,6 +36,8 @@ class ScraperConfig:
     selectors: dict[str, Any] | None = None
     options: dict[str, Any] | None = None
     test_skus: list[str] | None = None
+    retries: int = 3
+    validation: dict[str, Any] | None = None
 
 
 @dataclass
@@ -300,6 +302,8 @@ class ScraperAPIClient:
                     selectors=s.get("selectors"),
                     options=s.get("options"),
                     test_skus=s.get("test_skus"),
+                    retries=s.get("retries", 3),
+                    validation=s.get("validation"),
                 )
                 for s in data.get("scrapers", [])
             ]
@@ -508,6 +512,8 @@ class ScraperAPIClient:
                     selectors=s.get("selectors"),
                     options=s.get("options"),
                     test_skus=s.get("test_skus"),
+                    retries=s.get("retries", 3),
+                    validation=s.get("validation"),
                 )
                 for s in job_data.get("scrapers", [])
             ]

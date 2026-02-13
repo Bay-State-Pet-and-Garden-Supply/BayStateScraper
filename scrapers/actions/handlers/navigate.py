@@ -21,7 +21,7 @@ class NavigateAction(BaseAction):
             raise WorkflowExecutionError("Navigate action requires 'url' parameter")
 
         logger.info(f"Navigating to: {url}")
-        self.ctx.browser.get(url)
+        await self.ctx.browser.get(url)
 
         # Check HTTP status if monitoring is enabled
         if self.ctx.config.http_status and self.ctx.config.http_status.enabled:

@@ -23,16 +23,22 @@ class SupabaseSyncStub:
             logger.warning(f"supabase_sync.{method}() called - this is deprecated. Scrapers should use APIClient callbacks instead of direct DB access.")
             self._warned = True
 
-    def record_scrape_result(
-        self,
-        sku: str,
-        scraper_name: str,
-        status: str,
-        data: dict[str, Any] | None = None,
-        error: str | None = None,
-    ) -> bool:
-        self._warn_once("record_scrape_result")
-        logger.debug(f"[stub] record_scrape_result: {scraper_name}/{sku} = {status}")
+    def initialize(self) -> bool:
+        self._warn_once("initialize")
+        return True
+
+    def get_all_scrapers(self, include_disabled: bool = False) -> list[dict[str, Any]]:
+        self._warn_once("get_all_scrapers")
+        return []
+
+    def update_scraper_test_result(self, scraper_name: str, result: dict[str, Any]) -> None:
+        self._warn_once("update_scraper_test_result")
+
+    def update_scraper_health(self, scraper_name: str, health: dict[str, Any]) -> None:
+        self._warn_once("update_scraper_health")
+
+    def save_scraper(self, name: str, config: dict[str, Any]) -> bool:
+        self._warn_once("save_scraper")
         return True
 
     def get_pending_skus(self, limit: int = 100) -> list[str]:

@@ -13,10 +13,12 @@ test_skus: [
 fake_skus: ["xyzabc123notexist456", "999999", "NOTEXIST"]
 edge_case_skus: ["1", "0000000000000"]  # Very short and zero-padded
 timeout: 15
-retries: 2
+retries: 1
 image_quality: 60
 
 selectors:
+
+  # Detail page selectors
   - name: "Name"
     selector: "main h1"
     attribute: "text"
@@ -35,40 +37,68 @@ selectors:
     multiple: true
     required: false
 
+  # Search result list view selectors
+  - name: "Search Result BCI#"
+    selector: "main article >> text=BCI#"
+    attribute: "text"
+    index: 0
+    required: false
+  - name: "Search Result UPC"
+    selector: "main article >> text=UPC Code"
+    attribute: "text"
+    index: 0
+    required: false
+
 workflows:
   - action: "navigate"
     params:
       url: "https://www.bradleycaldwell.com/search?term={sku}"
-
+  - action: "wait_for_hidden"
+    params:
+      selector: "div.loading-overlay, .loading"
+      timeout: 10
+  - action: "wait_for"
+    params:
+      selector:
+        - "main article"
+        - "main h3:has-text('Sorry')"
+        - "span:has-text('0 items')"
+      timeout: 30
+  - action: "check_no_results"
+  - action: "conditional_skip"
+    params:
+      if_flag: "no_results_found"
+  
+  # === SEARCH RESULT VALIDATION (Fail Fast) ===
+  # Validate that the first result's BCI# matches the searched SKU
+  # This prevents false positives where search returns a product because 
+  # its UPC contains the search term (not just BCI#)
+  - action: "validate_search_result"
+  - action: "conditional_skip"
+    params:
+      if_flag: "no_results_found"
+  # ===========================================
+  
   - action: "wait_for"
     params:
       selector:
         - "text='View product'"
         - "//a[contains(text(), 'View product')]"
       timeout: 15
-
-  - action: "check_no_results"
-
-  - action: "conditional_skip"
+  - action: "wait"
     params:
-      if_flag: "no_results_found"
-
+      duration: 2
   - action: "click"
     params:
       selector: "text='View product'"
       index: 0
-
   - action: "wait"
     params:
       duration: 3
-
   - action: "wait_for"
     params:
-      selector:
-        - "h1"
+      selector: ["h1"]
       timeout: 10
-
-  # Extract product details directly from the page
   - action: "extract"
     params:
       fields: ["Name", "Brand", "Weight", "Image URLs"]
@@ -85,15 +115,14 @@ workflows:
 
 validation:
   no_results_selectors:
-    - "//h3[contains(text(), 'Sorry, no results for')]"
-    - "//p[contains(text(), '0 items')]"
+    - "main h3:has-text('Sorry')"
+    - "span:has-text('0 items')"
     - ".no-results"
     - "[data-testid='no-results']"
   no_results_text_patterns:
-    - "Sorry, no results for"
-    - "(0 items)"
-    - "0 items found"
-    - "no products found"
+    - "Sorry, no results"
+    - "0 items"
+    - "no results found"
     - "Your search returned no results"
 
 anti_detection:

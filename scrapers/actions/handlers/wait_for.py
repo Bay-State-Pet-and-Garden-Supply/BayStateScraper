@@ -8,6 +8,7 @@ from typing import Any
 from scrapers.actions.base import BaseAction
 from scrapers.actions.registry import ActionRegistry
 from scrapers.exceptions import TimeoutError, WorkflowExecutionError
+from scrapers.utils.locators import convert_to_playwright_locator
 
 logger = logging.getLogger(__name__)
 
@@ -34,22 +35,34 @@ class WaitForAction(BaseAction):
             found = False
 
             while time.time() < end_time:
+                # Refresh page reference each iteration to prevent stale references
+                # if navigation occurred during the wait
+                page = self.ctx.browser.page
+
                 for selector in selectors:
                     try:
-                        target = selector
-                        if (target.startswith("//") or target.startswith(".//")) and not target.startswith("xpath="):
-                            target = f"xpath={target}"
+                        # Convert selector to proper Playwright locator using best practices
+                        locator = convert_to_playwright_locator(page, selector)
 
-                        self.ctx.browser.page.wait_for_selector(target, state="attached", timeout=100)
+                        # Quick non-blocking check first
+                        if await locator.first.is_visible():
+                            found = True
+                            break
+
+                        # Short wait for this specific selector
+                        # Using 200ms for high responsiveness in the multi-selector loop
+                        await locator.wait_for(state="visible", timeout=200)
                         found = True
                         break
                     except Exception:
+                        # Continue to next selector if this one isn't visible yet
                         continue
 
                 if found:
                     break
 
-                await asyncio.sleep(0.5)
+                # Sleep slightly to prevent CPU pinning while polling
+                await asyncio.sleep(0.3)
 
             if not found:
                 raise TimeoutError("Playwright wait timed out")

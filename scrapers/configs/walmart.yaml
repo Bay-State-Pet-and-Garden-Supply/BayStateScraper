@@ -101,7 +101,7 @@ validation:
     - ".no-results"
     - "[data-testid='no-results']"
     - ".search-no-results"
-    - "//h2[contains(text(), 'No results')]"
+    - "h2:has-text('No results')"
   no_results_text_patterns:
     - "no results"
     - "0 results"

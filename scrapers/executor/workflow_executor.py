@@ -339,6 +339,12 @@ class WorkflowExecutor:
                 try:
                     await self._execute_step_with_retry(step, context, step_index=i)
                     logger.info(f"Step {i}/{total_steps}: Completed {step.action}")
+
+                    # Check for stop flag immediately after execution
+                    if self.workflow_stopped:
+                        logger.info("Workflow stopped during step execution, skipping remaining steps.")
+                        break
+
                 except NonRetryableError as e:
                     # Non-retryable errors for specific SKUs should not stop the workflow
                     if isinstance(e, CircuitBreakerOpenError):

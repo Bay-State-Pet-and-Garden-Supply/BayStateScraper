@@ -5,7 +5,7 @@ from pathlib import Path
 import yaml  # type: ignore
 
 from core.anti_detection_manager import AntiDetectionConfig
-from scrapers.models import ScraperConfig
+from scrapers.models import ScraperConfig, ValidationConfig
 from scrapers.schemas import validate_config_dict
 
 
@@ -20,6 +20,10 @@ class ScraperConfigParser:
         # Convert anti_detection dict to AntiDetectionConfig if present
         if "anti_detection" in config_dict and isinstance(config_dict["anti_detection"], dict):
             config_dict["anti_detection"] = AntiDetectionConfig(**config_dict["anti_detection"])
+
+        # Convert validation dict to ValidationConfig if present
+        if "validation" in config_dict and isinstance(config_dict["validation"], dict):
+            config_dict["validation"] = ValidationConfig(**config_dict["validation"])
 
         # Fix for empty login dict (which causes validation error)
         if "login" in config_dict and not config_dict["login"]:

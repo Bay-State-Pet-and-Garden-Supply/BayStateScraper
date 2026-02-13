@@ -8,6 +8,7 @@ from core.failure_classifier import FailureType
 from scrapers.actions.base import BaseAction
 from scrapers.actions.registry import ActionRegistry
 from scrapers.exceptions import WorkflowExecutionError
+from scrapers.utils.locators import convert_to_playwright_locator
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +72,9 @@ class CheckNoResultsAction(BaseAction):
         if self.ctx.config.validation:
             config_no_results = self.ctx.config.validation.no_results_selectors or []
             config_text_patterns = self.ctx.config.validation.no_results_text_patterns or []
+            logger.info(f"DEBUG: check_no_results using selectors: {config_no_results}")
         else:
+            logger.warning("DEBUG: check_no_results - No validation config found!")
             config_no_results = []
             config_text_patterns = []
 
@@ -98,26 +101,28 @@ class CheckNoResultsAction(BaseAction):
             # Fast selector check - only use config selectors (limit to first 5 for speed)
             for selector in config_no_results[:5]:
                 try:
-                    # Handle XPath vs CSS selectors
-                    if selector.startswith("//") or selector.startswith("(//"):
-                        locator = page.locator(f"xpath={selector}")
-                    else:
-                        locator = page.locator(selector)
+                    # Convert selector to proper Playwright locator using best practices
+                    locator = convert_to_playwright_locator(page, selector)
 
                     # Quick check with short timeout
-                    count = locator.count()
+                    count = await locator.count()
                     logger.info(f"DEBUG: Checking selector '{selector}' - found {count} elements")
 
                     if count > 0:
                         # Check if visible
                         try:
-                            if locator.first.is_visible():
+                            # Use is_visible() which is non-blocking status check
+                            is_vis = await locator.first.is_visible()
+                            logger.info(f"DEBUG: Selector '{selector}' visibility: {is_vis}")
+
+                            if is_vis:
                                 # Potential match found - wait and verify it persists
                                 logger.info(f"Potential no-results detected via {selector}, verifying persistence...")
+
                                 await asyncio.sleep(2)
 
                                 # Re-check
-                                if locator.count() > 0 and locator.first.is_visible():
+                                if await locator.count() > 0 and await locator.first.is_visible():
                                     logger.info(f"No results CONFIRMED via selector: {selector}")
                                     self.ctx.results["no_results_found"] = True
                                     self._emit_no_results_event()
@@ -125,6 +130,7 @@ class CheckNoResultsAction(BaseAction):
                                 else:
                                     logger.info(f"No results indicator {selector} disappeared - likely false positive.")
                                     continue
+
                         except Exception:
                             continue
                 except Exception as e:
@@ -135,7 +141,8 @@ class CheckNoResultsAction(BaseAction):
             if config_text_patterns:
                 try:
                     # Use inner_text('body') to get only visible text, not hidden templates
-                    page_content = page.inner_text("body").lower()
+                    page_content = await page.inner_text("body")
+                    page_content = page_content.lower()
                     logger.info(f"DEBUG: Checking text patterns in visible page text (length: {len(page_content)})")
 
                     for pattern in config_text_patterns:
@@ -220,7 +227,7 @@ class ConditionalClickAction(BaseAction):
         timeout = params.get("timeout", 2)
 
         try:
-            from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+            from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
             page = self.ctx.browser.page
             selectors_to_try = [s.strip() for s in selector.split(",")]
@@ -233,10 +240,10 @@ class ConditionalClickAction(BaseAction):
                     else:
                         locator = page.locator(sel)
 
-                    locator.first.wait_for(state="attached", timeout=timeout * 1000)
+                    await locator.first.wait_for(state="attached", timeout=timeout * 1000)
                     element_found = True
                     logger.info(f"Conditional element '{sel}' found. Attempting to click.")
-                    locator.first.click(timeout=5000)
+                    await locator.first.click(timeout=5000)
                     logger.info(f"Conditional click succeeded on '{sel}'")
                     break
                 except PlaywrightTimeoutError:
@@ -270,11 +277,11 @@ class VerifyAction(BaseAction):
         assert selector is not None
 
         try:
-            elements = self.ctx.find_elements_safe(selector)
+            elements = await self.ctx.find_elements_safe(selector)
             if not elements:
                 raise ValueError(f"No element found for selector: {selector}")
             element = elements[0]
-            actual_value = self.ctx._extract_value_from_element(element, attribute)
+            actual_value = await self.ctx.extract_value_from_element(element, attribute)
 
             if actual_value is None:
                 raise ValueError("Could not extract actual value from element")
@@ -310,3 +317,94 @@ class VerifyAction(BaseAction):
                 raise WorkflowExecutionError(error_msg)
             else:
                 logger.warning(error_msg)
+
+
+@ActionRegistry.register("validate_search_result")
+class ValidateSearchResultAction(BaseAction):
+    """
+    Action to validate that the first search result matches the searched SKU.
+
+    Compares the BCI# and UPC Code from the first article in search results
+    against the searched SKU. This prevents false positives where the search
+    returns a product because its title or manufacturer part number contains
+    the search term (not an exact identifier match).
+
+    Sets 'no_results_found' to True if neither BCI# nor UPC matches the searched SKU.
+    """
+
+    async def execute(self, params: dict[str, Any]) -> None:
+        # Get the searched SKU from context
+        searched_sku = None
+        if hasattr(self.ctx, "context") and self.ctx.context:
+            searched_sku = self.ctx.context.get("sku")
+        if not searched_sku:
+            searched_sku = self.ctx.results.get("sku")
+
+        if not searched_sku:
+            logger.warning("validate_search_result: No SKU found in context/results. Skipping.")
+            return
+
+        target_sku = str(searched_sku).strip()
+        logger.info(f"validate_search_result: Validating match for SKU: {target_sku}")
+
+        page = self.ctx.browser.page
+
+        try:
+            # 1. Get first article
+            articles = page.locator("main article")
+            # Use a short timeout for the initial count to avoid hanging on rate-limited pages
+            articles_count = await articles.count()
+
+            if articles_count == 0:
+                logger.info("validate_search_result: No articles found in search results.")
+                self.ctx.results["no_results_found"] = True
+                return
+
+            first_article = articles.first
+            found_match = False
+            match_details = []
+
+            # 2. Check BCI#
+            # We use a short timeout for text_content to prevent hanging
+            bci_locator = first_article.locator("span:has-text('BCI#:')")
+            if await bci_locator.count() > 0:
+                try:
+                    text = await bci_locator.first.text_content(timeout=2000)
+                    if text:
+                        # Parse "BCI#: 010199"
+                        val = text.split(":")[-1].strip()
+                        match_details.append(f"BCI:{val}")
+                        if val == target_sku or val.lstrip("0") == target_sku.lstrip("0"):
+                            found_match = True
+                except Exception:
+                    pass
+
+            # 3. Check UPC Code (If BCI didn't match)
+            if not found_match:
+                upc_locator = first_article.locator("span:has-text('UPC Code:')")
+                if await upc_locator.count() > 0:
+                    try:
+                        text = await upc_locator.first.text_content(timeout=2000)
+                        if text:
+                            # Parse "UPC Code: 015905003391"
+                            val = text.split(":")[-1].strip()
+                            match_details.append(f"UPC:{val}")
+                            if val == target_sku or val.lstrip("0") == target_sku.lstrip("0"):
+                                found_match = True
+                    except Exception:
+                        pass
+
+            # 4. Result Handling
+            if found_match:
+                logger.info(f"validate_search_result: Verified match ({', '.join(match_details)})")
+                self.ctx.results["no_results_found"] = False
+                self.ctx.results["search_result_validated"] = True
+            else:
+                logger.warning(f"validate_search_result: MISMATCH! Searched '{target_sku}', found {match_details}. Failing fast.")
+                self.ctx.results["no_results_found"] = True
+                self.ctx.results["search_result_validated"] = False
+
+        except Exception as e:
+            logger.error(f"validate_search_result: Error: {e}")
+            # Fail safe: if validation crashes, assume no results
+            self.ctx.results["no_results_found"] = True

@@ -60,7 +60,7 @@ workflows:
       if_flag: "no_results_found"
   - action: "click"
     params:
-      selector: "//a[div[contains(text(), 'Ordering Specifications')]]"
+      selector: "a:has(div:has-text('Ordering Specifications'))"
   - action: "wait_for"
     params:
       selector: "#orderSpecificationDiv"
@@ -97,7 +97,7 @@ anti_detection:
 
 validation:
   no_results_selectors:
-    - "//span[contains(text(), 'Found 0 results')]"
+    - "span:has-text('Found 0 results')"
     - ".no-results"
     - ".empty-search"
     - "[data-testid*='no-results']"

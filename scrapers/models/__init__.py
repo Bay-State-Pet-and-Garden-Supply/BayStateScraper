@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .config import LoginConfig, ScraperConfig, SelectorConfig, WorkflowStep
+from .config import LoginConfig, ScraperConfig, SelectorConfig, ValidationConfig, WorkflowStep
 from .result import (
     SkuResult,
     SkuType,
@@ -13,8 +13,9 @@ from .result import (
 
 __all__ = [
     "LoginConfig",
-    "ScraperConfig", 
+    "ScraperConfig",
     "SelectorConfig",
+    "ValidationConfig",
     "WorkflowStep",
     "SkuResult",
     "SkuType",

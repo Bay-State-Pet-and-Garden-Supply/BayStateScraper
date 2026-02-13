@@ -88,5 +88,5 @@ anti_detection:
 
 validation:
   no_results_selectors:
-    - "//h2[contains(., '0 item')]"
-    - "//h2[contains(., '0 items')]"
+    - "h2:has-text('0 item')"
+    - "h2:has-text('0 items')"
