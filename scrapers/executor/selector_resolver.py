@@ -64,7 +64,7 @@ class SelectorResolver:
         Find multiple elements using Playwright.
 
         Args:
-            selector: CSS or XPath selector string
+            selector: CSS, XPath, or Playwright text selector string
             timeout: Optional timeout in milliseconds for waiting
 
         Returns:
@@ -75,6 +75,10 @@ class SelectorResolver:
             if selector.startswith("//") or selector.startswith(".//"):
                 if not selector.startswith("xpath="):
                     selector = f"xpath={selector}"
+            # Handle Playwright text selectors (e.g., "text='View product'")
+            elif selector.startswith("text="):
+                # Pass through as-is - Playwright supports text= selector engine
+                pass
 
             if hasattr(self.browser, "page"):
                 if timeout:
