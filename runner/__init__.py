@@ -7,6 +7,7 @@ from typing import Any
 
 from core.api_client import JobConfig
 from core.events import create_emitter
+from core.settings_manager import settings
 from scrapers.executor.workflow_executor import WorkflowExecutor
 from scrapers.parser import ScraperConfigParser
 from scrapers.result_collector import ResultCollector
@@ -108,9 +109,14 @@ def run_job(
 
         executor = None
         try:
+            headless = settings.browser_settings["headless"]
+            if not headless:
+                logger.warning("[Runner] Running in VISIBLE mode (HEADLESS=false) - browser will be visible for debugging")
+                log_buffer.append(create_log_entry("warning", "Running in VISIBLE mode - browser will be visible"))
+
             executor = WorkflowExecutor(
                 config,
-                headless=True,
+                headless=headless,
                 timeout=30,
                 worker_id="API",
                 debug_mode=False,

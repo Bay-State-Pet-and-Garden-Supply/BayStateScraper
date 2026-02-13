@@ -38,6 +38,7 @@ class SettingsManager:
             "runner_name": "RUNNER_NAME",
             "max_workers": "MAX_WORKERS",
             "browser_timeout": "BROWSER_TIMEOUT",
+            "headless": "HEADLESS",
         }
 
         for setting_key, env_key in env_mappings.items():
@@ -77,8 +78,12 @@ class SettingsManager:
 
     @property
     def browser_settings(self) -> dict:
+        # HEADLESS env var: set to "false" to run with visible browser for debugging
+        headless_value = os.getenv("HEADLESS", "true").lower()
+        headless = headless_value not in ("false", "0", "no", "off")
+
         return {
-            "headless": True,
+            "headless": headless,
             "timeout": self.get("browser_timeout"),
         }
 

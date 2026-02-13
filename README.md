@@ -118,6 +118,7 @@ docker-compose up -d
 | `POLL_INTERVAL` | No | 30 | Seconds between job polls |
 | `MAX_JOBS_BEFORE_RESTART` | No | 100 | Restart for memory hygiene |
 | `BSR_SUPABASE_REALTIME_KEY` | No | - | Service role key for realtime mode (optional) |
+| `HEADLESS` | No | `true` | Set to `false` to run browser in visible mode for debugging |
 
 ### Supabase Realtime (Optional)
 
