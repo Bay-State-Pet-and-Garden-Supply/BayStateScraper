@@ -30,6 +30,35 @@ selectors:
     selector: "//tr[.//th[contains(., 'Weight')]] | //li[contains(., 'ounces')] | //li[contains(., 'pounds')]"
     attribute: "text"
     required: false
+  - name: "Price"
+    selector: ".a-price .a-offscreen, #priceblock_ourprice, .a-price"
+    attribute: "text"
+    required: false
+  - name: "Rating"
+    selector: "#acrPopover, i[data-hook='average-star-rating'] span"
+    attribute: "text"
+    required: false
+  - name: "Reviews"
+    selector: "#acrCustomerReviewText"
+    attribute: "text"
+    required: false
+  - name: "Description"
+    selector: "#productDescription"
+    attribute: "text"
+    required: false
+  - name: "Features"
+    selector: "#feature-bullets li span"
+    attribute: "text"
+    multiple: true
+    required: false
+  - name: "Availability"
+    selector: "#availability"
+    attribute: "text"
+    required: false
+  - name: "ASIN"
+    selector: "div#detailBullets_feature_div li:has(span:contains('ASIN')) span + span, tr:has(th:contains('ASIN')) td"
+    attribute: "text"
+    required: false
 
 workflows:
   - action: "conditional_click"
@@ -88,6 +117,35 @@ workflows:
               replacement: "_AC_SL1500_"
         - name: "Weight"
           selector: "//tr[.//th[contains(., 'Weight')]] | //li[contains(., 'ounces')] | //li[contains(., 'pounds')]"
+          attribute: "text"
+          required: false
+        - name: "Price"
+          selector: ".a-price .a-offscreen, #priceblock_ourprice, .a-price"
+          attribute: "text"
+          required: false
+        - name: "Rating"
+          selector: "#acrPopover, i[data-hook='average-star-rating'] span"
+          attribute: "text"
+          required: false
+        - name: "Reviews"
+          selector: "#acrCustomerReviewText"
+          attribute: "text"
+          required: false
+        - name: "Description"
+          selector: "#productDescription"
+          attribute: "text"
+          required: false
+        - name: "Features"
+          selector: "#feature-bullets li span"
+          attribute: "text"
+          multiple: true
+          required: false
+        - name: "Availability"
+          selector: "#availability"
+          attribute: "text"
+          required: false
+        - name: "ASIN"
+          selector: "div#detailBullets_feature_div li:has(span:contains('ASIN')) span + span, tr:has(th:contains('ASIN')) td"
           attribute: "text"
           required: false
 

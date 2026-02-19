@@ -7,11 +7,10 @@ cost tracking, and error handling.
 
 from __future__ import annotations
 
-from abc import abstractmethod
-from typing import Any, TYPE_CHECKING
-
-from browser_use import Browser
-from browser_use.llm import ChatOpenAI
+from abc import ABC, abstractmethod
+import importlib
+import inspect
+from typing import Any, TYPE_CHECKING, cast
 
 from scrapers.actions.base import BaseAction
 
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
     from scrapers.context import ScraperContext
 
 
-class BaseAIAction(BaseAction):
+class BaseAIAction(BaseAction, ABC):
     """Base class for AI actions using browser-use.
 
     This class provides the foundation for all AI-powered scraping actions,
@@ -46,11 +45,12 @@ class BaseAIAction(BaseAction):
             ctx: The ScraperContext providing access to browser, config, and results.
         """
         super().__init__(ctx)
-        self.browser: Browser | None = None
-        self.llm: ChatOpenAI | None = None
+        self.browser: Any | None = None
+        self.llm: Any | None = None
         self._cost_tracker: dict[str, Any] | None = None
+        self._using_shared_ai_browser: bool = False
 
-    async def initialize_browser(self, headless: bool = True) -> Browser:
+    async def initialize_browser(self, headless: bool = True) -> Any:
         """Initialize browser-use Browser instance.
 
         Creates a new Browser instance for AI agent interactions.
@@ -66,10 +66,19 @@ class BaseAIAction(BaseAction):
         Example:
             browser = await self.initialize_browser(headless=True)
         """
-        self.browser = Browser(headless=headless)
+        existing_browser = getattr(self.ctx, "ai_browser", None)
+        if existing_browser is not None:
+            self.browser = existing_browser
+            self._using_shared_ai_browser = True
+            return self.browser
+
+        browser_use_module = importlib.import_module("browser_use")
+        browser_factory = cast(Any, getattr(browser_use_module, "Browser"))
+        self.browser = browser_factory(headless=headless)
+        self._using_shared_ai_browser = False
         return self.browser
 
-    async def initialize_llm(self, model: str = "gpt-4o-mini", api_key: str | None = None, temperature: float = 0.0, **kwargs: Any) -> ChatOpenAI:
+    async def initialize_llm(self, model: str = "gpt-4o-mini", api_key: str | None = None, temperature: float = 0.0, **kwargs: Any) -> Any:
         """Initialize LLM with browser-use wrapper.
 
         Creates a ChatOpenAI instance configured for use with browser-use Agent.
@@ -97,7 +106,9 @@ class BaseAIAction(BaseAction):
         if not api_key:
             raise ValueError("OpenAI API key required. Provide via params, ctx.config.openai_api_key, ctx.results, or ctx.context")
 
-        self.llm = ChatOpenAI(model=model, api_key=api_key, temperature=temperature, **kwargs)
+        llm_module = importlib.import_module("browser_use.llm")
+        chat_openai_factory = cast(Any, getattr(llm_module, "ChatOpenAI"))
+        self.llm = chat_openai_factory(model=model, api_key=api_key, temperature=temperature, **kwargs)
         return self.llm
 
     def track_cost(self, input_tokens: int, output_tokens: int, model: str, cost_usd: float | None = None) -> None:
@@ -137,9 +148,10 @@ class BaseAIAction(BaseAction):
             self._cost_tracker["estimated_cost_usd"] += cost_usd
 
         # Call context hook if available
-        if hasattr(self.ctx, "track_ai_cost"):
+        hook = getattr(self.ctx, "track_ai_cost", None)
+        if callable(hook):
             try:
-                self.ctx.track_ai_cost(input_tokens=input_tokens, output_tokens=output_tokens, model=model, cost_usd=cost_usd)
+                hook(input_tokens=input_tokens, output_tokens=output_tokens, model=model, cost_usd=cost_usd)
             except Exception:
                 # Silently ignore hook errors to not break execution
                 pass
@@ -200,8 +212,14 @@ class BaseAIAction(BaseAction):
                 await self.cleanup()
         """
         if self.browser:
+            if self._using_shared_ai_browser:
+                self.browser = None
+                return
+
             try:
-                await self.browser.close()
+                close_result = self.browser.close()
+                if inspect.isawaitable(close_result):
+                    await close_result
             except Exception:
                 # Ignore cleanup errors
                 pass

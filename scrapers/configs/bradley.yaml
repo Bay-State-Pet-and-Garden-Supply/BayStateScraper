@@ -36,6 +36,34 @@ selectors:
     attribute: "src"
     multiple: true
     required: false
+  - name: "BCI Item Number"
+    selector: "p:has-text('BCI Item Number:')"
+    attribute: "text"
+    required: false
+  - name: "Manufacturer #"
+    selector: "p:has-text('Manufacturer #:')"
+    attribute: "text"
+    required: false
+  - name: "UPC"
+    selector: "p:has-text('UPC Code:')"
+    attribute: "text"
+    required: false
+  - name: "Case Pack"
+    selector: "li:has-text('Case Pack:')"
+    attribute: "text"
+    required: false
+  - name: "Unit of Measure"
+    selector: "li:has-text('Unit of Measure:')"
+    attribute: "text"
+    required: false
+  - name: "Dimensions"
+    selector: "li:has-text('Dimensions:')"
+    attribute: "text"
+    required: false
+  - name: "Ingredients"
+    selector: "div#ingredients, .ingredients"
+    attribute: "text"
+    required: false
 
   # Search result list view selectors
   - name: "Search Result BCI#"
@@ -101,7 +129,7 @@ workflows:
       timeout: 10
   - action: "extract"
     params:
-      fields: ["Name", "Brand", "Weight", "Image URLs"]
+      fields: ["Name", "Brand", "Weight", "Image URLs", "BCI Item Number", "Manufacturer #", "UPC", "Case Pack", "Unit of Measure", "Dimensions", "Ingredients"]
   - action: "transform_value"
     params:
       field: "Image URLs"

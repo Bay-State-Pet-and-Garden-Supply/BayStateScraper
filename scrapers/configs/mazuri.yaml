@@ -31,6 +31,27 @@ selectors:
     selector: ".product-single__photo img, .product__photo img, #carouselExampleControls img, .product-gallery img"
     attribute: "src"
     multiple: true
+  - name: "Price"
+    selector: ".product-price, .price-item"
+    attribute: "text"
+    required: false
+  - name: "Ingredients"
+    selector: "#ingredients-tab-content, .ingredients-section"
+    attribute: "text"
+    required: false
+  - name: "Guaranteed Analysis"
+    selector: "#analysis-tab-content, .guaranteed-analysis"
+    attribute: "text"
+    required: false
+  - name: "Feeding Directions"
+    selector: "#feeding-tab-content, .feeding-directions"
+    attribute: "text"
+    required: false
+  - name: "Size Options"
+    selector: "select[name='id'] option, .variant-input"
+    attribute: "text"
+    multiple: true
+    required: false
 
 workflows:
   - action: "navigate"
@@ -63,7 +84,7 @@ workflows:
       timeout: 5
   - action: "extract"
     params:
-      fields: ["Name", "Brand", "Weight", "Image URLs"]
+      fields: ["Name", "Brand", "Weight", "Image URLs", "Price", "Ingredients", "Guaranteed Analysis", "Feeding Directions", "Size Options"]
   - action: "transform_value"
     params:
       field: "Image URLs"

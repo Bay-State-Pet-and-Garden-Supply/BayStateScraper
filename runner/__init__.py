@@ -190,13 +190,32 @@ def run_job(
                     if has_data:
                         if sku not in results["data"]:
                             results["data"][sku] = {}
+
+                        # Handle both "Images" and "Image URLs" field names
+                        # (scraper configs use "Image URLs" as the selector name)
+                        images = (
+                            extracted_data.get("Images")
+                            or extracted_data.get("Image URLs")
+                            or extracted_data.get("Image_URLs")
+                            or []
+                        )
+
+                        # Capture the product page URL from the browser if not
+                        # explicitly extracted by a "URL" selector
+                        page_url = extracted_data.get("URL")
+                        if not page_url and executor and executor.browser:
+                            try:
+                                page_url = executor.browser.current_url
+                            except Exception:
+                                pass
+
                         results["data"][sku][config.name] = {
                             "price": extracted_data.get("Price"),
                             "title": extracted_data.get("Name"),
                             "description": extracted_data.get("Description"),
-                            "images": extracted_data.get("Images", []),
+                            "images": images,
                             "availability": extracted_data.get("Availability"),
-                            "url": extracted_data.get("URL"),
+                            "url": page_url,
                             "scraped_at": datetime.now().isoformat(),
                         }
 

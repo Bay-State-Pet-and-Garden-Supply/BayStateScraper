@@ -54,6 +54,11 @@ python runner.py --mode realtime
 - `runner.py` is thin wrapper (5 lines)
 - Docker ENTRYPOINT: `python daemon.py`
 
+## RELATED
+- Parent: `../AGENTS.md` (root scraper overview)
+- Core: `../core/AGENTS.md` (infrastructure services)
+- Scrapers: `../scrapers/AGENTS.md` (scraping domain)
+
 ## ANTI-PATTERNS
 - **NO** mode-specific logic outside this package
 - **NO** direct scraper instantiation (use WorkflowExecutor)

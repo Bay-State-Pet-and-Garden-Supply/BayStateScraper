@@ -58,5 +58,10 @@ core/
 - **NO** direct Supabase/PostgreSQL connections
 - **NO** bypassing APIClient for data
 
+## RELATED
+- Parent: `../AGENTS.md` (root scraper overview)
+- Runner: `../runner/AGENTS.md` (execution modes)
+- Scrapers: `../scrapers/AGENTS.md` (scraping domain)
+
 ## DEPRECATED
 `core/database/supabase_sync.py` - Legacy stub, kept for compat. Use APIClient instead.

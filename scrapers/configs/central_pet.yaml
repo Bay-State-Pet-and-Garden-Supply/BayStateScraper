@@ -25,10 +25,27 @@ selectors:
   - attribute: innerHTML
     name: Weight
     selector: //div[@class='specification-container']//li[strong[contains(text(), 'Product Gross Weight')]]/span
-  - attribute: src
-    multiple: true
     name: Image URLs
     selector: a#tst_productDetail_imageZoom img
+  - attribute: text
+    name: "Product #"
+    selector: "span[itemprop='sku'], .item-num span"
+  - attribute: text
+    name: "UPC"
+    selector: ".upc span"
+  - attribute: text
+    name: "Mfg Part #"
+    selector: ".mfg-part-num span"
+  - attribute: text
+    name: "Description"
+    selector: "#tst_productDetail_htmlContent"
+  - attribute: text
+    name: "Specifications"
+    selector: "#tst_productDetail_specifications li"
+    multiple: true
+  - attribute: text
+    name: "Safety Info"
+    selector: ".safety-info"
 
 workflows:
   - action: navigate
@@ -55,6 +72,12 @@ workflows:
         - Brand
         - Weight
         - Image URLs
+        - "Product #"
+        - "UPC"
+        - "Mfg Part #"
+        - "Description"
+        - "Specifications"
+        - "Safety Info"
   - action: "transform_value"
     params:
       field: "Image URLs"

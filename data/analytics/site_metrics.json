@@ -8,20 +8,20 @@
     "failure_types": {
       "element_missing": 44
     },
-    "recent_failures": 43,
+    "recent_failures": 41,
     "last_failure_time": 1770933444.109119,
     "health_score": 0.429
   },
   "bradley": {
-    "total_requests": 5,
+    "total_requests": 155,
     "total_failures": 4,
     "success_rate": 0.19999999999999996,
     "failure_rate": 0.8,
-    "avg_duration": 12.20759129524231,
+    "avg_duration": 1.5642542346831292,
     "failure_types": {
       "network_error": 4
     },
-    "recent_failures": 4,
+    "recent_failures": 2,
     "last_failure_time": 1770996854.6223154,
     "health_score": 0.2
   }

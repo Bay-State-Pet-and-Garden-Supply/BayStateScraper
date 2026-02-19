@@ -29,6 +29,27 @@ selectors:
     selector: "img[src*='salsify'][src*='images.salsify.com']"
     attribute: "src"
     multiple: true
+  - name: "Price"
+    selector: ".product-price, [itemprop='price']"
+    attribute: "text"
+    required: false
+  - name: "UPC"
+    selector: ".sku-upc, [itemprop='sku']"
+    attribute: "text"
+    required: false
+  - name: "Item Number"
+    selector: ".item-number"
+    attribute: "text"
+    required: false
+  - name: "Description"
+    selector: "#description, .product-description"
+    attribute: "text"
+    required: false
+  - name: "Features"
+    selector: ".features-list li, .product-features li"
+    attribute: "text"
+    multiple: true
+    required: false
 
 workflows:
   - action: "navigate"
@@ -60,7 +81,7 @@ workflows:
       timeout: 5
   - action: "extract"
     params:
-      fields: ["Name", "Brand", "Size", "Image URLs"]
+      fields: ["Name", "Brand", "Size", "Image URLs", "Price", "UPC", "Item Number", "Description", "Features"]
 
 anti_detection:
   enable_captcha_detection: false
