@@ -10,6 +10,13 @@ from typing import Any
 from dataclasses import dataclass, field
 from collections import defaultdict
 
+from scrapers.ai_metrics import (
+    get_metrics_collector,
+    record_ai_extraction,
+    record_ai_fallback,
+    set_circuit_breaker,
+)
+
 logger = logging.getLogger(__name__)
 
 # Cost limits configuration
@@ -106,17 +113,30 @@ class AICostTracker:
         self._total_cost_usd += cost_usd
 
         # Check if this extraction exceeded limits
-        if cost_usd > MAX_COST_PER_PAGE:
+        exceeded_limit = cost_usd > MAX_COST_PER_PAGE
+        if exceeded_limit:
             self._circuit_breaker_counts[scraper_name] += 1
             logger.warning(
                 f"Cost exceeded threshold: ${cost_usd:.4f} > ${MAX_COST_PER_PAGE} "
                 f"for scraper '{scraper_name}' "
                 f"(strike {self._circuit_breaker_counts[scraper_name]}/{CIRCUIT_BREAKER_THRESHOLD})"
             )
+            record_ai_fallback(scraper_name, f"high_cost:${cost_usd:.4f}")
         else:
             # Reset circuit breaker on successful extraction
             if scraper_name in self._circuit_breaker_counts:
                 del self._circuit_breaker_counts[scraper_name]
+
+        record_ai_extraction(
+            scraper_name=scraper_name,
+            success=not exceeded_limit,
+            cost_usd=cost_usd,
+            duration_seconds=0.0,
+            anti_bot_detected=False,
+        )
+
+        if self._circuit_breaker_counts.get(scraper_name, 0) >= CIRCUIT_BREAKER_THRESHOLD:
+            set_circuit_breaker(scraper_name, True)
 
         return extraction
 
