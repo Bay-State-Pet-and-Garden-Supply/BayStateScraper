@@ -198,27 +198,44 @@ class AIDiscoveryScraper:
             List of search results with url, title, description
         """
         try:
-            # Use the ai_search functionality
             import os
-            from brave import Brave
+            import httpx
 
             api_key = os.environ.get("BRAVE_API_KEY")
             if not api_key:
                 logger.error("BRAVE_API_KEY not set")
                 return []
 
-            brave = Brave(api_key)
-            results = brave.search(q=query, count=self.max_search_results)
+            headers = {
+                "Accept": "application/json",
+                "X-Subscription-Token": api_key,
+            }
+            params = {
+                "q": query,
+                "count": self.max_search_results,
+            }
+
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.get(
+                    "https://api.search.brave.com/res/v1/web/search",
+                    headers=headers,
+                    params=params,
+                )
+                response.raise_for_status()
+                data = response.json()
+
+            web_results = data.get("web", {}).get("results", [])
 
             search_results = []
-            for result in results.web_results:
-                search_results.append(
-                    {
-                        "url": result.url,
-                        "title": result.title,
-                        "description": result.description,
-                    }
-                )
+            for result in web_results[: self.max_search_results]:
+                if isinstance(result, dict):
+                    search_results.append(
+                        {
+                            "url": result.get("url", ""),
+                            "title": result.get("title", ""),
+                            "description": result.get("description", ""),
+                        }
+                    )
 
             return search_results
 
