@@ -13,9 +13,12 @@ class ScraperContext(Protocol):
     results: dict[str, Any]
     config: ScraperConfig
     context: dict[str, Any]
+    ai_context: dict[str, Any]
+    scraper_type: str
 
     # Browser interface
     browser: Any  # Has .page attribute
+    ai_browser: Any
 
     async def find_element_safe(self, selector: str, required: bool = True, timeout: int | None = None) -> Any: ...
 

@@ -8,6 +8,7 @@ from typing import Any
 from core.api_client import JobConfig
 from core.events import create_emitter
 from core.settings_manager import settings
+from scrapers.ai_discovery import AIDiscoveryScraper
 from scrapers.executor.workflow_executor import WorkflowExecutor
 from scrapers.parser import ScraperConfigParser
 from scrapers.result_collector import ResultCollector
@@ -55,6 +56,24 @@ def run_job(
     logger.info(f"[Runner] Starting job {job_id}")
     logger.info(f"[Runner] SKUs: {len(job_config.skus)}, Scrapers: {len(job_config.scrapers)}")
     logger.info(f"[Runner] Test mode: {job_config.test_mode}, Max workers: {job_config.max_workers}")
+
+    skus = job_config.skus
+    if not skus and job_config.test_mode:
+        for scraper in job_config.scrapers:
+            if scraper.test_skus:
+                skus.extend(scraper.test_skus)
+        skus = list(set(skus))
+        log_buffer.append(create_log_entry("info", f"Test mode: using {len(skus)} test SKUs from job payload"))
+        logger.info(f"[Runner] Test mode: using {len(skus)} test SKUs from job payload")
+
+    if not skus:
+        log_buffer.append(create_log_entry("warning", "No SKUs to process"))
+        logger.warning("[Runner] No SKUs to process")
+        return results
+
+    is_discovery_job = job_config.job_type == "discovery" or any(s.name == "ai_discovery" for s in job_config.scrapers)
+    if is_discovery_job:
+        return _run_discovery_job(job_config, skus, results, log_buffer)
 
     configs: list[Any] = []
     config_errors: list[tuple[str, str]] = []
@@ -112,20 +131,6 @@ def run_job(
         log_buffer.append(create_log_entry("error", "No valid scraper configurations"))
         raise ConfigurationError("[Runner] No valid scraper configurations")
 
-    skus = job_config.skus
-    if not skus and job_config.test_mode:
-        for config in configs:
-            if hasattr(config, "test_skus") and config.test_skus:
-                skus.extend(config.test_skus)
-        skus = list(set(skus))
-        log_buffer.append(create_log_entry("info", f"Test mode: using {len(skus)} test SKUs from configs"))
-        logger.info(f"[Runner] Test mode: using {len(skus)} test SKUs from configs")
-
-    if not skus:
-        log_buffer.append(create_log_entry("warning", "No SKUs to process"))
-        logger.warning("[Runner] No SKUs to process")
-        return results
-
     for config in configs:
         log_buffer.append(create_log_entry("info", f"Starting scraper: {config.name}"))
         logger.info(f"[Runner] Running scraper: {config.name}")
@@ -151,6 +156,8 @@ def run_job(
             # Run all async operations in a single event loop to properly manage
             # Playwright browser subprocess lifecycle
             async def run_all_scrapes():
+                if executor is None:
+                    return []
                 scrape_results = []
                 try:
                     await executor.initialize()
@@ -185,20 +192,47 @@ def run_job(
 
                 if result.get("success"):
                     extracted_data = result.get("results", {})
+
+                    if extracted_data.get("product_name") and not extracted_data.get("Name"):
+                        extracted_data["Name"] = extracted_data.pop("product_name")
+                    if extracted_data.get("price") and not extracted_data.get("Price"):
+                        extracted_data["Price"] = extracted_data.pop("price")
+                    if extracted_data.get("brand") and not extracted_data.get("Brand"):
+                        extracted_data["Brand"] = extracted_data.pop("brand")
+                    if extracted_data.get("description") and not extracted_data.get("Description"):
+                        extracted_data["Description"] = extracted_data.pop("description")
+                    if extracted_data.get("image_url") and not extracted_data.get("Images"):
+                        extracted_data["Images"] = [extracted_data.pop("image_url")]
+                    if extracted_data.get("availability") and not extracted_data.get("Availability"):
+                        extracted_data["Availability"] = extracted_data.pop("availability")
                     has_data = any(extracted_data.get(field) for field in ["Name", "Brand", "Weight"])
 
                     if has_data:
                         if sku not in results["data"]:
                             results["data"][sku] = {}
+
+                        # Handle both "Images" and "Image URLs" field names
+                        # (scraper configs use "Image URLs" as the selector name)
+                        images = extracted_data.get("Images") or extracted_data.get("Image URLs") or extracted_data.get("Image_URLs") or []
+
+                        # Capture the product page URL from the browser if not
+                        # explicitly extracted by a "URL" selector
+                        page_url = extracted_data.get("URL")
+                        if not page_url and executor and executor.browser:
+                            try:
+                                page_url = executor.browser.current_url
+                            except Exception:
+                                pass
+
                         results["data"][sku][config.name] = {
                             # Note: Price is NOT scraped - we use our own pricing
                             "title": extracted_data.get("Name"),
                             "brand": extracted_data.get("Brand"),
                             "weight": extracted_data.get("Weight"),
                             "description": extracted_data.get("Description"),
-                            "images": extracted_data.get("Image URLs", []),
+                            "images": extracted_data.get("Image URLs", []) or extracted_data.get("Images", []),
                             "availability": extracted_data.get("Availability"),
-                            "url": extracted_data.get("URL"),
+                            "url": page_url,
                             "scraped_at": datetime.now().isoformat(),
                         }
 
@@ -219,6 +253,84 @@ def run_job(
 
     log_buffer.append(create_log_entry("info", f"Job complete. Processed {results['skus_processed']} SKUs"))
     logger.info(f"[Runner] Job complete. Processed {results['skus_processed']} SKUs")
+    return results
+
+
+def _run_discovery_job(
+    job_config: JobConfig,
+    skus: list[str],
+    results: dict[str, Any],
+    log_buffer: list[dict[str, Any]],
+) -> dict[str, Any]:
+    discovery_cfg = job_config.job_config or {}
+    scraper_name = "ai_discovery"
+    max_concurrency = int(discovery_cfg.get("max_concurrency", job_config.max_workers) or job_config.max_workers)
+    max_search_results = int(discovery_cfg.get("max_search_results", 5) or 5)
+    max_steps = int(discovery_cfg.get("max_steps", 15) or 15)
+    confidence_threshold = float(discovery_cfg.get("confidence_threshold", 0.7) or 0.7)
+    llm_model = str(discovery_cfg.get("llm_model", "gpt-4o-mini") or "gpt-4o-mini")
+
+    items = [
+        {
+            "sku": sku,
+            "product_name": discovery_cfg.get("product_name"),
+            "brand": discovery_cfg.get("brand"),
+            "category": discovery_cfg.get("category"),
+        }
+        for sku in skus
+    ]
+
+    log_buffer.append(create_log_entry("info", f"Starting discovery scraper for {len(items)} SKUs"))
+    logger.info(f"[Runner] Starting discovery job for {len(items)} SKUs")
+    results["scrapers_run"].append(scraper_name)
+
+    async def _run() -> list[Any]:
+        scraper = AIDiscoveryScraper(
+            headless=settings.browser_settings["headless"],
+            max_search_results=max_search_results,
+            max_steps=max_steps,
+            confidence_threshold=confidence_threshold,
+            llm_model=llm_model,
+        )
+        return await scraper.scrape_products_batch(items, max_concurrency=max_concurrency)
+
+    batch_results = asyncio.run(_run())
+
+    for discovery in batch_results:
+        sku = discovery.sku
+        results["skus_processed"] += 1
+        if not sku:
+            continue
+
+        if sku not in results["data"]:
+            results["data"][sku] = {}
+
+        if discovery.success:
+            results["data"][sku][scraper_name] = {
+                "price": discovery.price,
+                "title": discovery.product_name,
+                "description": discovery.description,
+                "images": discovery.images,
+                "availability": discovery.availability,
+                "url": discovery.url,
+                "source_website": discovery.source_website,
+                "confidence": discovery.confidence,
+                "cost_usd": discovery.cost_usd,
+                "scraped_at": datetime.now().isoformat(),
+            }
+            log_buffer.append(create_log_entry("info", f"{scraper_name}/{sku}: Found data"))
+            logger.info(f"[Runner] {scraper_name}/{sku}: Found data")
+        else:
+            results["data"][sku][scraper_name] = {
+                "error": discovery.error,
+                "cost_usd": discovery.cost_usd,
+                "scraped_at": datetime.now().isoformat(),
+            }
+            log_buffer.append(create_log_entry("warning", f"{scraper_name}/{sku}: {discovery.error or 'Failed'}"))
+            logger.warning(f"[Runner] {scraper_name}/{sku}: {discovery.error or 'Failed'}")
+
+    log_buffer.append(create_log_entry("info", f"Discovery job complete. Processed {results['skus_processed']} SKUs"))
+    logger.info(f"[Runner] Discovery job complete. Processed {results['skus_processed']} SKUs")
     return results
 
 

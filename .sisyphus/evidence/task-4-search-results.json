@@ -1,0 +1,24 @@
+{
+  "task": 4,
+  "handler_path": "scrapers/actions/handlers/ai_search.py",
+  "structure_checks": {
+    "decorator_present": true,
+    "class_inherits_base_ai_action": true,
+    "execute_method_present": true,
+    "stores_results_in_context": true,
+    "accepts_query_param": true,
+    "accepts_max_results_param": true
+  },
+  "runtime_checks": {
+    "import_command": "python3 -c \"from scrapers.actions.handlers.ai_search import AISearchAction; print('✓ AISearchAction import OK')\"",
+    "import_output": "✓ AISearchAction import OK",
+    "registry_command": "python3 -c \"from scrapers.actions.registry import ActionRegistry; print('ai_search' in ActionRegistry._registry)\"",
+    "registry_output": "True"
+  },
+  "notes": [
+    "AISearchAction uses Brave Search API endpoint with async httpx client.",
+    "Retry logic implemented for timeout/network/http/decoding failures.",
+    "Results include url, title, description, domain, and score.",
+    "Scoring prioritizes SKU matches and common product domains."
+  ]
+}

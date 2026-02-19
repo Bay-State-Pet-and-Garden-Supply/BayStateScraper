@@ -1,6 +1,13 @@
 # Bay State Scraper Backend Requirements
 # Core dependencies for web scraping
 
+# AI-powered browser automation
+# NOTE: Use 'from browser_use.llm import ChatOpenAI' not 'from langchain_openai import ChatOpenAI'
+# The browser-use wrapper includes required 'provider' attribute for Agent initialization
+browser-use>=0.1.40
+langchain-openai>=0.2.0
+openai>=1.30.0
+
 # Web scraping
 playwright>=1.40.0
 pyyaml>=6.0
@@ -30,3 +37,6 @@ playwright-stealth>=1.0.4
 
 # Compatibility
 eval-type-backport>=0.1.3
+
+# Search APIs
+brave-search>=0.1.0

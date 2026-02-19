@@ -86,7 +86,8 @@ class TestCodebaseNoSelenium:
         matches: list[tuple[str, int, str]] = []
         for py_file in sorted(SCRAPER_ROOT.rglob("*.py")):
             # Skip test files and __pycache__
-            if "test_" in py_file.name or "__pycache__" in str(py_file):
+            path_str = str(py_file)
+            if "test_" in py_file.name or "__pycache__" in path_str or "/venv/" in path_str or "/.venv/" in path_str or "/site-packages/" in path_str:
                 continue
             for i, line in enumerate(py_file.read_text().splitlines(), start=1):
                 if "selenium" in line:
@@ -94,5 +95,3 @@ class TestCodebaseNoSelenium:
                     matches.append((str(rel), i, line.strip()))
 
         assert matches == [], f"Found {len(matches)} 'selenium' reference(s) in non-test files:\n" + "\n".join(f"  {f}:{ln}: {txt}" for f, ln, txt in matches)
-
-

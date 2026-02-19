@@ -1,36 +1,39 @@
 # SCRAPERS MODULE
 
-**Scope:** Scraping domain - actions, workflows, execution engine
+**Scope:** Scraping domain - actions, workflows, execution engine, events
 
 ## STRUCTURE
 ```
 scrapers/
-├── actions/
-│   ├── handlers/          # 21 action implementations (all async)
+├── actions/               # Action system
+│   ├── handlers/          # 27 action implementations (all async)
 │   │   ├── navigate.py    # Page navigation
 │   │   ├── click.py       # Element clicking
 │   │   ├── extract.py     # Data extraction
-│   │   ├── input.py       # Form input
-│   │   ├── login.py       # Authentication flows
-│   │   └── ... (16 more)
+│   │   ├── ai_extract.py  # AI-powered extraction
+│   │   └── ... (23 more)
 │   ├── base.py            # BaseAction abstract class
-│   ├── registry.py        # ActionRegistry with auto-discovery
-│   └── __init__.py
+│   └── registry.py        # ActionRegistry with auto-discovery
 ├── executor/              # Workflow execution engine (decomposed)
-│   ├── workflow_executor.py      # Main orchestrator (581 lines)
+│   ├── workflow_executor.py      # Main orchestrator
 │   ├── browser_manager.py        # Browser lifecycle
 │   ├── selector_resolver.py      # Element finding/extraction
 │   ├── step_executor.py          # Step execution with retry
 │   ├── debug_capture.py          # Debug artifact capture
 │   └── normalization.py          # Result normalization
-├── configs/               # YAML scraper definitions
+├── events/                # Event system
+│   ├── emitter.py         # EventEmitter with WebSocket
+│   ├── handlers/          # Event handlers
+│   └── websocket_server.py # WebSocket integration
+├── configs/               # YAML scraper definitions (12 files)
 │   ├── amazon.yaml
 │   ├── walmart.yaml
+│   ├── ai-template.yaml
 │   └── ...
 ├── context.py             # ScraperContext Protocol
-├── models/
-│   ├── config.py          # ScraperConfig Pydantic models
-│   └── result.py          # ScrapeResult Pydantic model
+├── models/                # Pydantic models
+│   ├── config.py          # ScraperConfig
+│   └── result.py          # ScrapeResult
 └── parser/
     └── yaml_parser.py     # YAML config parsing
 ```
@@ -69,6 +72,12 @@ WorkflowExecutor delegates to focused modules:
 - **debug_capture**: screenshots, page source on failure
 - **normalization**: result transformations
 
+### Event System
+Event-driven architecture for real-time monitoring:
+- **EventEmitter**: Central event bus with WebSocket support
+- **Handlers**: console, extraction, login, selector events
+- **WebSocket Server**: Real-time event streaming
+
 ## ADDING ACTIONS
 1. Create `{name}.py` in `actions/handlers/`
 2. Inherit `BaseAction`
@@ -81,6 +90,13 @@ WorkflowExecutor delegates to focused modules:
 - **NO** sync browser operations (use async)
 - **NO** direct DB access (use API callbacks)
 - **NO** hardcoded site logic (use YAML params)
+- **NO** bypassing EventEmitter for status updates
+
+## RELATED
+- Parent: `../AGENTS.md` (root scraper overview)
+- Actions: `./actions/AGENTS.md` (action system details)
+- Executor: `./executor/AGENTS.md` (workflow engine)
+- Events: `./events/AGENTS.md` (event system)
 
 ## TESTING
 Action tests: `tests/test_action_registry.py`

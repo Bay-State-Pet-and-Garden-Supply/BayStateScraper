@@ -1,0 +1,46 @@
+{
+  "run_date": "2026-02-19T11:42:41.513189",
+  "config": {
+    "limit": 2,
+    "brand": null,
+    "model": "gpt-4o-mini",
+    "max_steps": 15,
+    "dry_run": true
+  },
+  "summary": {
+    "total": 2,
+    "success": 2,
+    "failed": 0,
+    "success_rate": 1.0,
+    "total_cost_usd": 0.0,
+    "duration_seconds": 0.000142
+  },
+  "results": [
+    {
+      "sku": "TEST001",
+      "success": true,
+      "product_name": "Pro Plan Chicken & Rice",
+      "brand": "Purina",
+      "price": null,
+      "availability": null,
+      "url": null,
+      "source_website": null,
+      "confidence": 0.0,
+      "cost_usd": 0.0,
+      "error": null
+    },
+    {
+      "sku": "TEST002",
+      "success": true,
+      "product_name": "Life Protection Formula",
+      "brand": "Blue Buffalo",
+      "price": null,
+      "availability": null,
+      "url": null,
+      "source_website": null,
+      "confidence": 0.0,
+      "cost_usd": 0.0,
+      "error": null
+    }
+  ]
+}

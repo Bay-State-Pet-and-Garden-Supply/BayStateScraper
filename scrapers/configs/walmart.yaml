@@ -37,6 +37,31 @@ selectors:
   - name: "UPC"
     selector: "//div[contains(text(), 'UPC')]/following-sibling::div | //tr[.//td[contains(., 'UPC')]]/td[2]"
     attribute: "text"
+  - name: "Price"
+    selector: "[itemprop='price'], .price-group, [data-testid='price-wrap']"
+    attribute: "text"
+    required: false
+  - name: "Features"
+    selector: ".nb_bullet, [data-testid='product-description'] li"
+    attribute: "text"
+    multiple: true
+    required: false
+  - name: "Rating"
+    selector: "[data-testid='average-rating'], .rating-number"
+    attribute: "text"
+    required: false
+  - name: "Review Count"
+    selector: "[data-testid='reviews-count'], .rating-count"
+    attribute: "text"
+    required: false
+  - name: "Specifications"
+    selector: "[data-testid='product-specifications']"
+    attribute: "text"
+    required: false
+  - name: "Ingredients"
+    selector: "[data-testid='ingredients-content']"
+    attribute: "text"
+    required: false
 
 workflows:
   - action: "navigate"
@@ -73,7 +98,7 @@ workflows:
       seconds: 2
   - action: "extract"
     params:
-      fields: ["Name", "Brand", "Description", "Image URLs", "Weight", "UPC"]
+      fields: ["Name", "Brand", "Description", "Image URLs", "Images", "Weight", "UPC", "Price", "Features", "Rating", "Review Count", "Specifications", "Ingredients"]
   - action: "transform_value"
     params:
       field: "Image URLs"

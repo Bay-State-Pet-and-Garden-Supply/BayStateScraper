@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -73,6 +73,22 @@ class NormalizationRule(BaseModel):
     params: dict[str, Any] = Field(default_factory=dict, description="Parameters for the action")
 
 
+class AIConfig(BaseModel):
+    """Configuration for AI-powered scrapers.
+
+    Used when scraper_type is 'agentic' to configure
+    browser-use Agent behavior.
+    """
+
+    tool: Literal["browser-use"] = Field(default="browser-use", description="AI tool to use for extraction")
+    task: str = Field(description="Natural language task for the AI agent")
+    max_steps: int = Field(default=10, description="Maximum steps before timeout", ge=1, le=50)
+    confidence_threshold: float = Field(default=0.7, description="Minimum confidence score for acceptance", ge=0.0, le=1.0)
+    llm_model: str = Field(default="gpt-4o-mini", description="OpenAI model to use")
+    use_vision: bool = Field(default=True, description="Enable GPT-4 Vision for better extraction")
+    headless: bool = Field(default=True, description="Run browser in headless mode")
+
+
 class ScraperConfig(BaseModel):
     """Main configuration for a scraper."""
 
@@ -94,6 +110,8 @@ class ScraperConfig(BaseModel):
     name: str = Field(..., description="Name of the scraper")
     base_url: str = Field(..., description="Base URL for the scraper")
     display_name: str | None = Field(None, description="Display name for UI")
+    scraper_type: Literal["static", "agentic"] = Field(default="static", description="Type of scraper: static (CSS selectors) or agentic (AI-powered)")
+    ai_config: AIConfig | None = Field(default=None, description="AI configuration when scraper_type is 'agentic'")
     selectors: list[SelectorConfig] = Field(default_factory=list, description="List of selectors for data extraction")
     workflows: list[WorkflowStep] = Field(default_factory=list, description="List of workflow steps")
     normalization: list[NormalizationRule] | None = Field(None, description="List of normalization rules")

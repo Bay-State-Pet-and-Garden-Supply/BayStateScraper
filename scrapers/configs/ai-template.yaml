@@ -1,0 +1,239 @@
+# AI Scraper Template
+# This is a reference template for AI-powered scrapers using browser-use.
+# Copy this file and customize for your specific scraper.
+
+# ============================================================================
+# BASIC CONFIGURATION
+# ============================================================================
+
+name: "ai-product-extractor"  # Unique identifier for this scraper
+display_name: "AI Product Extractor"  # Human-readable name
+base_url: "https://example.com"  # Base URL (used for relative links)
+
+# IMPORTANT: Must be "agentic" to enable AI features
+scraper_type: "agentic"  # Options: "static" (CSS selectors) or "agentic" (AI-powered)
+
+# AI Configuration (required when scraper_type is "agentic")
+ai_config:
+  # The AI tool to use (currently only "browser-use" is supported)
+  tool: "browser-use"
+  
+  # Natural language task for the AI agent
+  # This describes what the AI should do on each page
+  task: "Extract product information including name, brand, price, description, and images"
+  
+  # Maximum steps the AI agent can take before timeout
+  # Higher values = more thorough but slower and more expensive
+  max_steps: 10  # Range: 1-50, Default: 10
+  
+  # Minimum confidence score for accepting extraction results
+  # Values below this will trigger fallback to traditional extraction
+  confidence_threshold: 0.7  # Range: 0.0-1.0, Default: 0.7
+  
+  # OpenAI model to use for extraction
+  # Options: gpt-4o-mini (cheap), gpt-4o (better), gpt-4 (best but expensive)
+  llm_model: "gpt-4o-mini"  # Default: gpt-4o-mini
+  
+  # Enable GPT-4 Vision for better extraction from complex pages
+  use_vision: true  # Default: true
+  
+  # Run browser in headless mode (no visible window)
+  headless: true  # Default: true
+
+# ============================================================================
+# WORKFLOW DEFINITION
+# ============================================================================
+
+workflows:
+  # Example 1: Simple AI extraction (single page)
+  - action: "ai_extract"
+    name: "extract_product"
+    params:
+      # Task description for the AI
+      task: "Extract product details from this page"
+      
+      # Schema defines what fields to extract
+      # If not provided, uses default ProductData schema
+      schema:
+        name: str
+        brand: str
+        price: str
+        description: str
+        images: list
+        ingredients: str
+      
+      # Visit top N search results (if ai_search was run before)
+      visit_top_n: 1
+      
+      # Maximum agent steps
+      max_steps: 15
+      
+      # Confidence threshold
+      confidence_threshold: 0.8
+
+  # Example 2: Search then extract (multi-step)
+  - action: "ai_search"
+    name: "find_product_pages"
+    params:
+      # Search query with template variables
+      # {sku} and {placeholder_name} are replaced from context
+      query: "{sku} {placeholder_name} product"
+      max_results: 5
+  
+  - action: "ai_extract"
+    name: "extract_from_search_results"
+    params:
+      task: "Extract complete product information from the search results"
+      visit_top_n: 3  # Visit top 3 search results
+      schema:
+        name: str
+        brand: str
+        price: str
+        description: str
+      confidence_threshold: 0.75
+
+  # Example 3: Extract with validation
+  - action: "ai_extract"
+    name: "extract_product"
+    params:
+      task: "Extract product information"
+  
+  - action: "ai_validate"
+    name: "validate_extraction"
+    params:
+      # Fields that must be present and non-empty
+      required_fields:
+        - name
+        - price
+        - brand
+      
+      # Whether to check if extracted SKU matches query SKU
+      sku_must_match: true
+      
+      # Minimum confidence threshold
+      min_confidence: 0.7
+
+# ============================================================================
+# FALLBACK CONFIGURATION (Optional)
+# ============================================================================
+
+# Fallback chain: AI → Traditional → Manual
+# This is handled automatically by the fallback manager
+# but you can configure thresholds here
+
+fallback_config:
+  # Maximum cost per extraction before triggering fallback
+  max_cost_per_extraction: 0.15  # USD
+  
+  # Maximum attempts at each tier
+  max_attempts_per_tier: 2
+  
+  # Whether to enable automatic fallback
+  auto_fallback: true
+
+# ============================================================================
+# SELECTORS (Optional for AI scrapers)
+# ============================================================================
+
+# AI scrapers don't require CSS selectors, but you can provide
+# them as hints for the AI or for hybrid extraction
+
+selectors:
+  - name: "product_name"
+    selector: "h1.product-title"  # Hint for AI
+    attribute: "text"
+    required: false  # AI will find it even if selector fails
+
+# ============================================================================
+# VALIDATION
+# ============================================================================
+
+validation:
+  # Detect "no results" or "out of stock" pages
+  no_results_selectors:
+    - ".no-results"
+    - ".out-of-stock"
+  
+  no_results_text_patterns:
+    - "no products found"
+    - "out of stock"
+    - "unavailable"
+
+# ============================================================================
+# TEST CONFIGURATION
+# ============================================================================
+
+# SKUs to use for testing this scraper
+test_skus:
+  - "12345"
+  - "ABC-67890"
+
+# Fake SKUs that should return no results
+fake_skus:
+  - "FAKE123"
+  - "NOTEXIST999"
+
+# Edge case SKUs for boundary testing
+edge_case_skus:
+  - "0"
+  - ""
+  - "special!@#chars"
+
+# ============================================================================
+# TIMEOUTS AND RETRIES
+# ============================================================================
+
+timeout: 60  # Seconds per step (AI extractions take longer)
+retries: 2   # Number of retries on failure
+
+# ============================================================================
+# ANTI-DETECTION (Optional)
+# ============================================================================
+
+anti_detection:
+  enabled: true
+  user_agent_rotation: true
+  request_delay: 1.0  # Seconds between requests
+
+# ============================================================================
+# TROUBLESHOOTING
+# ============================================================================
+
+# Common Issues and Solutions:
+#
+# 1. "Cost exceeded budget" error
+#    → Lower max_steps or use gpt-4o-mini instead of gpt-4o
+#
+# 2. "Low confidence" warnings
+#    → Lower confidence_threshold or improve task description
+#
+# 3. Anti-bot blocks (CAPTCHA)
+#    → Enable anti_detection settings
+#    → Add delays between requests
+#    → Consider using residential proxies
+#
+# 4. Missing fields in extraction
+#    → Add more specific task description
+#    → Increase max_steps for complex pages
+#    → Use use_vision: true for image-heavy sites
+#
+# 5. SKU mismatch errors
+#    → Disable sku_must_match if SKUs vary by retailer
+#    → Use fuzzy matching (automatic)
+#
+# ============================================================================
+# COST OPTIMIZATION TIPS
+# ============================================================================
+
+# 1. Use gpt-4o-mini for simple extractions (cheapest)
+# 2. Limit max_steps to what's actually needed
+# 3. Use visit_top_n: 1 instead of 3+ when possible
+# 4. Set confidence_threshold to avoid re-extraction
+# 5. Enable cost tracking to monitor spending
+#
+# Typical costs:
+# - gpt-4o-mini: $0.01-0.05 per page
+# - gpt-4o: $0.05-0.15 per page
+# - gpt-4: $0.20-0.50 per page
+#
+# ============================================================================

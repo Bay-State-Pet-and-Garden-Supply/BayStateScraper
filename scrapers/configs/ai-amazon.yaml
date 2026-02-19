@@ -1,0 +1,90 @@
+name: "ai-amazon"
+display_name: "AI Amazon Product Extractor"
+base_url: "https://www.amazon.com"
+scraper_type: "agentic"
+
+ai_config:
+  tool: "browser-use"
+  task: "Find the exact Amazon product detail page for the SKU and extract product identity, pricing, packaging size, and media assets while avoiding sponsored or irrelevant listings."
+  max_steps: 14
+  confidence_threshold: 0.74
+  llm_model: "gpt-4o-mini"
+  use_vision: true
+  headless: true
+
+workflows:
+  - action: "ai_search"
+    name: "search_amazon_for_sku"
+    params:
+      query: "site:amazon.com {sku} pet product"
+      max_results: 5
+
+  - action: "ai_extract"
+    name: "extract_amazon_product"
+    params:
+      task: "Open the best Amazon product page candidate and extract Name, Brand, Price, Description, Images, Availability, ASIN, and package size/weight."
+      visit_top_n: 2
+      max_steps: 16
+      confidence_threshold: 0.74
+      schema:
+        name: str
+        brand: str
+        price: str
+        description: str
+        images: list
+        availability: str
+        asin: str
+        weight: str
+
+  - action: "ai_validate"
+    name: "validate_amazon_extraction"
+    params:
+      required_fields:
+        - name
+        - brand
+        - images
+      sku_must_match: false
+      min_confidence: 0.7
+
+test_skus:
+  - "035585499741"
+  - "079105116708"
+  - "029695285400"
+  - "038100174642"
+  - "017800149495"
+  - "811048022202"
+  - "4059433864082"
+  - "4059433864075"
+  - "4059433816098"
+  - "4059433763316"
+
+fake_skus:
+  - "xyzabc123notexist456"
+  - "B00ZZZZZZZ"
+  - "NOTAPRODUCT"
+
+edge_case_skus:
+  - "A1"
+  - "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+timeout: 60
+retries: 2
+
+anti_detection:
+  enable_captcha_detection: true
+  enable_rate_limiting: true
+  enable_human_simulation: true
+  enable_session_rotation: true
+  enable_blocking_handling: true
+  rate_limit_min_delay: 2.0
+  rate_limit_max_delay: 6.0
+  session_rotation_interval: 25
+  max_retries_on_detection: 2
+
+validation:
+  no_results_selectors:
+    - ".s-no-results-filler"
+    - "#noResultsTitle"
+  no_results_text_patterns:
+    - "no results for"
+    - "0 results"

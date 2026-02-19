@@ -9,6 +9,7 @@ Distributed headless scraper runners for Bay State Pet & Garden Supply.
 - **Simplified Architecture** - Polling daemon mode for reliability
 - **Test Lab Events** - Real-time event system for testing
 - **Enhanced Installation** - Guided setup with realtime key configuration
+- **AI-Powered Extraction** - Agentic browser control for universal product discovery
 
 ## Quick Install
 
@@ -23,6 +24,25 @@ You'll be prompted for:
 2. **API Key** - Get from Admin Panel → Scraper Network → Runner Accounts
 
 That's it! The runner starts automatically and runs in the background.
+
+## AI-Powered Discovery
+
+v0.2.0 introduces agentic scraping capabilities for universal product discovery.
+
+### Key AI Features
+- **Universal Extraction**: No CSS selectors required. AI identifies and extracts product data automatically.
+- **Official Source Identification**: Uses Brave Search + LLM to find official manufacturer pages.
+- **Cost Tracking**: Built-in budget enforcement to prevent runaway API spending.
+- **Smart Fallback**: Automatically falls back to static scraping if AI confidence is low or costs are too high.
+
+### Setup
+Ensure these keys are in your `.env`:
+```bash
+OPENAI_API_KEY=sk-...
+BRAVE_API_KEY=bs-...
+```
+
+For detailed AI configuration, see [docs/ai-scraper.md](../docs/ai-scraper.md).
 
 ## Development vs Production
 
