@@ -1,0 +1,101 @@
+# AI Scraper Config: Walmart
+# Problematic site with strong anti-bot measures and JS-heavy rendering
+name: "ai-walmart"
+display_name: "AI Walmart Product Extractor"
+base_url: "https://www.walmart.com"
+scraper_type: "agentic"
+
+# Problem indicators from static scraper:
+# - anti_bot: Cloudflare, aggressive rate limiting
+# - js_rendered: React SPA with dynamic content loading
+# - selector_breakage: data-testid attributes change frequently
+# - success_rate: <70% estimated due to anti-bot
+
+ai_config:
+  tool: "browser-use"
+  task: "Find the exact Walmart product page for the SKU and extract product name, brand, price, description, images, weight, and specifications. Avoid sponsored listings and verify product matches search query."
+  max_steps: 12
+  confidence_threshold: 0.75
+  llm_model: "gpt-4o-mini"
+  use_vision: true
+  headless: true
+
+workflows:
+  - action: "navigate"
+    name: "search_walmart_for_sku"
+    params:
+      url: "https://www.walmart.com/search?q={sku}"
+
+  - action: "ai_extract"
+    name: "extract_walmart_product"
+    params:
+      task: "Open the best Walmart product page candidate and extract Name, Brand, Price, Description, Images, Weight, UPC, Rating, Review Count, and Specifications. Skip sponsored products."
+      visit_top_n: 2
+      max_steps: 14
+      confidence_threshold: 0.75
+      schema:
+        name: str
+        brand: str
+        price: str
+        description: str
+        images: list
+        weight: str
+        upc: str
+        rating: str
+        review_count: str
+        specifications: str
+
+  - action: "ai_validate"
+    name: "validate_walmart_extraction"
+    params:
+      required_fields:
+        - name
+        - brand
+        - images
+      sku_must_match: false
+      min_confidence: 0.7
+
+test_skus:
+  - "Pedigree Complete Nutrition Adult Dry Dog Food, Grilled Steak & Vegetable Flavor, 44 lb. Bag"
+  - "Purina Dog Chow Complete, Dry Dog Food for Adult Dogs High Protein, Real Chicken, 44 lb Bag"
+  - "Purina Beneful Freshly Prepared Blends Wet Dog Food with Chicken, Carrots, Peas, and Wild Rice, 10 oz Tub"
+  - "Purina Puppy Chow Dry Dog Food, High Protein Tender & Crunchy Real Beef Formula, 15 lb Bag"
+  - "Purina Dog Chow Complete Dry Dog Food for Adult Dogs High Protein, Lamb, 18.5 lb Bag"
+
+fake_skus:
+  - "xyzabc123notexist456"
+  - "000000000000"
+  - "999999999999"
+
+edge_case_skus:
+  - "123"
+  - "12345678901234567890"
+
+timeout: 60
+retries: 2
+
+anti_detection:
+  enable_captcha_detection: true
+  enable_rate_limiting: true
+  enable_human_simulation: true
+  enable_session_rotation: true
+  enable_blocking_handling: true
+  rate_limit_min_delay: 3.0
+  rate_limit_max_delay: 7.0
+  session_rotation_interval: 20
+  max_retries_on_detection: 3
+
+validation:
+  no_results_selectors:
+    - ".no-results"
+    - "[data-testid='no-results']"
+    - ".search-no-results"
+  no_results_text_patterns:
+    - "no results"
+    - "0 results"
+    - "We couldn't find"
+
+# Success criteria for PoC:
+# - Target: >80% extraction success rate
+# - Target: <$0.10 per page cost
+# - Fallback: Traditional scraper if AI fails 2x

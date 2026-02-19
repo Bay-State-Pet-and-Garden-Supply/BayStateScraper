@@ -27,8 +27,7 @@ from urllib.parse import urlparse
 from collections import OrderedDict
 
 from scrapers.ai_cost_tracker import AICostTracker
-from scrapers.ai_metrics import record_ai_extraction, record_ai_fallback
-from scrapers.actions.handlers.ai_base import BaseAIAction
+from scrapers.ai_metrics import record_ai_extraction
 
 logger = logging.getLogger(__name__)
 

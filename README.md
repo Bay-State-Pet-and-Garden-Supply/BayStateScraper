@@ -34,6 +34,7 @@ v0.2.0 introduces agentic scraping capabilities for universal product discovery.
 - **Official Source Identification**: Uses Brave Search + LLM to find official manufacturer pages.
 - **Cost Tracking**: Built-in budget enforcement to prevent runaway API spending.
 - **Smart Fallback**: Automatically falls back to static scraping if AI confidence is low or costs are too high.
+- **Metrics Collection**: Prometheus-compatible metrics for monitoring success rates and costs.
 
 ### Setup
 Ensure these keys are in your `.env`:
@@ -42,7 +43,26 @@ OPENAI_API_KEY=sk-...
 BRAVE_API_KEY=bs-...
 ```
 
-For detailed AI configuration, see [docs/ai-scraper.md](../docs/ai-scraper.md).
+### Quick Start
+
+Create an AI-powered scraper using the template:
+
+```yaml
+name: "my-ai-scraper"
+scraper_type: "agentic"
+
+ai_config:
+  task: "Extract product information"
+  llm_model: "gpt-4o-mini"
+  confidence_threshold: 0.7
+
+workflows:
+  - action: "ai_extract"
+    params:
+      task: "Extract product details"
+```
+
+For detailed AI configuration, cost management, and troubleshooting, see [docs/ai-scraper.md](docs/ai-scraper.md).
 
 ## Development vs Production
 

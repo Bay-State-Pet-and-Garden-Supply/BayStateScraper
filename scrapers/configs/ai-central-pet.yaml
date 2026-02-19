@@ -1,0 +1,109 @@
+# AI Scraper Config: Central Pet
+# Problematic site with AngularJS rendering and complex selectors
+name: "ai-central-pet"
+display_name: "AI Central Pet Product Extractor"
+base_url: "https://www.centralpet.com"
+scraper_type: "agentic"
+
+# Problem indicators from static scraper:
+# - js_rendered: AngularJS (ng-if attributes visible in HTML)
+# - selector_breakage: Complex Angular-style selectors break frequently
+# - Complex DOM structure with nested directives
+
+ai_config:
+  tool: "browser-use"
+  task: "Find the exact Central Pet product for the SKU and extract product name, brand, description, images, weight, UPC, and specifications. Navigate through search results to find the correct product."
+  max_steps: 10
+  confidence_threshold: 0.7
+  llm_model: "gpt-4o-mini"
+  use_vision: true
+  headless: true
+
+workflows:
+  - action: "navigate"
+    name: "search_central_pet_for_sku"
+    params:
+      url: "https://www.centralpet.com/Search?criteria={sku}"
+
+  - action: "ai_extract"
+    name: "extract_central_pet_product"
+    params:
+      task: "Open the best Central Pet product page and extract Name, Brand, Description, Images, Weight, Product Number, UPC, Mfg Part Number, and Specifications. Handle AngularJS dynamic content loading."
+      visit_top_n: 2
+      max_steps: 12
+      confidence_threshold: 0.7
+      schema:
+        name: str
+        brand: str
+        description: str
+        images: list
+        weight: str
+        product_number: str
+        upc: str
+        mfg_part_number: str
+        specifications: str
+
+  - action: "ai_validate"
+    name: "validate_central_pet_extraction"
+    params:
+      required_fields:
+        - name
+        - brand
+        - images
+      sku_must_match: true
+      min_confidence: 0.65
+
+test_skus:
+  - "38777520"   # KONG Air Dog Squeaker Tennis Ball
+  - "43580233"   # IAMS Perfect Portions Kitten Wet Cat Food
+  - "55599200"   # Kaytee Take-Home Box Medium
+  - "32530920"   # Hikari USA Frozen Mysis Shrimp Fish Food
+  - "74200017"   # Starmark Everlasting Treat Chicken Small
+  - "32530120"   # Hikari USA Blood Worm Frozen Fish Food
+  - "48712030"   # Zilla Reptile Food
+  - "87306423"   # Wellness Pet Food
+  - "673541332"  # Tetra Fish Food
+  - "45120633"   # Nylabone Dog Chew
+  - "382450030"  # PetSafe Product
+  - "736690771"  # Kong Dog Toy
+  - "261721632"  # Caru Pet Food
+  - "400413241"  # Vitakraft Pet Product
+  - "292676362"  # Four Paws Pet Product
+
+fake_skus:
+  - "xyzabc123notexist456"
+  - "00000000"
+  - "99999999"
+
+edge_case_skus:
+  - "1"
+  - "123456789012345"
+
+timeout: 60
+retries: 2
+
+anti_detection:
+  enable_captcha_detection: false
+  enable_rate_limiting: true
+  enable_human_simulation: true
+  enable_session_rotation: false
+  enable_blocking_handling: false
+  rate_limit_min_delay: 2.0
+  rate_limit_max_delay: 5.0
+  session_rotation_interval: 30
+  max_retries_on_detection: 2
+
+validation:
+  no_results_selectors:
+    - "span.no-results-found"
+    - ".no-results"
+    - ".empty-search"
+  no_results_text_patterns:
+    - "no results found"
+    - "no products found"
+    - "sorry, no products were found"
+
+# Success criteria for PoC:
+# - Target: >80% extraction success rate
+# - Target: <$0.08 per page cost
+# - Fallback: Traditional scraper if AI fails 2x

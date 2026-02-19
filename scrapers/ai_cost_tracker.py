@@ -11,7 +11,6 @@ from dataclasses import dataclass, field
 from collections import defaultdict
 
 from scrapers.ai_metrics import (
-    get_metrics_collector,
     record_ai_extraction,
     record_ai_fallback,
     set_circuit_breaker,
