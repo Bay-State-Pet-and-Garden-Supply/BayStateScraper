@@ -1,0 +1,7 @@
+# AI Scraper - Separate requirements file
+# Use: pip install -r requirements-ai.txt
+
+browser-use>=0.1.40
+langchain-openai>=0.2.0
+openai>=1.30.0
+playwright>=1.40.0
