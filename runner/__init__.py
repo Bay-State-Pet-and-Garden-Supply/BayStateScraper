@@ -185,6 +185,19 @@ def run_job(
 
                 if result.get("success"):
                     extracted_data = result.get("results", {})
+
+                    if extracted_data.get("product_name") and not extracted_data.get("Name"):
+                        extracted_data["Name"] = extracted_data.pop("product_name")
+                    if extracted_data.get("price") and not extracted_data.get("Price"):
+                        extracted_data["Price"] = extracted_data.pop("price")
+                    if extracted_data.get("brand") and not extracted_data.get("Brand"):
+                        extracted_data["Brand"] = extracted_data.pop("brand")
+                    if extracted_data.get("description") and not extracted_data.get("Description"):
+                        extracted_data["Description"] = extracted_data.pop("description")
+                    if extracted_data.get("image_url") and not extracted_data.get("Images"):
+                        extracted_data["Images"] = [extracted_data.pop("image_url")]
+                    if extracted_data.get("availability") and not extracted_data.get("Availability"):
+                        extracted_data["Availability"] = extracted_data.pop("availability")
                     has_data = any(extracted_data.get(field) for field in ["Name", "Brand", "Weight"])
 
                     if has_data:
@@ -193,12 +206,7 @@ def run_job(
 
                         # Handle both "Images" and "Image URLs" field names
                         # (scraper configs use "Image URLs" as the selector name)
-                        images = (
-                            extracted_data.get("Images")
-                            or extracted_data.get("Image URLs")
-                            or extracted_data.get("Image_URLs")
-                            or []
-                        )
+                        images = extracted_data.get("Images") or extracted_data.get("Image URLs") or extracted_data.get("Image_URLs") or []
 
                         # Capture the product page URL from the browser if not
                         # explicitly extracted by a "URL" selector
