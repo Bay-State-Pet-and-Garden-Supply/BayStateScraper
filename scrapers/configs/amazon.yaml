@@ -22,7 +22,7 @@ selectors:
   - name: "Brand"
     selector: "#bylineInfo"
     attribute: "text"
-  - name: "Images"
+  - name: "Image URLs"
     selector: "#altImages li.imageThumbnail img"
     attribute: "src"
     multiple: true
@@ -78,7 +78,7 @@ workflows:
             - type: "regex_extract"
               pattern: "Visit the (.+) Store"
               group: 1
-        - name: "Images"
+        - name: "Image URLs"
           selector: "#altImages li.imageThumbnail img"
           attribute: "src"
           multiple: true

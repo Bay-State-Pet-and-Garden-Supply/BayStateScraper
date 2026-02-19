@@ -7,28 +7,24 @@ timeout: 30
 retries: 3
 
 selectors:
-  - name: "product_name"
+  - name: "Name"
     selector: "h1"
     attribute: "text"
 
-  - name: "price"
-    selector: ".price"
-    attribute: "text"
-
-  - name: "sku"
+  - name: "SKU"
     selector: ".product-sku"
     attribute: "text"
 
-  - name: "description"
+  - name: "Description"
     selector: "#product-description"
     attribute: "text"
 
-  - name: "image_urls"
+  - name: "Image URLs"
     selector: ".product-image img"
     attribute: "src"
     multiple: true
 
-  - name: "breadcrumbs"
+  - name: "Breadcrumbs"
     selector: ".breadcrumb a"
     attribute: "text"
     multiple: true
@@ -62,7 +58,7 @@ workflows:
 
   - action: "extract"
     params:
-      fields: ["product_name", "price", "sku", "description", "image_urls", "breadcrumbs"]
+      fields: ["Name", "SKU", "Description", "Image URLs", "Breadcrumbs"]
 
 validation:
   no_results_selectors:

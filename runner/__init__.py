@@ -191,10 +191,12 @@ def run_job(
                         if sku not in results["data"]:
                             results["data"][sku] = {}
                         results["data"][sku][config.name] = {
-                            "price": extracted_data.get("Price"),
+                            # Note: Price is NOT scraped - we use our own pricing
                             "title": extracted_data.get("Name"),
+                            "brand": extracted_data.get("Brand"),
+                            "weight": extracted_data.get("Weight"),
                             "description": extracted_data.get("Description"),
-                            "images": extracted_data.get("Images", []),
+                            "images": extracted_data.get("Image URLs", []),
                             "availability": extracted_data.get("Availability"),
                             "url": extracted_data.get("URL"),
                             "scraped_at": datetime.now().isoformat(),

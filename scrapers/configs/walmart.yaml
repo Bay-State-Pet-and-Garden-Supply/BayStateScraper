@@ -27,7 +27,7 @@ selectors:
   - name: "Description"
     selector: "[data-testid='product-description'], div.about-desc, div.AboutThisItem-description"
     attribute: "text"
-  - name: "Images"
+  - name: "Image URLs"
     selector: "[data-testid='media-thumbnail'] img, .hover-zoom-hero-image img, img.prod-hero-image-image"
     attribute: "src"
     multiple: true
@@ -73,10 +73,10 @@ workflows:
       seconds: 2
   - action: "extract"
     params:
-      fields: ["Name", "Brand", "Description", "Images", "Weight", "UPC"]
+      fields: ["Name", "Brand", "Description", "Image URLs", "Weight", "UPC"]
   - action: "transform_value"
     params:
-      field: "Images"
+      field: "Image URLs"
       transformations:
         - type: "replace"
           pattern: "odnHeight=\\d+"

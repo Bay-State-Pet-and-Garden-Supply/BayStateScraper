@@ -6,13 +6,10 @@ retries: 2
 image_quality: 100
 
 selectors:
-  - name: "Title"
+  - name: "Name"
     selector: "h2, .product-title, .product_title"
     attribute: "text"
-  - name: "Price"
-    selector: ".price, .product-price, .offer-price"
-    attribute: "text"
-  - name: "Images"
+  - name: "Image URLs"
     selector: "img"
     attribute: "src"
     multiple: true
@@ -32,13 +29,10 @@ workflows:
     params:
       selector: "div[class*='product-tile'], div[class*='product_tile'], .search-result-grid > div"
       fields:
-        - name: "Title"
+        - name: "Name"
           selector: "h2, .product-title, .product_title"
           attribute: "text"
-        - name: "Price"
-          selector: ".price, .product-price, .offer-price"
-          attribute: "text"
-        - name: "Images"
+        - name: "Image URLs"
           selector: "img"
           attribute: "src"
           multiple: false
