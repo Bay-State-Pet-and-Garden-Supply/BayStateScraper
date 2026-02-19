@@ -24,6 +24,7 @@ import logging
 from typing import Any, Optional
 from dataclasses import dataclass
 from urllib.parse import urlparse
+from collections import OrderedDict
 
 from scrapers.ai_cost_tracker import AICostTracker
 from scrapers.ai_metrics import record_ai_extraction, record_ai_fallback
@@ -42,7 +43,7 @@ class DiscoveryResult:
     brand: Optional[str] = None
     price: Optional[str] = None
     description: Optional[str] = None
-    images: list[str] = None
+    images: Optional[list[str]] = None
     availability: Optional[str] = None
     url: Optional[str] = None
     source_website: Optional[str] = None
@@ -90,6 +91,29 @@ class AIDiscoveryScraper:
         self._cost_tracker = AICostTracker()
         self._browser: Any = None
         self._llm: Any = None
+        self._search_cache: OrderedDict[str, list[dict[str, Any]]] = OrderedDict()
+        self._search_cache_max = 500
+
+    async def scrape_products_batch(
+        self,
+        items: list[dict[str, Any]],
+        max_concurrency: int = 4,
+    ) -> list[DiscoveryResult]:
+        semaphore = asyncio.Semaphore(max(1, max_concurrency))
+
+        async def _run_one(item: dict[str, Any]) -> DiscoveryResult:
+            async with semaphore:
+                sku = str(item.get("sku", "")).strip()
+                if not sku:
+                    return DiscoveryResult(success=False, sku="", error="Missing sku")
+                return await self.scrape_product(
+                    sku=sku,
+                    product_name=item.get("product_name"),
+                    brand=item.get("brand"),
+                    category=item.get("category"),
+                )
+
+        return await asyncio.gather(*[_run_one(item) for item in items])
 
     async def scrape_product(
         self,
@@ -197,6 +221,10 @@ class AIDiscoveryScraper:
         Returns:
             List of search results with url, title, description
         """
+        cached = self._cache_get(query)
+        if cached is not None:
+            return cached
+
         try:
             import os
             import httpx
@@ -237,11 +265,26 @@ class AIDiscoveryScraper:
                         }
                     )
 
+            self._cache_set(query, search_results)
             return search_results
 
         except Exception as e:
             logger.error(f"[AI Discovery] Search failed: {e}")
             return []
+
+    def _cache_get(self, key: str) -> Optional[list[dict[str, Any]]]:
+        if key not in self._search_cache:
+            return None
+        value = self._search_cache.pop(key)
+        self._search_cache[key] = value
+        return value
+
+    def _cache_set(self, key: str, value: list[dict[str, Any]]) -> None:
+        if key in self._search_cache:
+            self._search_cache.pop(key)
+        self._search_cache[key] = value
+        while len(self._search_cache) > self._search_cache_max:
+            self._search_cache.popitem(last=False)
 
     async def _identify_best_source(
         self,
@@ -262,8 +305,6 @@ class AIDiscoveryScraper:
         3. Affiliate/marketing sites
         """
         try:
-            # Initialize LLM
-            from browser_use.llm import ChatOpenAI
             import os
 
             api_key = os.environ.get("OPENAI_API_KEY")
@@ -271,6 +312,9 @@ class AIDiscoveryScraper:
                 logger.error("OPENAI_API_KEY not set")
                 # Fallback to simple heuristic
                 return self._heuristic_source_selection(search_results, brand)
+
+            browser_llm_module = __import__("browser_use.llm", fromlist=["ChatOpenAI"])
+            ChatOpenAI = getattr(browser_llm_module, "ChatOpenAI")
 
             llm = ChatOpenAI(
                 model=self.llm_model,
@@ -359,11 +403,15 @@ Respond with ONLY the number (1-{len(search_results)}) of the best result, or 0 
         brand: Optional[str],
     ) -> dict[str, Any]:
         """Extract product data from the selected URL using browser-use."""
+        browser = None
         try:
-            # Import browser-use components
-            from browser_use import Browser, Agent
-            from browser_use.llm import ChatOpenAI
             import os
+
+            browser_module = __import__("browser_use", fromlist=["Browser", "Agent"])
+            Browser = getattr(browser_module, "Browser")
+            Agent = getattr(browser_module, "Agent")
+            browser_llm_module = __import__("browser_use.llm", fromlist=["ChatOpenAI"])
+            ChatOpenAI = getattr(browser_llm_module, "ChatOpenAI")
 
             # Initialize browser
             browser = Browser(headless=self.headless)
@@ -445,10 +493,11 @@ Return ONLY a JSON object with these fields. If a field is not available, use nu
             }
         finally:
             # Cleanup browser
-            try:
-                await browser.close()
-            except:
-                pass
+            if browser is not None:
+                try:
+                    await browser.close()
+                except Exception:
+                    pass
 
 
 # Convenience function for direct usage
