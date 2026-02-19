@@ -7,6 +7,7 @@ class ActionRegistry:
     """Registry for managing available workflow actions."""
 
     _actions: dict[str, type[BaseAction]] = {}
+    _registry: dict[str, type[BaseAction]] = _actions
 
     @classmethod
     def register(cls, name: str):
@@ -41,7 +42,7 @@ class ActionRegistry:
         # Import all modules in the handlers directory
         for _, module_name, _ in pkgutil.iter_modules([str(handlers_path)]):
             try:
-                importlib.import_module(f"scrapers.actions.handlers.{module_name}")
+                _ = importlib.import_module(f"scrapers.actions.handlers.{module_name}")
                 # The decorators will register the actions automatically
             except ImportError as e:
                 # Log but don't fail - some handlers might have dependencies
@@ -55,6 +56,10 @@ class ActionRegistry:
 
         logger = logging.getLogger(__name__)
         registered_count = len(cls._actions)
-        logger.info(
-            f"Auto-discovered {registered_count} actions: {list(cls._actions.keys())}"
-        )
+        logger.info(f"Auto-discovered {registered_count} actions: {list(cls._actions.keys())}")
+
+
+try:
+    ActionRegistry.auto_discover_actions()
+except Exception:
+    pass
