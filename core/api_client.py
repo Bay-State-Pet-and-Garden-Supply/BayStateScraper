@@ -51,6 +51,7 @@ class JobConfig:
     max_workers: int = 3
     job_type: str = "standard"
     job_config: dict[str, Any] | None = None
+    ai_credentials: dict[str, str] | None = None
     lease_token: str | None = None
     lease_expires_at: str | None = None
 
@@ -318,6 +319,7 @@ class ScraperAPIClient:
                 max_workers=data.get("max_workers", 3),
                 job_type=data.get("job_type", "standard"),
                 job_config=data.get("job_config"),
+                ai_credentials=data.get("ai_credentials"),
             )
 
         except AuthenticationError as e:
@@ -530,6 +532,7 @@ class ScraperAPIClient:
                 max_workers=job_data.get("max_workers", 3),
                 job_type=job_data.get("job_type", "standard"),
                 job_config=job_data.get("job_config"),
+                ai_credentials=job_data.get("ai_credentials"),
                 lease_token=job_data.get("lease_token"),
                 lease_expires_at=job_data.get("lease_expires_at"),
             )

@@ -2,9 +2,7 @@
 # Core dependencies for web scraping
 
 # AI-powered browser automation
-# NOTE: Use 'from browser_use.llm import ChatOpenAI' not 'from langchain_openai import ChatOpenAI'
-# The browser-use wrapper includes required 'provider' attribute for Agent initialization
-browser-use>=0.1.40
+crawl4ai>=0.8.0
 langchain-openai>=0.2.0
 openai>=1.30.0
 

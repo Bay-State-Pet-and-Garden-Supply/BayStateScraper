@@ -40,10 +40,10 @@ class DiscoveryResult:
     sku: str
     product_name: Optional[str] = None
     brand: Optional[str] = None
-    price: Optional[str] = None
     description: Optional[str] = None
+    size_metrics: Optional[str] = None
     images: Optional[list[str]] = None
-    availability: Optional[str] = None
+    categories: Optional[list[str]] = None
     url: Optional[str] = None
     source_website: Optional[str] = None
     confidence: float = 0.0
@@ -53,6 +53,8 @@ class DiscoveryResult:
     def __post_init__(self):
         if self.images is None:
             self.images = []
+        if self.categories is None:
+            self.categories = []
 
 
 class AIDiscoveryScraper:
@@ -142,15 +144,45 @@ class AIDiscoveryScraper:
             if not search_results:
                 return DiscoveryResult(success=False, sku=sku, error="No search results found")
 
-            # Step 3: Use AI to identify best source (prefer manufacturer website)
-            target_url = await self._identify_best_source(search_results, brand, product_name)
-            if not target_url:
-                return DiscoveryResult(success=False, sku=sku, error="Could not identify suitable product page")
+            # Step 3-5: Try extracting from each source with fallback
+            max_attempts = 3
+            extraction_result = None
+            target_url = None
 
-            logger.info(f"[AI Discovery] Selected source: {target_url}")
+            for attempt in range(max_attempts):
+                # Step 3: Use AI to identify best source (prefer manufacturer website)
+                target_url = await self._identify_best_source(search_results, sku, brand, product_name)
+                if not target_url:
+                    if attempt < max_attempts - 1:
+                        # Remove failed URL and try next
+                        search_results = [r for r in search_results if r.get("url") != target_url]
+                        continue
+                    return DiscoveryResult(success=False, sku=sku, error="Could not identify suitable product page")
 
-            # Step 4: Extract product data from the selected page
-            extraction_result = await self._extract_product_data(target_url, sku, product_name, brand)
+                logger.info(f"[AI Discovery] Selected source (attempt {attempt + 1}): {target_url}")
+
+                # Step 4: Extract product data from the selected page
+                extraction_result = await self._extract_product_data(target_url, sku, product_name, brand)
+
+                # Check if extraction succeeded and has images/confidence
+                if extraction_result.get("success"):
+                    images = extraction_result.get("images", [])
+                    confidence = extraction_result.get("confidence", 0)
+
+                    if len(images) > 0 and confidence >= 0.8:
+                        # Good result, break out of loop
+                        break
+
+                    logger.info(f"[AI Discovery] Attempt {attempt + 1} returned {len(images)} images, confidence {confidence}. Trying next source...")
+
+                # Remove tried URL from results and try next
+                search_results = [r for r in search_results if r.get("url") != target_url]
+                if not search_results:
+                    logger.warning("[AI Discovery] No more search results to try")
+                    break
+
+            if not extraction_result:
+                return DiscoveryResult(success=False, sku=sku, error="All extraction attempts failed")
 
             # Step 5: Record metrics
             cost_summary = self._cost_tracker.get_cost_summary()
@@ -169,10 +201,10 @@ class AIDiscoveryScraper:
                     sku=sku,
                     product_name=extraction_result.get("product_name") or product_name,
                     brand=extraction_result.get("brand") or brand,
-                    price=extraction_result.get("price"),
                     description=extraction_result.get("description"),
+                    size_metrics=extraction_result.get("size_metrics"),
                     images=extraction_result.get("images", []),
-                    availability=extraction_result.get("availability"),
+                    categories=extraction_result.get("categories", []),
                     url=target_url,
                     source_website=urlparse(target_url).netloc,
                     confidence=extraction_result.get("confidence", 0),
@@ -288,6 +320,7 @@ class AIDiscoveryScraper:
     async def _identify_best_source(
         self,
         search_results: list[dict[str, Any]],
+        sku: str,
         brand: Optional[str],
         product_name: Optional[str],
     ) -> Optional[str]:
@@ -329,26 +362,38 @@ class AIDiscoveryScraper:
                 ]
             )
 
-            prompt = f"""Given these search results for a product, identify the BEST official product page.
+            # Prompt v2 - Optimized for manufacturer site detection and exact variant extraction
+            prompt = f"""You are ranking search results to select the single best product page for structured extraction.
 
-Product Brand: {brand or "Unknown"}
-Product Name: {product_name or "Unknown"}
+INPUT PRODUCT CONTEXT
+- SKU: {sku or "Unknown"}
+- Brand (may be null): {brand or "Unknown"}
+- Product Name: {product_name or "Unknown"}
 
-Search Results:
+SEARCH RESULTS
 {results_text}
 
-Rank the results by preference:
-1. Manufacturer/brand official website (e.g., purina.com for Purina products)
-2. Official product page with complete specs
-3. Major retailer with comprehensive product info
+INSTRUCTIONS
+1) Infer the likely canonical brand when Brand is Unknown by using Product Name tokens and search result titles/descriptions.
+2) Score each result using this weighted rubric (0-100 total):
+   - Domain authority & source tier (0-45)
+     - 45: official manufacturer / official brand domain for inferred brand
+     - 30: major trusted retailer PDP (Home Depot, Lowe's, Walmart, Target, Chewy, Tractor Supply, Ace)
+     - 10: marketplace / affiliate / review / aggregator pages
+   - SKU/variant relevance (0-30)
+     - Explicit SKU match or exact variant tokens (size/color/form) in title/snippet/url
+   - Content quality signals (0-25)
+     - Strong signals: explicit price mention, stock/availability hint, product detail depth, image-rich PDP indicators
+     - Penalize thin pages, category pages, blog/review pages, comparison pages, or "best X" roundups
 
-AVOID:
-- Review sites
-- Comparison shopping sites  
-- Affiliate marketing sites
-- Sites with thin content
+REQUIRED DECISION POLICY
+- Prefer manufacturer page if it is plausibly the exact SKU/variant.
+- If no viable manufacturer result exists, choose best major retailer PDP.
+- Affiliate/review/aggregator pages are last resort and should only be selected when nothing else is viable.
 
-Respond with ONLY the number (1-{len(search_results)}) of the best result, or 0 if none are suitable."""
+OUTPUT FORMAT (STRICT)
+- Return ONLY one integer from 1 to {len(search_results[: self.max_search_results])} for the best result.
+- Return 0 only if none are suitable product pages."""
 
             response = await llm.ainvoke(prompt)
             response_text = response.content if hasattr(response, "content") else str(response)
@@ -401,87 +446,142 @@ Respond with ONLY the number (1-{len(search_results)}) of the best result, or 0 
         product_name: Optional[str],
         brand: Optional[str],
     ) -> dict[str, Any]:
-        """Extract product data from the selected URL using browser-use."""
-        browser = None
+        """Extract product data from the selected URL using crawl4ai."""
         try:
             import os
+            import json
+            from pydantic import BaseModel, Field
+            from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig, CacheMode, LLMConfig
+            from crawl4ai.extraction_strategy import LLMExtractionStrategy
 
-            browser_module = __import__("browser_use", fromlist=["Browser", "Agent"])
-            Browser = getattr(browser_module, "Browser")
-            Agent = getattr(browser_module, "Agent")
-            browser_llm_module = __import__("browser_use.llm", fromlist=["ChatOpenAI"])
-            ChatOpenAI = getattr(browser_llm_module, "ChatOpenAI")
+            class ProductData(BaseModel):
+                product_name: str = Field(description="The exact product name")
+                brand: str = Field(description="The brand name")
+                description: str = Field(description="Full product description")
+                size_metrics: str = Field(description="Size, weight, volume, or dimensions (e.g., '5 lb bag', '12oz bottle')")
+                images: list[str] = Field(description="List of product image URLs")
+                categories: list[str] = Field(description="Product types, categories, or tags (e.g., ['Dog Food', 'Dry Food', 'Grain-Free'])")
 
-            # Initialize browser
-            browser = Browser(headless=self.headless)
-
-            # Initialize LLM
             api_key = os.environ.get("OPENAI_API_KEY")
             if not api_key:
                 return {"success": False, "error": "OPENAI_API_KEY not set"}
 
-            llm = ChatOpenAI(
-                model=self.llm_model,
-                api_key=api_key,
-                temperature=0,
+            browser_config = BrowserConfig(
+                headless=self.headless,
+                viewport={"width": 1920, "height": 1080},
             )
 
-            # Build extraction task
-            task = f"""Navigate to {url} and extract product information for:
-SKU: {sku}
-Expected Brand: {brand or "Unknown"}
-Expected Product: {product_name or "Unknown"}
+            # Prompt v2 - Optimized for manufacturer site detection and exact variant extraction
+            instruction = f"""Extract structured product data for a single SKU-locked product page.
 
-Extract the following fields:
-- product_name: The exact product name
-- brand: The brand name (verify it matches expected brand if provided)
-- price: Current price (with currency symbol)
-- description: Full product description
-- images: List of product image URLs
-- availability: In stock status
+TARGET CONTEXT
+- SKU: {sku}
+- Expected Brand (may be null): {brand or "Unknown"}
+- Expected Product Name: {product_name or "Unknown"}
 
-Return ONLY a JSON object with these fields. If a field is not available, use null."""
+CRITICAL EXTRACTION RULES
+1) SKU / VARIANT LOCK (FUZZY VALIDATION)
+   - Ensure extracted product refers to the same variant as the target SKU context.
+   - Match using fuzzy evidence across: SKU text, size/weight, color, flavor, form-factor terms.
+   - Do NOT output data for a different variant from carousel/recommendations.
 
-            # Create and run agent
-            agent = Agent(
-                task=task,
-                llm=llm,
-                browser=browser,
-                max_steps=self.max_steps,
+2) BRAND INFERENCE
+   - If Expected Brand is Unknown/null, infer brand from the product title, breadcrumb, manufacturer field, or structured data.
+   - Return the canonical brand string (not store name).
+
+3) MUST-FILL CHECKLIST BEFORE FINAL OUTPUT
+   - product_name: required
+   - images: at least 1 required
+   - brand, description, size_metrics, categories: strongly preferred
+   - If a required field cannot be found, keep searching the same page context (JSON-LD, meta, visible PDP modules) before giving up.
+
+4) SIZE METRICS EXTRACTION
+   - Extract size, weight, volume, or dimensions (e.g., "5 lb bag", "12oz bottle", "24-pack")
+   - Look in title, product specs, variant selectors, or packaging information
+
+5) CATEGORIES EXTRACTION
+   - Extract product types, categories, or tags (e.g., ["Dog Food", "Dry Food", "Grain-Free"])
+   - Look in breadcrumbs, category navigation, product tags, or structured data
+
+6) IMAGE PRIORITIZATION
+     - images: Extract ALL high-resolution product image URLs from the image carousel, gallery thumbnails, and JSON-LD structured data blocks.
+     - Look carefully for `data-src` attributes, `<script type="application/ld+json">`, and elements with classes like `carousel` or `gallery`.
+     - Do not just grab the first image. Return absolute URLs only (https://...).
+     - Put primary hero image first, then additional product angles, variants, and detail shots.
+     - Exclude sprites, icons, logos, and unrelated recommendation images.
+     - DO NOT HALLUCINATE OR INVENT URLS. If you cannot find absolute URLs on the current domain, return an empty list rather than `example.com` or placeholder URLs.
+
+7) DESCRIPTION QUALITY
+   - Extract meaningful product description/spec text for the exact variant, not generic category copy.
+
+OUTPUT QUALITY BAR
+- Return the most complete, variant-accurate record possible.
+- Do not hallucinate missing values."""
+
+            llm_strategy = LLMExtractionStrategy(
+                llm_config=LLMConfig(
+                    provider=f"openai/{self.llm_model}",
+                    api_token=api_key,
+                ),
+                schema=ProductData.model_json_schema(),
+                extraction_type="schema",
+                instruction=instruction,
             )
 
-            result = await agent.run()
+            # JavaScript to scroll the page to trigger lazy loading of carousel images
+            scroll_js = """
+            async () => {
+                // Scroll down to bottom to trigger lazy loading
+                window.scrollTo(0, document.body.scrollHeight);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Scroll back up
+                window.scrollTo(0, 0);
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Try to find and interact with carousel elements
+                const carousels = document.querySelectorAll('[class*="carousel"], [class*="gallery"], [data-carousel], [role="carousel"]');
+                for (const carousel of carousels) {
+                    carousel.scrollLeft += 200;
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+            }
+            """
 
-            # Parse result
-            result_text = result.content if hasattr(result, "content") else str(result)
+            crawl_config = CrawlerRunConfig(
+                extraction_strategy=llm_strategy,
+                cache_mode=CacheMode.BYPASS,
+                js_code=scroll_js,
+                delay_before_return_html=2.0,
+                word_count_threshold=1,
+            )
 
-            # Extract JSON from result
-            try:
-                # Find JSON in the response
-                start = result_text.find("{")
-                end = result_text.rfind("}")
-                if start >= 0 and end > start:
-                    json_str = result_text[start : end + 1]
-                    data = json.loads(json_str)
-                else:
-                    data = {}
+            async with AsyncWebCrawler(config=browser_config) as crawler:
+                result = await crawler.arun(url=url, config=crawl_config)
 
-                # Validate and enhance result
-                data["success"] = True
-                data["url"] = url
+                if result.success and result.extracted_content:
+                    try:
+                        data = json.loads(result.extracted_content)
+                        if data and isinstance(data, list):
+                            product_data = data[0]
+                            product_data["success"] = True
+                            product_data["url"] = url
 
-                # Calculate confidence based on filled fields
-                required_fields = ["product_name", "brand", "price", "images"]
-                filled = sum(1 for f in required_fields if data.get(f))
-                data["confidence"] = filled / len(required_fields)
+                            # Calculate confidence based on filled fields
+                            required_fields = ["product_name", "brand", "description", "size_metrics", "images", "categories"]
+                            filled = sum(1 for f in required_fields if product_data.get(f))
+                            product_data["confidence"] = filled / len(required_fields)
 
-                return data
-
-            except json.JSONDecodeError:
+                            return product_data
+                    except json.JSONDecodeError:
+                        return {
+                            "success": False,
+                            "error": "Could not parse extraction result",
+                            "raw_response": result.extracted_content[:500],
+                        }
                 return {
                     "success": False,
-                    "error": "Could not parse extraction result",
-                    "raw_response": result_text[:500],
+                    "error": result.error_message or "Extraction failed or returned no content",
                 }
 
         except Exception as e:
@@ -490,13 +590,6 @@ Return ONLY a JSON object with these fields. If a field is not available, use nu
                 "success": False,
                 "error": str(e),
             }
-        finally:
-            # Cleanup browser
-            if browser is not None:
-                try:
-                    await browser.close()
-                except Exception:
-                    pass
 
 
 # Convenience function for direct usage

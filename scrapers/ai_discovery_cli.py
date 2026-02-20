@@ -85,20 +85,19 @@ Examples:
         print(f"✅ SUCCESS (Confidence: {result.confidence:.0%})")
         print(f"\n📦 Product: {result.product_name or 'N/A'}")
         print(f"🏢 Brand: {result.brand or 'N/A'}")
-        print(f"💰 Price: {result.price or 'N/A'}")
+        print(f"📏 Size: {result.size_metrics or 'N/A'}")
         print(f"📍 Source: {result.source_website or 'N/A'}")
-        print(f"🔗 URL: {result.url or 'N/A'}")
-        print(f"✓ Availability: {result.availability or 'N/A'}")
+        print(f"🏷️ Categories: {', '.join(result.categories) if result.categories else 'N/A'}")
         print(f"\n📝 Description:")
         desc = result.description or "N/A"
         if len(desc) > 200:
             desc = desc[:200] + "..."
         print(f"  {desc}")
-        print(f"\n🖼️  Images: {len(result.images)} found")
-        for i, img in enumerate(result.images[:3], 1):
+        print(f"\n🖼️  Images: {len(result.images or [])} found")
+        for i, img in enumerate((result.images or [])[:3], 1):
             print(f"  {i}. {img[:80]}...")
-        if len(result.images) > 3:
-            print(f"  ... and {len(result.images) - 3} more")
+        if len(result.images or []) > 3:
+            print(f"  ... and {len(result.images or []) - 3} more")
     else:
         print(f"❌ FAILED")
         print(f"\nError: {result.error or 'Unknown error'}")
@@ -114,10 +113,10 @@ Examples:
             "sku": result.sku,
             "product_name": result.product_name,
             "brand": result.brand,
-            "price": result.price,
+            "size_metrics": result.size_metrics,
             "description": result.description,
             "images": result.images,
-            "availability": result.availability,
+            "categories": result.categories,
             "url": result.url,
             "source_website": result.source_website,
             "confidence": result.confidence,

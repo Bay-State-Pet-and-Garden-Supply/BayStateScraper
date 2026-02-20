@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 from datetime import datetime, timezone
 from typing import Any
 
@@ -270,6 +271,17 @@ def _run_discovery_job(
     confidence_threshold = float(discovery_cfg.get("confidence_threshold", 0.7) or 0.7)
     llm_model = str(discovery_cfg.get("llm_model", "gpt-4o-mini") or "gpt-4o-mini")
 
+    previous_openai = os.environ.get("OPENAI_API_KEY")
+    previous_brave = os.environ.get("BRAVE_API_KEY")
+    runtime_credentials = job_config.ai_credentials or {}
+    runtime_openai = runtime_credentials.get("openai_api_key")
+    runtime_brave = runtime_credentials.get("brave_api_key")
+
+    if runtime_openai:
+        os.environ["OPENAI_API_KEY"] = runtime_openai
+    if runtime_brave:
+        os.environ["BRAVE_API_KEY"] = runtime_brave
+
     items = [
         {
             "sku": sku,
@@ -294,7 +306,20 @@ def _run_discovery_job(
         )
         return await scraper.scrape_products_batch(items, max_concurrency=max_concurrency)
 
-    batch_results = asyncio.run(_run())
+    try:
+        batch_results = asyncio.run(_run())
+    finally:
+        if runtime_openai:
+            if previous_openai is None:
+                os.environ.pop("OPENAI_API_KEY", None)
+            else:
+                os.environ["OPENAI_API_KEY"] = previous_openai
+
+        if runtime_brave:
+            if previous_brave is None:
+                os.environ.pop("BRAVE_API_KEY", None)
+            else:
+                os.environ["BRAVE_API_KEY"] = previous_brave
 
     for discovery in batch_results:
         sku = discovery.sku
@@ -307,11 +332,11 @@ def _run_discovery_job(
 
         if discovery.success:
             results["data"][sku][scraper_name] = {
-                "price": discovery.price,
+                "size_metrics": discovery.size_metrics,
                 "title": discovery.product_name,
                 "description": discovery.description,
                 "images": discovery.images,
-                "availability": discovery.availability,
+                "categories": discovery.categories,
                 "url": discovery.url,
                 "source_website": discovery.source_website,
                 "confidence": discovery.confidence,
