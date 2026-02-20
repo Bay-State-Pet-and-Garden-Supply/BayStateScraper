@@ -140,9 +140,10 @@ class AIDiscoveryScraper:
             logger.info(f"[AI Discovery] Searching for: {search_query}")
 
             # Step 2: Search for product pages
-            search_results = await self._search_product(search_query)
+            search_results, search_error = await self._search_product(search_query)
             if not search_results:
-                return DiscoveryResult(success=False, sku=sku, error="No search results found")
+                error_msg = search_error or "No search results found"
+                return DiscoveryResult(success=False, sku=sku, error=error_msg)
 
             # Step 3-5: Try extracting from each source with fallback
             max_attempts = 3
@@ -243,18 +244,18 @@ class AIDiscoveryScraper:
 
         return query
 
-    async def _search_product(self, query: str) -> list[dict[str, Any]]:
+    async def _search_product(self, query: str) -> tuple[list[dict[str, Any]], Optional[str]]:
         """Search for product using Brave Search API.
 
         Args:
             query: Search query
 
         Returns:
-            List of search results with url, title, description
+            Tuple of (List of search results, Error message if any)
         """
         cached = self._cache_get(query)
         if cached is not None:
-            return cached
+            return cached, None
 
         try:
             import os
@@ -263,7 +264,7 @@ class AIDiscoveryScraper:
             api_key = os.environ.get("BRAVE_API_KEY")
             if not api_key:
                 logger.error("BRAVE_API_KEY not set")
-                return []
+                return [], "BRAVE_API_KEY not set"
 
             headers = {
                 "Accept": "application/json",
@@ -297,11 +298,11 @@ class AIDiscoveryScraper:
                     )
 
             self._cache_set(query, search_results)
-            return search_results
+            return search_results, None
 
         except Exception as e:
             logger.error(f"[AI Discovery] Search failed: {e}")
-            return []
+            return [], str(e)
 
     def _cache_get(self, key: str) -> Optional[list[dict[str, Any]]]:
         if key not in self._search_cache:

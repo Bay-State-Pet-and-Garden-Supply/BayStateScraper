@@ -145,7 +145,7 @@ RUNNER_NAME=$(hostname)
 EOF
 
 # Start
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Environment Variables

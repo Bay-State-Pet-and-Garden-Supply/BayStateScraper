@@ -4,7 +4,7 @@ import asyncio
 import logging
 import os
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Dict, List, Optional, Tuple
 
 from core.api_client import JobConfig
 from core.events import create_emitter
@@ -21,7 +21,7 @@ class ConfigurationError(Exception):
     pass
 
 
-def create_log_entry(level: str, message: str) -> dict[str, Any]:
+def create_log_entry(level: str, message: str) -> Dict[str, Any]:
     return {
         "level": level,
         "message": message,
@@ -31,9 +31,9 @@ def create_log_entry(level: str, message: str) -> dict[str, Any]:
 
 def run_job(
     job_config: JobConfig,
-    runner_name: str | None = None,
-    log_buffer: list[dict[str, Any]] | None = None,
-) -> dict[str, Any]:
+    runner_name: Optional[str] = None,
+    log_buffer: Optional[List[Dict[str, Any]]] = None,
+) -> Dict[str, Any]:
     del runner_name
 
     job_id = job_config.job_id
@@ -41,7 +41,7 @@ def run_job(
     parser = ScraperConfigParser()
     collector = ResultCollector(test_mode=job_config.test_mode)
 
-    results: dict[str, Any] = {
+    results: Dict[str, Any] = {
         "skus_processed": 0,
         "scrapers_run": [],
         "data": {},
@@ -156,7 +156,7 @@ def run_job(
 
             # Run all async operations in a single event loop to properly manage
             # Playwright browser subprocess lifecycle
-            async def run_all_scrapes():
+            async def run_all_scrapes() -> List[Tuple[str, Any]]:
                 if executor is None:
                     return []
                 scrape_results = []
@@ -240,6 +240,7 @@ def run_job(
                         collector.add_result(sku, config.name, extracted_data)
 
                         log_buffer.append(create_log_entry("info", f"{config.name}/{sku}: Found data"))
+                        emitter.info(f"{config.name}/{sku}: Found data", data=results["data"][sku][config.name])
                         logger.info(f"[Runner] {config.name}/{sku}: Found data")
                     else:
                         log_buffer.append(create_log_entry("info", f"{config.name}/{sku}: No data found"))
@@ -259,10 +260,10 @@ def run_job(
 
 def _run_discovery_job(
     job_config: JobConfig,
-    skus: list[str],
-    results: dict[str, Any],
-    log_buffer: list[dict[str, Any]],
-) -> dict[str, Any]:
+    skus: List[str],
+    results: Dict[str, Any],
+    log_buffer: List[Dict[str, Any]],
+) -> Dict[str, Any]:
     discovery_cfg = job_config.job_config or {}
     scraper_name = "ai_discovery"
     max_concurrency = int(discovery_cfg.get("max_concurrency", job_config.max_workers) or job_config.max_workers)

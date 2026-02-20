@@ -6,6 +6,7 @@ from typing import Any
 
 from core.api_client import ScraperAPIClient
 from core.config_fetcher import ConfigFetchError, ConfigValidationError
+from core.events import ScraperEvent, event_bus
 from core.realtime_manager import RealtimeManager
 from utils.structured_logging import generate_trace_id
 
@@ -110,7 +111,40 @@ async def run_realtime_mode(client: ScraperAPIClient, runner_name: str) -> None:
                     details={"skus": len(job_config.skus), "scrapers": [s.name for s in job_config.scrapers]},
                 )
 
-            results = run_job(job_config, runner_name=runner_name)
+            def _on_scraper_event(event: ScraperEvent) -> None:
+                if event.job_id != job_id:
+                    return
+                # We want to capture the SYSTEM_INFO events that carry our product data details
+                if event.event_type.value in ("system.info", "system.warning", "system.error"):
+                    try:
+                        import asyncio
+                        
+                        level_map = {
+                            "system.info": "info",
+                            "system.warning": "warning",
+                            "system.error": "error"
+                        }
+                        
+                        # Only broadcast if there are actual details to share, 
+                        # to avoid duplicating the standard logger info messages already being sent elsewhere
+                        if event.data:
+                            asyncio.create_task(
+                                rm.broadcast_job_log(
+                                    job_id=job_id, 
+                                    level=level_map.get(event.event_type.value, "info"), 
+                                    message=event.data.get("message", "Product data found"), 
+                                    details=event.data
+                                )
+                            )
+                    except Exception as e:
+                        logger.error(f"[Realtime Runner] Failed to handle event payload: {e}")
+
+            event_bus.subscribe(_on_scraper_event)
+            
+            try:
+                results = run_job(job_config, runner_name=runner_name)
+            finally:
+                event_bus.unsubscribe(_on_scraper_event)
 
             if rm.is_connected:
                 await rm.broadcast_job_progress(
