@@ -1,0 +1,122 @@
+[
+  {
+    "sku": "032247886598",
+    "brand": "Scotts",
+    "name": "Scotts NatureScapes Color Enhanced Mulch Deep Forest Brown 1.5 cu ft",
+    "description": "Scotts NatureScapes Color Enhanced Mulch Deep Forest Brown helps soil retain moisture, prevents weeds, and never has recycled pallet wood with chemicals or harmful debris. Uses ColorGuard technology for year-long color.",
+    "size_metrics": "1.5 cu ft",
+    "images": [
+      "https://www.lowes.com/pd/Scotts-Color-Enhanced-1-5-cu-ft-Deep-Forest-Brown-Blend-Mulch/1001364002"
+    ],
+    "categories": ["Mulch", "Garden Care", "Soil Amendment"],
+    "source": "ScottsMiracle-Gro, Lowes, True Value"
+  },
+  {
+    "sku": "095668300593",
+    "brand": "Manna Pro",
+    "name": "Manna Pro Duckling & Gosling Starter Grower Crumbles 8 lb",
+    "description": "Complete non-medicated feed for ducklings and goslings. Contains 22% protein to support healthy growth and muscle development. Fortified with essential vitamins, minerals, and probiotics. No artificial colors or antibiotics.",
+    "size_metrics": "8 lb",
+    "images": [
+      "https://mannapro.com/products/duck-starter-grower"
+    ],
+    "categories": ["Poultry Feed", "Duck Feed", "Starter Feed"],
+    "source": "MannaPro, Tractor Supply, Southern States"
+  },
+  {
+    "sku": "032247761215",
+    "brand": "Scotts",
+    "name": "Scotts Turf Builder EdgeGuard Mini Broadcast Spreader",
+    "description": "Compact broadcast spreader with patented EdgeGuard technology. Holds up to 5,000 sq ft of lawn products. Keeps product off landscaping, driveways, sidewalks and waterways. Rustproof hopper.",
+    "size_metrics": "5,000 sq ft capacity",
+    "images": [
+      "https://www.scotts.com/en-us/shop/spreaders/scotts-turf-builder-edgeguard-mini-broadcast-spreader/76121B.html"
+    ],
+    "categories": ["Spreader", "Lawn Care", "Garden Tool"],
+    "source": "Scotts, Home Depot, Lowes"
+  },
+  {
+    "sku": "032247885591",
+    "brand": "Scotts",
+    "name": "Scotts NatureScapes Classic Black Color Enhanced Mulch 1.5 cu ft",
+    "description": "Scotts NatureScapes Classic Black Color Enhanced Mulch helps soil retain moisture, prevents weeds, and never has recycled pallet wood. Features ColorGuard technology for year-long color. More colorant than other Scotts mulches.",
+    "size_metrics": "1.5 cu ft",
+    "images": [
+      "https://www.scotts.com/en-us/scotts-nature-scapes-classic-black-42.5l/88559750.html"
+    ],
+    "categories": ["Mulch", "Garden Care", "Soil Amendment"],
+    "source": "ScottsMiracle-Gro, True Value, Lowes"
+  },
+  {
+    "sku": "095668001032",
+    "brand": "Manna Pro",
+    "name": "Manna Pro Farmhouse Favorites Mini Horse & Donkey Treats",
+    "description": "Baked treats specially formulated for mini horses and mini donkeys. Made with wholesome ingredients including wheat flour, alfalfa meal, oats, and sugar. Apple banana flavored. 11% protein minimum.",
+    "size_metrics": "",
+    "images": [
+      "https://mannapro.com/products/farmhouse-favorites-mini-horse-donkey-treats"
+    ],
+    "categories": ["Horse Treats", "Mini Horse Treats", "Donkey Treats"],
+    "source": "MannaPro, Tractor Supply"
+  },
+  {
+    "sku": "095668225308",
+    "brand": "Manna Pro",
+    "name": "Manna Pro 16% All Flock Crumbles with Probiotics 8 lb",
+    "description": "Versatile complete feed for mixed flocks of chickens, ducks, geese, turkeys, and gamebirds. 16% protein with added probiotics for gut health. No artificial colors or flavors. Crumble form for easy feeding.",
+    "size_metrics": "8 lb",
+    "images": [
+      "https://mannapro.com/products/all-flock-with-probiotic-crumble"
+    ],
+    "categories": ["Poultry Feed", "All Flock Feed", "Mixed Flock"],
+    "source": "MannaPro, Tractor Supply, HorseLoverZ"
+  },
+  {
+    "sku": "032247278140",
+    "brand": "Miracle-Gro",
+    "name": "Miracle-Gro Potting Mix 25 Quart",
+    "description": "All-purpose potting mix for container plants. Grows plants twice as big (vs unfed plants). Feeds for up to 6 months. Ideal for indoor or outdoor containers, hanging baskets, and planters. Specially formulated for all types of potted plants.",
+    "size_metrics": "25 Quart",
+    "images": [
+      "https://miraclegro.com/en-us/shop/soils/miracle-gro-potting-mix/miracle-gro-potting-mix.html"
+    ],
+    "categories": ["Potting Mix", "Soil", "Container Gardening"],
+    "source": "Miracle-Gro, Home Depot, Lowes"
+  },
+  {
+    "sku": "032247279048",
+    "brand": "Miracle-Gro",
+    "name": "Miracle-Gro Potting Mix 50 Quart",
+    "description": "All-purpose potting mix for container plants. Grows plants twice as big (vs unfed plants). Feeds for up to 6 months. Fills approximately 3-12 inch containers. Ideal for flowers, vegetables, shrubs, annuals, and perennials.",
+    "size_metrics": "50 Quart",
+    "images": [
+      "https://miraclegro.com/en-us/shop/soils/miracle-gro-potting-mix/miracle-gro-potting-mix.html"
+    ],
+    "categories": ["Potting Mix", "Soil", "Container Gardening"],
+    "source": "Miracle-Gro, True Value, Lowes"
+  },
+  {
+    "sku": "032247884594",
+    "brand": "Scotts",
+    "name": "Scotts NatureScapes Color Enhanced Mulch Sierra Red 1.5 cu ft",
+    "description": "Scotts NatureScapes Color Enhanced Mulch Sierra Red helps soil retain moisture, prevents weeds, and never has recycled pallet wood. Features ColorGuard technology for year-long vibrant color.",
+    "size_metrics": "1.5 cu ft",
+    "images": [
+      "https://www.scotts.com/en-us/shop/mulch-soil-garden/scotts-nature-scapes-color-enhanced-mulch/scotts-nature-scapes-color-enhanced-mulch.html"
+    ],
+    "categories": ["Mulch", "Garden Care", "Soil Amendment"],
+    "source": "ScottsMiracle-Gro, True Value"
+  },
+  {
+    "sku": "095668302580",
+    "brand": "Manna Pro",
+    "name": "Manna Pro Bite-Size Nuggets Alfalfa & Molasses 4 lb",
+    "description": "Bite-size nuggets horse treats made with alfalfa and molasses. Irresistible taste horses love. Great for training and pocket-sized for quick rewards. Added lysine, methionine, and B-complex vitamins. Happy horse guaranteed.",
+    "size_metrics": "4 lb",
+    "images": [
+      "https://mannapro.com/products/bite-size-nuggets-horse-treats"
+    ],
+    "categories": ["Horse Treats", "Horse Feed", "Training Treats"],
+    "source": "MannaPro, Tractor Supply, HorseLoverZ"
+  }
+]
