@@ -33,7 +33,7 @@ class ScraperConfig:
     disabled: bool = False
     base_url: str | None = None
     search_url_template: str | None = None
-    selectors: dict[str, Any] | None = None
+    selectors: list[dict[str, Any]] | dict[str, Any] | None = None
     options: dict[str, Any] | None = None
     test_skus: list[str] | None = None
     retries: int = 3

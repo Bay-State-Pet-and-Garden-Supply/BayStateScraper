@@ -283,15 +283,40 @@ def _run_discovery_job(
     if runtime_brave:
         os.environ["BRAVE_API_KEY"] = runtime_brave
 
-    items = [
-        {
-            "sku": sku,
-            "product_name": discovery_cfg.get("product_name"),
-            "brand": discovery_cfg.get("brand"),
-            "category": discovery_cfg.get("category"),
-        }
-        for sku in skus
-    ]
+    item_context_by_sku: Dict[str, Dict[str, Any]] = {}
+
+    raw_items = discovery_cfg.get("items")
+    if isinstance(raw_items, list):
+        for candidate in raw_items:
+            if not isinstance(candidate, dict):
+                continue
+            candidate_sku = str(candidate.get("sku", "")).strip()
+            if not candidate_sku:
+                continue
+            item_context_by_sku[candidate_sku] = candidate
+
+    raw_sku_context = discovery_cfg.get("sku_context")
+    if isinstance(raw_sku_context, dict):
+        for key, value in raw_sku_context.items():
+            candidate_sku = str(key).strip()
+            if not candidate_sku or not isinstance(value, dict):
+                continue
+            merged_context = dict(item_context_by_sku.get(candidate_sku, {}))
+            merged_context.update(value)
+            merged_context.setdefault("sku", candidate_sku)
+            item_context_by_sku[candidate_sku] = merged_context
+
+    items = []
+    for sku in skus:
+        item_context = item_context_by_sku.get(sku, {})
+        items.append(
+            {
+                "sku": sku,
+                "product_name": item_context.get("product_name", discovery_cfg.get("product_name")),
+                "brand": item_context.get("brand", discovery_cfg.get("brand")),
+                "category": item_context.get("category", discovery_cfg.get("category")),
+            }
+        )
 
     log_buffer.append(create_log_entry("info", f"Starting discovery scraper for {len(items)} SKUs"))
     logger.info(f"[Runner] Starting discovery job for {len(items)} SKUs")

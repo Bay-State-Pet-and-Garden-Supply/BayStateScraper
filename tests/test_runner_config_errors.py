@@ -1,6 +1,6 @@
 """Tests for runner configuration error handling."""
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -150,3 +150,78 @@ class TestRunnerConfigurationErrorHandling:
         finally:
             # Restore the original function
             runner.create_emitter = original_create_emitter
+
+
+def test_discovery_job_uses_per_sku_context_items() -> None:
+    scraper_configs = [
+        ScraperConfig(
+            name="ai_discovery",
+            base_url="https://example.com",
+            selectors=[],
+            options={},
+            test_skus=[],
+        )
+    ]
+
+    job_config = JobConfig(
+        job_id="discovery-job-ctx",
+        skus=["SKU_A", "SKU_B"],
+        scrapers=scraper_configs,
+        test_mode=False,
+        max_workers=1,
+        job_type="discovery",
+        job_config={
+            "items": [
+                {
+                    "sku": "SKU_A",
+                    "product_name": "Alpha Toy",
+                    "brand": "Brand A",
+                    "category": "Dog Toys",
+                },
+                {
+                    "sku": "SKU_B",
+                    "product_name": "Beta Toy",
+                    "brand": "Brand B",
+                    "category": "Dog Toys",
+                },
+            ]
+        },
+    )
+
+    captured_items: list[dict[str, object]] = []
+
+    class StubDiscoveryScraper:
+        def __init__(self, **kwargs):
+            _ = kwargs
+
+        async def scrape_products_batch(self, items, max_concurrency=1):
+            captured_items.extend(items)
+            _ = max_concurrency
+            return [
+                MagicMock(
+                    sku=item["sku"],
+                    success=False,
+                    error="stub",
+                    cost_usd=0.0,
+                    size_metrics=None,
+                    product_name=None,
+                    description=None,
+                    images=[],
+                    categories=[],
+                    url=None,
+                    source_website=None,
+                    confidence=0.0,
+                )
+                for item in items
+            ]
+
+    with patch("runner.AIDiscoveryScraper", StubDiscoveryScraper):
+        run_job(job_config, runner_name="test-runner")
+
+    assert len(captured_items) == 2
+    assert captured_items[0]["sku"] == "SKU_A"
+    assert captured_items[0]["product_name"] == "Alpha Toy"
+    assert captured_items[0]["brand"] == "Brand A"
+    assert captured_items[1]["sku"] == "SKU_B"
+    assert captured_items[1]["product_name"] == "Beta Toy"
+    assert captured_items[1]["brand"] == "Brand B"
