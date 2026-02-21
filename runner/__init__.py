@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 from core.api_client import JobConfig
-from core.events import create_emitter
+from core.events import ScraperEvent, create_emitter, event_bus
 from core.settings_manager import settings
 from scrapers.ai_discovery import AIDiscoveryScraper
 from scrapers.executor.workflow_executor import WorkflowExecutor
@@ -26,6 +26,131 @@ def create_log_entry(level: str, message: str) -> Dict[str, Any]:
         "level": level,
         "message": message,
         "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+    }
+
+
+def _build_telemetry_from_events(events: list[ScraperEvent]) -> Dict[str, Any]:
+    steps_by_index: dict[int, dict[str, Any]] = {}
+    selectors: list[dict[str, Any]] = []
+    extractions: list[dict[str, Any]] = []
+
+    for event in events:
+        event_type = event.event_type.value
+        data = event.data or {}
+
+        if event_type in {"step.started", "step.completed", "step.failed", "step.skipped"}:
+            raw_step_data = data.get("step")
+            step_data: dict[str, Any] = raw_step_data if isinstance(raw_step_data, dict) else {}
+            raw_timing_data = data.get("timing")
+            timing_data: dict[str, Any] = raw_timing_data if isinstance(raw_timing_data, dict) else {}
+            index = step_data.get("index")
+            if not isinstance(index, int):
+                continue
+
+            existing = steps_by_index.get(
+                index,
+                {
+                    "step_index": index,
+                    "action_type": str(step_data.get("action") or "unknown"),
+                    "status": "pending",
+                    "extracted_data": {},
+                },
+            )
+
+            action_value = step_data.get("action")
+            if isinstance(action_value, str):
+                existing["action_type"] = action_value
+
+            if event_type == "step.started":
+                existing["status"] = "running"
+                started_at = timing_data.get("started_at")
+                if isinstance(started_at, str):
+                    existing["started_at"] = started_at
+                elif isinstance(event.timestamp, str):
+                    existing["started_at"] = event.timestamp
+            elif event_type == "step.completed":
+                existing["status"] = "completed"
+                started_at = timing_data.get("started_at")
+                completed_at = timing_data.get("completed_at")
+                duration_ms = timing_data.get("duration_ms")
+                if isinstance(started_at, str):
+                    existing["started_at"] = started_at
+                if isinstance(completed_at, str):
+                    existing["completed_at"] = completed_at
+                if isinstance(duration_ms, int):
+                    existing["duration_ms"] = duration_ms
+                raw_extraction_payload = data.get("extraction")
+                extraction_payload: dict[str, Any] = raw_extraction_payload if isinstance(raw_extraction_payload, dict) else {}
+                if extraction_payload:
+                    existing["extracted_data"] = extraction_payload
+                existing["sku"] = data.get("sku")
+            elif event_type == "step.failed":
+                existing["status"] = "failed"
+                started_at = timing_data.get("started_at")
+                completed_at = timing_data.get("completed_at")
+                duration_ms = timing_data.get("duration_ms")
+                if isinstance(started_at, str):
+                    existing["started_at"] = started_at
+                if isinstance(completed_at, str):
+                    existing["completed_at"] = completed_at
+                if isinstance(duration_ms, int):
+                    existing["duration_ms"] = duration_ms
+                raw_error_payload = data.get("error")
+                error_payload: dict[str, Any] = raw_error_payload if isinstance(raw_error_payload, dict) else {}
+                if isinstance(error_payload.get("message"), str):
+                    existing["error_message"] = str(error_payload.get("message"))
+                existing["sku"] = data.get("sku")
+            elif event_type == "step.skipped":
+                existing["status"] = "skipped"
+                reason = data.get("reason")
+                if isinstance(reason, str):
+                    existing["error_message"] = reason
+                existing["sku"] = data.get("sku")
+
+            steps_by_index[index] = existing
+            continue
+
+        if event_type == "selector.resolved":
+            raw_selector_payload = data.get("selector")
+            selector_payload: dict[str, Any] = raw_selector_payload if isinstance(raw_selector_payload, dict) else {}
+            found = selector_payload.get("found") is True
+            status = "FOUND" if found else "MISSING"
+            if isinstance(selector_payload.get("error"), str):
+                status = "ERROR"
+
+            selectors.append(
+                {
+                    "sku": data.get("sku") if isinstance(data.get("sku"), str) else "",
+                    "selector_name": str(selector_payload.get("name") or "unknown"),
+                    "selector_value": str(selector_payload.get("value") or ""),
+                    "status": status,
+                    "error_message": selector_payload.get("error") if isinstance(selector_payload.get("error"), str) else None,
+                    "duration_ms": None,
+                }
+            )
+            continue
+
+        if event_type == "extraction.completed":
+            raw_extraction_payload = data.get("extraction")
+            extraction_payload: dict[str, Any] = raw_extraction_payload if isinstance(raw_extraction_payload, dict) else {}
+            status = str(extraction_payload.get("status") or "SUCCESS")
+            field_value = extraction_payload.get("value")
+            extractions.append(
+                {
+                    "sku": data.get("sku") if isinstance(data.get("sku"), str) else "",
+                    "field_name": str(extraction_payload.get("field_name") or "unknown"),
+                    "field_value": str(field_value) if field_value is not None else None,
+                    "status": status,
+                    "error_message": extraction_payload.get("error") if isinstance(extraction_payload.get("error"), str) else None,
+                    "duration_ms": None,
+                }
+            )
+
+    ordered_steps = [steps_by_index[idx] for idx in sorted(steps_by_index.keys())]
+    return {
+        "steps": ordered_steps,
+        "selectors": selectors,
+        "extractions": extractions,
     }
 
 
@@ -70,6 +195,8 @@ def run_job(
     if not skus:
         log_buffer.append(create_log_entry("warning", "No SKUs to process"))
         logger.warning("[Runner] No SKUs to process")
+        results["logs"] = log_buffer
+        results["telemetry"] = {"steps": [], "selectors": [], "extractions": []}
         return results
 
     is_discovery_job = job_config.job_type == "discovery" or any(s.name == "ai_discovery" for s in job_config.scrapers)
@@ -129,8 +256,12 @@ def run_job(
         raise ConfigurationError(f"[Runner] Configuration parsing failed for {len(config_errors)} scraper(s): {error_details}")
 
     if not configs:
-        log_buffer.append(create_log_entry("error", "No valid scraper configurations"))
-        raise ConfigurationError("[Runner] No valid scraper configurations")
+        if not job_config.scrapers:
+            error_msg = "No scrapers specified in job configuration (missing chunks?)"
+        else:
+            error_msg = f"No valid scraper configurations after filtering. Original scrapers: {[s.name for s in job_config.scrapers]}"
+        log_buffer.append(create_log_entry("error", error_msg))
+        raise ConfigurationError(f"[Runner] {error_msg}")
 
     for config in configs:
         log_buffer.append(create_log_entry("info", f"Starting scraper: {config.name}"))
@@ -255,6 +386,9 @@ def run_job(
 
     log_buffer.append(create_log_entry("info", f"Job complete. Processed {results['skus_processed']} SKUs"))
     logger.info(f"[Runner] Job complete. Processed {results['skus_processed']} SKUs")
+    captured_events = event_bus.get_events(job_id=job_id, limit=2000)
+    results["logs"] = log_buffer
+    results["telemetry"] = _build_telemetry_from_events(captured_events)
     return results
 
 
@@ -382,6 +516,8 @@ def _run_discovery_job(
 
     log_buffer.append(create_log_entry("info", f"Discovery job complete. Processed {results['skus_processed']} SKUs"))
     logger.info(f"[Runner] Discovery job complete. Processed {results['skus_processed']} SKUs")
+    results["logs"] = log_buffer
+    results["telemetry"] = {"steps": [], "selectors": [], "extractions": []}
     return results
 
 
