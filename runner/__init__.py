@@ -4,7 +4,7 @@ import asyncio
 import logging
 import os
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from core.api_client import JobConfig
 from core.events import ScraperEvent, create_emitter, event_bus
@@ -27,6 +27,30 @@ def create_log_entry(level: str, message: str) -> Dict[str, Any]:
         "message": message,
         "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     }
+
+
+def _normalize_selectors_payload(raw_selectors: Any) -> list[dict[str, Any]]:
+    """Normalize API selectors payload into list format expected by ScraperConfig."""
+    if isinstance(raw_selectors, list):
+        return raw_selectors
+
+    # API can return an empty object for "no selectors" in some paths.
+    if raw_selectors is None or raw_selectors == {}:
+        return []
+
+    # Backward-compat for legacy dict format: {"Field": {"selector": "..."}}
+    if isinstance(raw_selectors, dict):
+        normalized: list[dict[str, Any]] = []
+        for field_name, field_config in raw_selectors.items():
+            if not isinstance(field_config, dict):
+                continue
+            item = dict(field_config)
+            if "name" not in item and isinstance(field_name, str):
+                item["name"] = field_name
+            normalized.append(item)
+        return normalized
+
+    return []
 
 
 def _build_telemetry_from_events(events: list[ScraperEvent]) -> Dict[str, Any]:
@@ -158,7 +182,21 @@ def run_job(
     job_config: JobConfig,
     runner_name: Optional[str] = None,
     log_buffer: Optional[List[Dict[str, Any]]] = None,
+    progress_callback: Optional[Callable[[str, str, dict[str, Any]], bool]] = None,
 ) -> Dict[str, Any]:
+    """Execute a scrape job.
+
+    Args:
+        job_config: The job configuration
+        runner_name: Optional name of the runner
+        log_buffer: Optional list to collect log entries
+        progress_callback: Optional callback function called after each SKU is processed.
+                          Signature: callback(sku: str, scraper_name: str, data: dict) -> bool
+                          Should return True if progress was saved successfully.
+
+    Returns:
+        Dictionary with job results
+    """
     del runner_name
 
     job_id = job_config.job_id
@@ -206,11 +244,6 @@ def run_job(
     configs: list[Any] = []
     config_errors: list[tuple[str, str]] = []
 
-    # Get config directory path for fallback loading
-    from pathlib import Path
-
-    config_dir = Path(__file__).parent.parent / "scrapers" / "configs"
-
     for scraper_cfg in job_config.scrapers:
         try:
             options = scraper_cfg.options or {}
@@ -218,28 +251,13 @@ def run_job(
                 "name": scraper_cfg.name,
                 "base_url": scraper_cfg.base_url,
                 "search_url_template": scraper_cfg.search_url_template,
-                "selectors": scraper_cfg.selectors if scraper_cfg.selectors is not None else {},
+                "selectors": _normalize_selectors_payload(scraper_cfg.selectors),
                 "workflows": options.get("workflows", []),
                 "timeout": options.get("timeout", 30),
                 "test_skus": scraper_cfg.test_skus if scraper_cfg.test_skus is not None else [],
                 "retries": getattr(scraper_cfg, "retries", 0),
                 "validation": getattr(scraper_cfg, "validation", None),
             }
-
-            # Fallback to local YAML for validation config if not provided by API
-            if config_dict.get("validation") is None:
-                yaml_path = config_dir / f"{scraper_cfg.name.lower().replace(' ', '_')}.yaml"
-                if yaml_path.exists():
-                    try:
-                        import yaml
-
-                        with open(yaml_path, encoding="utf-8") as f:
-                            yaml_config = yaml.safe_load(f)
-                            if yaml_config and "validation" in yaml_config:
-                                config_dict["validation"] = yaml_config["validation"]
-                                logger.info(f"[Runner] Loaded validation config from local YAML: {scraper_cfg.name}")
-                    except Exception as e:
-                        logger.warning(f"[Runner] Failed to load validation from YAML for {scraper_cfg.name}: {e}")
 
             config = parser.load_from_dict(config_dict)
             configs.append(config)
@@ -369,6 +387,13 @@ def run_job(
                         }
 
                         collector.add_result(sku, config.name, extracted_data)
+
+                        # Call progress callback if provided (for incremental saving)
+                        if progress_callback:
+                            try:
+                                progress_callback(sku, config.name, results["data"][sku][config.name])
+                            except Exception as e:
+                                logger.warning(f"[Runner] Progress callback failed for {config.name}/{sku}: {e}")
 
                         log_buffer.append(create_log_entry("info", f"{config.name}/{sku}: Found data"))
                         emitter.info(f"{config.name}/{sku}: Found data", data=results["data"][sku][config.name])

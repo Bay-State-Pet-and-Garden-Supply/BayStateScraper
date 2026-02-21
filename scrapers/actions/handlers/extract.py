@@ -9,6 +9,28 @@ from scrapers.exceptions import WorkflowExecutionError
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_OPTIONAL_FIELD_TIMEOUT_MS = 1500
+
+
+def _coerce_timeout_ms(value: Any, default: int) -> int:
+    """Normalize timeout values to a non-negative integer in milliseconds."""
+    if value is None:
+        return default
+
+    try:
+        timeout_ms = int(value)
+    except (TypeError, ValueError):
+        return default
+
+    return max(0, timeout_ms)
+
+
+def _resolve_timeout_ms(required: bool, raw_timeout_ms: Any) -> int | None:
+    """Resolve timeout behavior for required vs optional selector lookups."""
+    if raw_timeout_ms is None:
+        return DEFAULT_OPTIONAL_FIELD_TIMEOUT_MS if not required else None
+    return _coerce_timeout_ms(raw_timeout_ms, DEFAULT_OPTIONAL_FIELD_TIMEOUT_MS)
+
 
 @ActionRegistry.register("extract_single")
 class ExtractSingleAction(BaseAction):
@@ -30,7 +52,14 @@ class ExtractSingleAction(BaseAction):
         if not selector_config:
             raise WorkflowExecutionError(f"Selector '{identifier}' not found in config")
 
-        element = await self.ctx.find_element_safe(selector_config.selector)
+        required = bool(params.get("required", selector_config.required))
+        timeout_ms = _resolve_timeout_ms(required, params.get("timeout_ms"))
+
+        element = await self.ctx.find_element_safe(
+            selector_config.selector,
+            required=required,
+            timeout=timeout_ms,
+        )
 
         if element:
             value = await self.ctx._extract_value_from_element(element, selector_config.attribute)
@@ -62,7 +91,13 @@ class ExtractMultipleAction(BaseAction):
             raise WorkflowExecutionError(f"Selector '{identifier}' not found in config")
 
         try:
-            elements = await self.ctx.find_elements_safe(selector_config.selector)
+            required = bool(params.get("required", selector_config.required))
+            timeout_ms = _resolve_timeout_ms(required, params.get("timeout_ms"))
+
+            elements = await self.ctx.find_elements_safe(
+                selector_config.selector,
+                timeout=timeout_ms,
+            )
             values = []
             for element in elements:
                 value = await self.ctx._extract_value_from_element(element, selector_config.attribute)
@@ -91,6 +126,8 @@ class ExtractAction(BaseAction):
             logger.warning("No selectors specified for extract action (need 'selector_ids' or 'fields')")
             return
 
+        raw_field_timeout_ms = params.get("field_timeout_ms")
+
         logger.debug(f"Starting extract action for identifiers: {identifiers}")
 
         for identifier in identifiers:
@@ -103,8 +140,14 @@ class ExtractAction(BaseAction):
             result_key = selector_config.name
 
             try:
+                required = selector_config.required
+                timeout_ms = _resolve_timeout_ms(required, raw_field_timeout_ms)
+
                 if selector_config.multiple:
-                    elements = await self.ctx.find_elements_safe(selector_config.selector)
+                    elements = await self.ctx.find_elements_safe(
+                        selector_config.selector,
+                        timeout=timeout_ms,
+                    )
                     values = []
                     for element in elements:
                         value = await self.ctx._extract_value_from_element(element, selector_config.attribute)
@@ -119,7 +162,11 @@ class ExtractAction(BaseAction):
                             deduplicated_values.append(value)
                     self.ctx.results[result_key] = deduplicated_values
                 else:
-                    element = await self.ctx.find_element_safe(selector_config.selector)
+                    element = await self.ctx.find_element_safe(
+                        selector_config.selector,
+                        required=required,
+                        timeout=timeout_ms,
+                    )
                     value = None
                     if element:
                         value = await self.ctx._extract_value_from_element(element, selector_config.attribute)

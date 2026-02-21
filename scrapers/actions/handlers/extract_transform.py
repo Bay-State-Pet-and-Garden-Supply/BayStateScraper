@@ -6,7 +6,6 @@ step, reducing config complexity and eliminating step dispatch overhead.
 """
 
 from __future__ import annotations
-import asyncio
 
 import logging
 import re
@@ -17,6 +16,20 @@ from scrapers.actions.registry import ActionRegistry
 from scrapers.exceptions import WorkflowExecutionError
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_OPTIONAL_FIELD_TIMEOUT_MS = 1500
+
+
+def _coerce_timeout_ms(value: Any, default: int) -> int:
+    if value is None:
+        return default
+
+    try:
+        timeout_ms = int(value)
+    except (TypeError, ValueError):
+        return default
+
+    return max(0, timeout_ms)
 
 
 @ActionRegistry.register("extract_and_transform")
@@ -72,20 +85,21 @@ class ExtractAndTransformAction(BaseAction):
         fields = params.get("fields", [])
 
         if not fields:
-            raise WorkflowExecutionError(
-                "extract_and_transform requires 'fields' parameter with list of field configs"
-            )
+            raise WorkflowExecutionError("extract_and_transform requires 'fields' parameter with list of field configs")
 
         logger.debug(f"Starting extract_and_transform for {len(fields)} fields")
 
-        for field_config in fields:
-            self._process_field(field_config)
-
-        logger.info(
-            f"extract_and_transform completed. Extracted: {list(self.ctx.results.keys())}"
+        default_timeout_ms = _coerce_timeout_ms(
+            params.get("field_timeout_ms", DEFAULT_OPTIONAL_FIELD_TIMEOUT_MS),
+            DEFAULT_OPTIONAL_FIELD_TIMEOUT_MS,
         )
 
-    def _process_field(self, field_config: dict[str, Any]) -> None:
+        for field_config in fields:
+            await self._process_field(field_config, default_timeout_ms)
+
+        logger.info(f"extract_and_transform completed. Extracted: {list(self.ctx.results.keys())}")
+
+    async def _process_field(self, field_config: dict[str, Any], default_timeout_ms: int) -> None:
         """Process a single field: extract from DOM and apply transforms."""
         name = field_config.get("name")
         selector = field_config.get("selector")
@@ -93,6 +107,7 @@ class ExtractAndTransformAction(BaseAction):
         multiple = field_config.get("multiple", False)
         required = field_config.get("required", True)
         transforms = field_config.get("transform", [])
+        timeout_ms_value = field_config.get("timeout_ms")
 
         if not name:
             raise WorkflowExecutionError("Field config missing 'name'")
@@ -101,16 +116,18 @@ class ExtractAndTransformAction(BaseAction):
             raise WorkflowExecutionError(f"Field '{name}' missing 'selector'")
 
         try:
-            if multiple:
-                value = self._extract_multiple(selector, attribute)
+            if timeout_ms_value is None:
+                timeout_ms = None if required else default_timeout_ms
             else:
-                value = self._extract_single(selector, attribute)
+                timeout_ms = _coerce_timeout_ms(timeout_ms_value, default_timeout_ms)
+            if multiple:
+                value = await self._extract_multiple(selector, attribute, timeout_ms)
+            else:
+                value = await self._extract_single(selector, attribute, required, timeout_ms)
 
             # Check required constraint
             if required and value is None:
-                logger.warning(
-                    f"Required field '{name}' not found (selector: {selector})"
-                )
+                logger.warning(f"Required field '{name}' not found (selector: {selector})")
                 self.ctx.results[name] = [] if multiple else None
                 return
 
@@ -121,45 +138,54 @@ class ExtractAndTransformAction(BaseAction):
             # Apply transformations
             if transforms:
                 if isinstance(value, list):
-                    value = [
-                        self._apply_transformations(v, transforms) for v in value if v
-                    ]
+                    value = [self._apply_transformations(v, transforms) for v in value if v]
                 else:
                     value = self._apply_transformations(value, transforms)
 
             self.ctx.results[name] = value
-            logger.debug(
-                f"Extracted '{name}': {value[:100] if isinstance(value, str) else value}"
-            )
+            logger.debug(f"Extracted '{name}': {value[:100] if isinstance(value, str) else value}")
 
         except Exception as e:
             logger.warning(f"Error extracting field '{name}': {e}")
             self.ctx.results[name] = [] if multiple else None
 
-    def _extract_single(self, selector: str, attribute: str) -> str | None:
+    async def _extract_single(
+        self,
+        selector: str,
+        attribute: str,
+        required: bool,
+        timeout_ms: int | None,
+    ) -> str | None:
         """Extract a single value from the first matching element."""
-        element = self.ctx.find_element_safe(selector)
+        element = await self.ctx.find_element_safe(
+            selector,
+            required=required,
+            timeout=timeout_ms,
+        )
         if not element:
             return None
-        return self.ctx._extract_value_from_element(element, attribute)
+        return await self.ctx.extract_value_from_element(element, attribute)
 
-    def _extract_multiple(self, selector: str, attribute: str) -> list[str]:
+    async def _extract_multiple(
+        self,
+        selector: str,
+        attribute: str,
+        timeout_ms: int | None,
+    ) -> list[str]:
         """Extract values from all matching elements, deduplicated."""
-        elements = self.ctx.find_elements_safe(selector)
+        elements = await self.ctx.find_elements_safe(selector, timeout=timeout_ms)
         values = []
         seen = set()
 
         for element in elements:
-            value = self.ctx._extract_value_from_element(element, attribute)
+            value = await self.ctx.extract_value_from_element(element, attribute)
             if value and value not in seen:
                 seen.add(value)
                 values.append(value)
 
         return values
 
-    def _apply_transformations(
-        self, value: str, transformations: list[dict[str, Any]]
-    ) -> str:
+    def _apply_transformations(self, value: str, transformations: list[dict[str, Any]]) -> str:
         """Apply a sequence of transformations to a value."""
         result = str(value) if value else ""
 
@@ -171,9 +197,7 @@ class ExtractAndTransformAction(BaseAction):
                 replacement = transform.get("replacement", "")
                 if pattern:
                     try:
-                        result = re.sub(
-                            pattern, replacement, result, flags=re.IGNORECASE
-                        ).strip()
+                        result = re.sub(pattern, replacement, result, flags=re.IGNORECASE).strip()
                     except re.error as e:
                         logger.warning(f"Invalid regex pattern '{pattern}': {e}")
 
@@ -199,9 +223,7 @@ class ExtractAndTransformAction(BaseAction):
                         if match:
                             result = match.group(group)
                     except (re.error, IndexError) as e:
-                        logger.warning(
-                            f"Regex extraction failed for pattern '{pattern}': {e}"
-                        )
+                        logger.warning(f"Regex extraction failed for pattern '{pattern}': {e}")
 
             elif t_type == "prefix":
                 prefix = transform.get("value", "")

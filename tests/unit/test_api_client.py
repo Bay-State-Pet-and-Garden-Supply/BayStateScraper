@@ -91,6 +91,55 @@ class TestScraperAPIClient:
             assert len(job_config.scrapers) == 1
             assert job_config.scrapers[0].name == "amazon"
 
+    def test_get_job_config_normalizes_empty_object_selectors(self):
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "job_id": "job-124",
+            "skus": ["SKU001"],
+            "scrapers": [{"name": "bradley", "disabled": False, "selectors": {}}],
+            "test_mode": False,
+            "max_workers": 1,
+        }
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.get.return_value = mock_response
+
+            job_config = self.client.get_job_config("job-124")
+
+            assert job_config is not None
+            assert job_config.scrapers[0].selectors == []
+
+    def test_poll_for_work_normalizes_legacy_dict_selectors(self):
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "job": {
+                "job_id": "job-125",
+                "skus": ["SKU001"],
+                "scrapers": [
+                    {
+                        "name": "legacy-scraper",
+                        "disabled": False,
+                        "selectors": {"Name": {"selector": "h1", "attribute": "text", "required": True}},
+                    }
+                ],
+                "test_mode": False,
+                "max_workers": 1,
+            }
+        }
+
+        with patch("httpx.Client") as mock_client:
+            mock_instance = mock_client.return_value.__enter__.return_value
+            mock_instance.post.return_value = mock_response
+
+            job = self.client.poll_for_work()
+
+            assert job is not None
+            assert isinstance(job.scrapers[0].selectors, list)
+            assert job.scrapers[0].selectors == [{"name": "Name", "selector": "h1", "attribute": "text", "required": True}]
+
     def test_submit_results_sends_payload(self):
         mock_response = MagicMock()
         mock_response.status_code = 200

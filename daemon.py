@@ -148,7 +148,11 @@ def run_claimed_chunk(
     job_config.max_workers = chunk.max_workers
 
     if chunk.scrapers:
-        job_config.scrapers = [s for s in job_config.scrapers if s.name in chunk.scrapers]
+        job_config.scrapers = [
+            s
+            for s in job_config.scrapers
+            if s.name in chunk.scrapers or (s.display_name and s.display_name in chunk.scrapers)
+        ]
 
     return run_job(job_config, client, log_buffer)
 
@@ -248,6 +252,8 @@ async def main_async():
                         "skus_successful": len(results.get("data", {})),
                         "skus_failed": results.get("skus_processed", 0) - len(results.get("data", {})),
                         "data": results.get("data", {}),
+                        "telemetry": results.get("telemetry", {}),
+                        "logs": results.get("logs", []),
                     }
 
                     await asyncio.to_thread(
@@ -311,10 +317,6 @@ def main():
         asyncio.run(main_async())
     except KeyboardInterrupt:
         pass
-
-
-if __name__ == "__main__":
-    main()
 
 
 if __name__ == "__main__":

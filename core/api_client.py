@@ -30,6 +30,7 @@ class ScraperConfig:
     """Configuration for a single scraper."""
 
     name: str
+    display_name: str | None = None
     disabled: bool = False
     base_url: str | None = None
     search_url_template: str | None = None
@@ -93,6 +94,29 @@ class ConfigFetchError(Exception):
         self.schema_version = schema_version
         self.original_error = original_error
         super().__init__(message)
+
+
+def _normalize_selectors_payload(raw_selectors: Any) -> list[dict[str, Any]]:
+    """Normalize selectors payload from coordinator into list format."""
+    if isinstance(raw_selectors, list):
+        return raw_selectors
+
+    if raw_selectors is None or raw_selectors == {}:
+        return []
+
+    if isinstance(raw_selectors, dict):
+        normalized: list[dict[str, Any]] = []
+        for field_name, field_config in raw_selectors.items():
+            if not isinstance(field_config, dict):
+                continue
+
+            item = dict(field_config)
+            if "name" not in item and isinstance(field_name, str):
+                item["name"] = field_name
+            normalized.append(item)
+        return normalized
+
+    return []
 
 
 def _is_retryable_error(status_code: int | None, exception: Exception) -> bool:
@@ -299,10 +323,11 @@ class ScraperAPIClient:
             scrapers = [
                 ScraperConfig(
                     name=s.get("name", ""),
+                    display_name=s.get("display_name"),
                     disabled=s.get("disabled", False),
                     base_url=s.get("base_url"),
                     search_url_template=s.get("search_url_template"),
-                    selectors=s.get("selectors"),
+                    selectors=_normalize_selectors_payload(s.get("selectors")),
                     options=s.get("options"),
                     test_skus=s.get("test_skus"),
                     retries=s.get("retries", 3),
@@ -477,6 +502,60 @@ class ScraperAPIClient:
             logger.error(f"Error submitting chunk results: {e}")
             return False
 
+    def submit_chunk_progress(
+        self,
+        chunk_id: str,
+        sku: str,
+        scraper_name: str,
+        data: dict[str, Any],
+    ) -> bool:
+        """Submit incremental progress for a single SKU within a chunk.
+
+        This allows saving results incrementally as each SKU is processed,
+        rather than waiting for the entire chunk to complete. If the job
+        fails partway through, already-processed SKUs are preserved.
+
+        Args:
+            chunk_id: The chunk identifier
+            sku: The SKU that was just processed
+            scraper_name: Name of the scraper that processed it
+            data: The scraped data for this SKU
+
+        Returns:
+            True if successfully recorded, False otherwise
+        """
+        if not self.api_url:
+            logger.error("API client not configured - missing URL")
+            return False
+
+        payload_dict: dict[str, Any] = {
+            "chunk_id": chunk_id,
+            "status": "in_progress",
+            "runner_name": self.runner_name,
+            "progress": {
+                "sku": sku,
+                "scraper_name": scraper_name,
+                "data": data,
+            },
+        }
+
+        payload = json.dumps(payload_dict)
+
+        try:
+            self._make_request("POST", "/api/scraper/v1/chunk-callback", payload=payload)
+            logger.debug(f"Submitted progress for chunk {chunk_id}, SKU {sku}")
+            return True
+
+        except AuthenticationError as e:
+            logger.error(f"Authentication failed: {e}")
+            return False
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Failed to submit chunk progress: {e.response.status_code} - {e.response.text}")
+            return False
+        except Exception as e:
+            logger.error(f"Error submitting chunk progress: {e}")
+            return False
+
     def poll_for_work(self) -> JobConfig | None:
         """
         Poll the coordinator for the next available job.
@@ -512,10 +591,11 @@ class ScraperAPIClient:
             scrapers = [
                 ScraperConfig(
                     name=s.get("name", ""),
+                    display_name=s.get("display_name"),
                     disabled=s.get("disabled", False),
                     base_url=s.get("base_url"),
                     search_url_template=s.get("search_url_template"),
-                    selectors=s.get("selectors"),
+                    selectors=_normalize_selectors_payload(s.get("selectors")),
                     options=s.get("options"),
                     test_skus=s.get("test_skus"),
                     retries=s.get("retries", 3),

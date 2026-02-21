@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from typing import Protocol, Any
-from scrapers.models.config import ScraperConfig, WorkflowStep
+from scrapers.models.config import ScraperConfig, SelectorConfig, WorkflowStep
 
 
 class ScraperContext(Protocol):
@@ -26,12 +26,16 @@ class ScraperContext(Protocol):
 
     async def extract_value_from_element(self, element: Any, attribute: str | None = None) -> Any: ...
 
+    async def _extract_value_from_element(self, element: Any, attribute: str | None = None) -> Any: ...
+
+    def resolve_selector(self, identifier: str) -> SelectorConfig | None: ...
+
     # Workflow control
 
     workflow_stopped: bool
     first_navigation_done: bool
 
-    def dispatch_step(self, step: WorkflowStep) -> Any: ...
+    async def dispatch_step(self, step: WorkflowStep) -> Any: ...
 
     # Session management
     def is_session_authenticated(self) -> bool: ...

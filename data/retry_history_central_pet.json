@@ -1,0 +1,6704 @@
+{
+  "failure_history": [
+    {
+      "timestamp": 1771691668.7277405,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347003043",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691675.780673,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347003043",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691684.8079793,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347003043",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691696.6200361,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347003043",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691703.2716472,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668001032",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691710.4134498,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668001032",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691719.5910559,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668001032",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691731.4123814,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668001032",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691738.0349104,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691745.4067736,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691754.213197,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691766.5174098,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691772.9797537,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "758364118465",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691780.1956196,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "758364118465",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691788.8321383,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "758364118465",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691800.6551125,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "758364118465",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691901.652027,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369171037",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691909.074966,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369171037",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691917.9955292,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369171037",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691930.030991,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369171037",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691936.291507,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781005182",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691943.5460334,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781005182",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691952.382704,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781005182",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691963.8430505,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781005182",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691970.193084,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437223",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691977.4537497,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437223",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691986.1896145,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437223",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771691997.673344,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437223",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771692098.555532,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444719",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771692105.8238726,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444719",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771692114.441411,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444719",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771692125.9971228,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444719",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771692132.3915794,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "869050000114",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771692139.4777277,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "869050000114",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771692148.2909284,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "869050000114",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771692159.7406123,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "869050000114",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771698859.4121482,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771698866.462095,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771698875.6210456,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771698887.5162508,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771698987.727705,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771698993.99396,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699000.5063891,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699007.6138058,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "013600769406",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699013.5969424,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369171037",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699019.7429545,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369171037",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699026.2736058,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369171037",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699033.4143867,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369171037",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699039.5775754,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437223",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699045.742118,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437223",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699052.2295866,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437223",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699059.349474,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437223",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699066.7502232,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781005182",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699072.8262918,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781005182",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699079.3798535,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781005182",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699086.558806,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781005182",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699092.6236444,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444719",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699098.809471,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444719",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699105.3114645,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444719",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699112.414206,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444719",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699118.7640617,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005872",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699124.8383107,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005872",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699131.347311,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005872",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699138.6218984,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005872",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699145.2407978,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "853662006688",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699151.3801038,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "853662006688",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699158.088306,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "853662006688",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699165.2482512,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "853662006688",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699171.4378545,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "853662006015",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699177.6120493,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "853662006015",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699184.5247936,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "853662006015",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699191.74822,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "853662006015",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699293.2295158,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "815756021342",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699299.6413906,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "815756021342",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699306.4903917,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "815756021342",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699313.6822913,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "815756021342",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699319.7436025,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668225308",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699325.89863,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668225308",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699332.5194976,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668225308",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699339.6301916,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668225308",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699345.815798,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032584945163",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699351.9592383,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032584945163",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699358.7806349,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032584945163",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699365.9991803,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032584945163",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699372.3951912,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247885591",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699378.4616127,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247885591",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699385.1203685,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247885591",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699392.4271595,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247885591",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699398.6603374,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444740",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699405.031519,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444740",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699411.6300993,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444740",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699418.9124496,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444740",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699425.1215127,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441442",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699431.217499,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441442",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699437.7576518,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441442",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699444.8985507,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441442",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699451.0795066,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517440810",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699457.1607792,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517440810",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699463.7468107,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517440810",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699471.0261123,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517440810",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699477.2502716,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "015561222877",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699483.3675447,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "015561222877",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699489.8638723,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "015561222877",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699497.138072,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "015561222877",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699503.3230267,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "180181033421",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699509.7338545,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "180181033421",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699516.3344254,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "180181033421",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699523.4119399,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "180181033421",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699626.8332167,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001419",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699632.9605572,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001419",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699639.4268327,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001419",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699646.5518186,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001419",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699652.694987,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781011619",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699658.8376715,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781011619",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699665.4290953,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781011619",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699672.5694718,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781011619",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699678.7710097,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "815756021304",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699684.883249,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "815756021304",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699691.8644795,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "815756021304",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699699.3696115,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "815756021304",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699705.7371163,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "810029430036",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699711.8482826,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "810029430036",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699718.4454446,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "810029430036",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699725.6486328,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "810029430036",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699732.0186534,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444825",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699738.1438406,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444825",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699744.6983323,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444825",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699751.784249,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444825",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699758.1809933,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850056818162",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699764.5683753,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850056818162",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699771.4807668,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850056818162",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699778.664447,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850056818162",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699785.014647,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850056818100",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699791.173455,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850056818100",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699797.6892872,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850056818100",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699804.899706,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850056818100",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699811.2289188,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "035585534046",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699817.2496452,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "035585534046",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699823.8318198,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "035585534046",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699831.4293513,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "035585534046",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699838.012842,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005902",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699844.4904082,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005902",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699851.0941074,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005902",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699858.3322904,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005902",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699864.9205253,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005308",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699870.99001,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005308",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699877.5327418,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005308",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699884.747186,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "856595005308",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699891.109792,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850089007304",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699897.1730158,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850089007304",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699903.721754,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850089007304",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699910.9063263,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850089007304",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699917.2400715,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668844110",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699923.3828135,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668844110",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699929.96594,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668844110",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699937.169256,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668844110",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699943.4586613,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "887853002661",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699949.5658655,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "887853002661",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699956.1258936,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "887853002661",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699963.30589,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "887853002661",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699969.641469,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850017876132",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699975.7508104,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850017876132",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699982.3368354,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850017876132",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699989.5228927,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850017876132",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771699995.7244327,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "751374257346",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700002.0356505,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "751374257346",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700008.6751692,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "751374257346",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700015.793136,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "751374257346",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700022.0900893,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001150",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700028.2197309,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001150",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700034.789783,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001150",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700041.9884353,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001150",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700048.2407446,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247884594",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700054.3809402,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247884594",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700060.9417372,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247884594",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700068.091188,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247884594",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700074.4958892,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441466",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700080.6676402,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441466",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700087.2505357,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441466",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700094.4397159,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441466",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700100.6174703,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "890522001124",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700106.6753292,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "890522001124",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700113.299254,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "890522001124",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700120.7203672,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "890522001124",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700127.0355897,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369442953",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700133.0893316,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369442953",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700139.7071366,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369442953",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700147.1773803,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "784369442953",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700153.7230287,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247886598",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700160.1400082,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247886598",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700167.072764,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247886598",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700174.2258458,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247886598",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700180.3993545,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "079545109417",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700186.5250378,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "079545109417",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700193.0696151,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "079545109417",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700200.3437426,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "079545109417",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700206.7710433,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441435",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700212.8214965,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441435",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700219.373741,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441435",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700226.5758402,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441435",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700233.9596019,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "751374720024",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700240.2884018,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "751374720024",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700247.1337943,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "751374720024",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700254.6047404,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "751374720024",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700260.914829,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437209",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700267.0668054,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437209",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700273.9320617,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437209",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700281.0296736,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437209",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700287.250759,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "180181033476",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700293.3746474,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "180181033476",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700300.300339,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "180181033476",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700307.5730112,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "180181033476",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700313.5241451,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437216",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700319.9952605,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437216",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700326.564897,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437216",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700333.8429637,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437216",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700340.3628676,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437186",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700346.458591,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437186",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700353.011243,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437186",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700360.2389002,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437186",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700366.3366804,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347002015",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700372.6207662,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347002015",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700379.2303116,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347002015",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700386.3630853,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347002015",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700392.9749389,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668941390",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700399.0965242,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668941390",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700405.629659,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668941390",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700412.8129475,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668941390",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700419.002084,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668302580",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700425.1105464,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668302580",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700431.9796023,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668302580",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700439.5733383,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668302580",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700461.6959438,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850017876200",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700467.7739527,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850017876200",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700474.3470242,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850017876200",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700481.6243377,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "850017876200",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700488.3299248,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "810029430371",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700494.497004,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "810029430371",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700501.1732895,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "810029430371",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700508.3125875,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "810029430371",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700610.0464337,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347001018",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700616.19842,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347001018",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700622.787041,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347001018",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700629.999424,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347001018",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700636.1683357,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001143",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700642.523369,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001143",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700649.0573823,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001143",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700656.666341,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "686960001143",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700662.996761,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247279048",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700669.129721,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247279048",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700675.6115823,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247279048",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700682.7458258,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247279048",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700688.8659706,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247278140",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700694.98035,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247278140",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700701.4733646,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247278140",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700708.7651784,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247278140",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700715.0398471,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668300593",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700721.3678768,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668300593",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700728.1725376,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668300593",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700735.7698736,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668300593",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700742.0730646,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781011633",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700748.446926,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781011633",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700755.1896887,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781011633",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700762.737846,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781011633",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700769.4147286,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347001025",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700775.549388,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347001025",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700782.192735,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347001025",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700789.5157332,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "813347001025",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700795.7452452,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "699064503017",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700802.2289367,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "699064503017",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700809.0282452,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "699064503017",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700816.5938208,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "699064503017",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700822.8209214,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668941307",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700828.9335923,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668941307",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700835.4822836,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668941307",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700842.7813053,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668941307",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700849.128778,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668480400",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700855.5143387,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668480400",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700862.1269479,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668480400",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700869.3949015,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "095668480400",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700970.552016,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247761215",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700976.7697887,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247761215",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700983.350706,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247761215",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700990.9050066,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "032247761215",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771700997.5486407,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444856",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701003.905871,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444856",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701010.4708414,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444856",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701017.6672046,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444856",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701023.930259,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441459",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701030.3503304,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441459",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701036.888545,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441459",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701044.3988914,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441459",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701050.8148427,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437155",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701057.2147996,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437155",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701064.0351012,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437155",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701071.5212276,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517437155",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701077.7713604,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "015561104982",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701084.1091974,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "015561104982",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701090.9597857,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "015561104982",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701098.343197,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "015561104982",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701104.6348405,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444863",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701111.0058298,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444863",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701117.6704855,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444863",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701125.105679,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444863",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701131.7182379,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441534",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701138.0531702,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441534",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701144.850165,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441534",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701152.3914402,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441534",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701254.2509618,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444832",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701260.6731946,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444832",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701267.505251,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444832",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701274.89012,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517444832",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701281.0580602,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781013552",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701287.6295357,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781013552",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701294.3117816,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781013552",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701301.7388341,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 3,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "846781013552",
+          "retry_count": 3,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701308.6438773,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 0,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441527",
+          "retry_count": 0,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701314.7066905,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 1,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441527",
+          "retry_count": 1,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    },
+    {
+      "timestamp": 1771701321.2364328,
+      "failure_context": {
+        "site_name": "central_pet",
+        "action": "wait_for",
+        "retry_count": 2,
+        "context": {
+          "site_name": "central_pet",
+          "action": "wait_for",
+          "step_index": 3,
+          "selector": null,
+          "url": null,
+          "sku": "022517441527",
+          "retry_count": 2,
+          "max_retries": 3
+        },
+        "failure_type": "network_error"
+      },
+      "success_after_retry": false,
+      "final_success": false
+    }
+  ],
+  "timestamp": 1771701321.2407804
+}

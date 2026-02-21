@@ -103,7 +103,7 @@ class TestRunnerConfigurationErrorHandling:
             run_job(job_config, runner_name="test-runner")
 
         error_message = str(exc_info.value)
-        assert "No valid scraper configurations" in error_message
+        assert "No scrapers specified in job configuration" in error_message
 
     def test_valid_configs_succeed(self):
         """Test that valid configurations are processed successfully."""
@@ -225,3 +225,42 @@ def test_discovery_job_uses_per_sku_context_items() -> None:
     assert captured_items[1]["sku"] == "SKU_B"
     assert captured_items[1]["product_name"] == "Beta Toy"
     assert captured_items[1]["brand"] == "Brand B"
+
+
+def test_empty_object_selectors_payload_does_not_fail_parsing() -> None:
+    scraper_configs = [
+        ScraperConfig(
+            name="bradley",
+            base_url="https://example.com",
+            search_url_template="https://example.com/search?q={sku}",
+            selectors={},
+            options={},
+            test_skus=[],
+        )
+    ]
+
+    job_config = JobConfig(
+        job_id="test-job-empty-selectors-dict",
+        skus=["SKU001"],
+        scrapers=scraper_configs,
+        test_mode=False,
+        max_workers=1,
+    )
+
+    class StubWorkflowExecutor:
+        def __init__(self, *args, **kwargs):
+            _ = args, kwargs
+            self.browser = None
+
+        async def initialize(self):
+            return None
+
+        async def execute_workflow(self, context=None, quit_browser=False):
+            _ = context, quit_browser
+            return {"success": False, "results": {}}
+
+    with patch("runner.WorkflowExecutor", StubWorkflowExecutor):
+        results = run_job(job_config, runner_name="test-runner")
+
+    assert results is not None
+    assert "bradley" in results["scrapers_run"]
