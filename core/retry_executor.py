@@ -348,13 +348,13 @@ class RetryExecutor:
         """Calculate delay for retry with strategy-specific logic."""
         delay = self.adaptive_strategy.calculate_delay(config, attempt)
 
-        # Apply minimum delays for specific failure types
+        # Apply minimum delays for specific failure types (reduced for fast failure)
         if failure_type == FailureType.RATE_LIMITED:
-            delay = max(delay, 10.0)  # At least 10s for rate limits
+            delay = max(delay, 2.0)  # 2s for rate limits (was 10s)
         elif failure_type == FailureType.CAPTCHA_DETECTED:
-            delay = max(delay, 5.0)  # At least 5s for CAPTCHA
+            delay = max(delay, 1.0)  # 1s for CAPTCHA (was 5s)
         elif failure_type == FailureType.ACCESS_DENIED:
-            delay = max(delay, 15.0)  # At least 15s for access denied
+            delay = max(delay, 3.0)  # 3s for access denied (was 15s)
 
         return delay
 
