@@ -57,7 +57,7 @@ class WorkflowExecutor:
         config: ScraperConfig,
         headless: bool = True,
         timeout: int | None = None,
-        enable_retry: bool = True,
+        enable_retry: bool = False,
         max_retries: int | None = None,
         worker_id: str | None = None,
         stop_event: threading.Event | None = None,
@@ -108,8 +108,8 @@ class WorkflowExecutor:
         if self.is_ci:
             self.timeout = 60
 
-        # Set max retries from config or parameter
-        self.max_retries = max_retries if max_retries is not None else config.retries
+        # Set max retries - default to 0 (no retries) for fast failure
+        self.max_retries = max_retries if max_retries is not None else (config.retries if config.retries is not None else 0)
 
         self.browser: Any = None
         self.results: dict[str, Any] = {}

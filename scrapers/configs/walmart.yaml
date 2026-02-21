@@ -69,14 +69,14 @@ workflows:
       url: "https://www.walmart.com/search?q={sku}"
   - action: "wait"
     params:
-      seconds: 3
+      seconds: 1
   - action: "wait_for"
     params:
       selector: "[data-testid='list-view'], div.search-result-gridview-items, .search-result-listview-items, [data-testid='item-stack'], .no-results"
       timeout: 5
   - action: "wait"
     params:
-      seconds: 2
+      seconds: 1
   - action: "check_no_results"
   - action: "conditional_skip"
     params:
@@ -95,9 +95,10 @@ workflows:
       timeout: 5
   - action: "wait"
     params:
-      seconds: 2
+      seconds: 1
   - action: "extract"
     params:
+      field_timeout_ms: 1500
       fields: ["Name", "Brand", "Description", "Image URLs", "Images", "Weight", "UPC", "Price", "Features", "Rating", "Review Count", "Specifications", "Ingredients"]
   - action: "transform_value"
     params:

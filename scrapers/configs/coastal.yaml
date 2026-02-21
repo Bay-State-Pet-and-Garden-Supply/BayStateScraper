@@ -81,6 +81,7 @@ workflows:
       timeout: 5
   - action: "extract"
     params:
+      field_timeout_ms: 1500
       fields: ["Name", "Brand", "Size", "Image URLs", "Price", "UPC", "Item Number", "Description", "Features"]
 
 anti_detection:

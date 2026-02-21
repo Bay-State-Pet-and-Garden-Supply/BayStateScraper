@@ -59,14 +59,14 @@ workflows:
       url: "https://mazuri.com/pages/search-results-page?q={sku}"
   - action: "wait"
     params:
-      seconds: 3
+      seconds: 1
   - action: "wait_for"
     params:
       selector: ".snize-product, a[href*='/products/'], .snize-no-results, .snize-no-products-found, #search-no-results, .search-results, body"
       timeout: 5
   - action: "wait"
     params:
-      seconds: 2
+      seconds: 1
   - action: "check_no_results"
   - action: "conditional_skip"
     params:
@@ -84,6 +84,7 @@ workflows:
       timeout: 5
   - action: "extract"
     params:
+      field_timeout_ms: 1500
       fields: ["Name", "Brand", "Weight", "Image URLs", "Price", "Ingredients", "Guaranteed Analysis", "Feeding Directions", "Size Options"]
   - action: "transform_value"
     params:

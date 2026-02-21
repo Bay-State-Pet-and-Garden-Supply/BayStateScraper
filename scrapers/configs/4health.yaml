@@ -27,6 +27,7 @@ workflows:
       timeout: 15
   - action: "extract_and_transform"
     params:
+      field_timeout_ms: 1500
       selector: "div[class*='product-tile'], div[class*='product_tile'], .search-result-grid > div"
       fields:
         - name: "Name"

@@ -40,7 +40,7 @@ workflows:
       url: "https://www.orgill.com/SearchResultN.aspx?ddlhQ={sku}"
   - action: "wait"
     params:
-      seconds: 5
+      seconds: 1
   - action: "wait_for"
     params:
       selector:
@@ -53,7 +53,7 @@ workflows:
       timeout: 10
   - action: "wait"
     params:
-      seconds: 5
+      seconds: 2
   - action: "check_no_results"
   - action: "conditional_skip"
     params:
@@ -67,6 +67,7 @@ workflows:
       timeout: 5
   - action: "extract"
     params:
+      field_timeout_ms: 1500
       fields: ["Name", "Brand", "model_number", "Weight", "Image URLs"]
   - action: "transform_value"
     params:

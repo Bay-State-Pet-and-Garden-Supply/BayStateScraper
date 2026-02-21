@@ -68,7 +68,7 @@ edge_case_skus:
   - "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 timeout: 60
-retries: 2
+retries: 0
 
 anti_detection:
   enable_captcha_detection: true

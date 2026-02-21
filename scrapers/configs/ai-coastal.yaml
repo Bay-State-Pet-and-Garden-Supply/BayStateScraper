@@ -71,7 +71,7 @@ edge_case_skus:
   - "ABCDEFGHIJ123456"
 
 timeout: 60
-retries: 2
+retries: 0
 
 anti_detection:
   enable_captcha_detection: false

@@ -19,33 +19,45 @@ selectors:
   - attribute: text
     name: Name
     selector: "#tst_productDetail_erpDescription, h1"
+    required: false
   - attribute: text
     name: Brand
     selector: a[ng-if='vm.product.brand.detailPagePath']
+    required: false
   - attribute: innerHTML
     name: Weight
     selector: //div[@class='specification-container']//li[strong[contains(text(), 'Product Gross Weight')]]/span
+    required: false
+  - attribute: src
     name: Image URLs
     selector: a#tst_productDetail_imageZoom img
+    multiple: true
+    required: false
   - attribute: text
     name: "Product #"
     selector: "span[itemprop='sku'], .item-num span"
+    required: false
   - attribute: text
     name: "UPC"
     selector: ".upc span"
+    required: false
   - attribute: text
     name: "Mfg Part #"
     selector: ".mfg-part-num span"
+    required: false
   - attribute: text
     name: "Description"
     selector: "#tst_productDetail_htmlContent"
+    required: false
   - attribute: text
     name: "Specifications"
     selector: "#tst_productDetail_specifications li"
     multiple: true
+    required: false
   - attribute: text
     name: "Safety Info"
     selector: ".safety-info"
+    required: false
 
 workflows:
   - action: navigate
@@ -60,13 +72,14 @@ workflows:
       timeout: 5
   - action: wait
     params:
-      duration: 2
+      seconds: 1
   - action: check_no_results
   - action: conditional_skip
     params:
       if_flag: no_results_found
   - action: "extract"
     params:
+      field_timeout_ms: 1500
       fields:
         - Name
         - Brand

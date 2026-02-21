@@ -58,6 +58,7 @@ workflows:
 
   - action: "extract"
     params:
+      field_timeout_ms: 1500
       fields: ["Name", "SKU", "Description", "Image URLs", "Breadcrumbs"]
 
 validation:

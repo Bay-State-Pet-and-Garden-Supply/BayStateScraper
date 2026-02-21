@@ -80,7 +80,7 @@ edge_case_skus:
   - "123456789012345"
 
 timeout: 60
-retries: 2
+retries: 0
 
 anti_detection:
   enable_captcha_detection: false

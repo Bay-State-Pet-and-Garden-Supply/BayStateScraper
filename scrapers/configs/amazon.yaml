@@ -69,14 +69,14 @@ workflows:
       url: "https://www.amazon.com/s?k={sku}"
   - action: "wait"
     params:
-      seconds: 5
+      seconds: 1
   - action: "wait_for"
     params:
       selector: ".s-result-item, .s-main-slot, .s-no-results-filler, #noResultsTitle, h2, #search, body"
       timeout: 5
   - action: "wait"
     params:
-      seconds: 2
+      seconds: 1
   - action: "check_no_results"
   - action: "conditional_skip"
     params:
@@ -96,6 +96,7 @@ workflows:
   # Using extract_and_transform for cleaner single-pass extraction with inline transforms
   - action: "extract_and_transform"
     params:
+      field_timeout_ms: 1500
       fields:
         - name: "Name"
           selector: "#productTitle"

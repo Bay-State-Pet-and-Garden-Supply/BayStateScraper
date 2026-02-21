@@ -91,7 +91,7 @@ workflows:
         - "main article"
         - "main h3:has-text('Sorry')"
         - "span:has-text('0 items')"
-      timeout: 30
+      timeout: 12
   - action: "check_no_results"
   - action: "conditional_skip"
     params:
@@ -115,20 +115,21 @@ workflows:
       timeout: 15
   - action: "wait"
     params:
-      duration: 2
+      seconds: 1
   - action: "click"
     params:
       selector: "text='View product'"
       index: 0
   - action: "wait"
     params:
-      duration: 3
+      seconds: 1
   - action: "wait_for"
     params:
       selector: ["h1"]
       timeout: 10
   - action: "extract"
     params:
+      field_timeout_ms: 1500
       fields: ["Name", "Brand", "Weight", "Image URLs", "BCI Item Number", "Manufacturer #", "UPC", "Case Pack", "Unit of Measure", "Dimensions", "Ingredients"]
   - action: "transform_value"
     params:
